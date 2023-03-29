@@ -1,6 +1,7 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+export { reportWebVitals } from 'next-axiom';
 
 import { api } from "n/utils/api";
 
