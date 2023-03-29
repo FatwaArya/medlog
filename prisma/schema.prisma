@@ -6,18 +6,70 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider     = "mysql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
+model Patient {
+    id            String          @id @default(cuid())
+    user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String
+    name          String
+    phone         String          @unique
+    address       String
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    MedicalRecord MedicalRecord[]
+
+    @@index([userId])
+}
+
+model MedicalRecord {
+    id         String       @id @default(cuid())
+    patient    Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    patientId  String
+    complaint  String
+    diagnosis  String
+    treatment  String
+    note       String
+    createdAt  DateTime     @default(now())
+    updatedAt  DateTime     @updatedAt
+    Attachment Attachment[]
+
+    @@index([patientId])
+}
+
+model Attachment {
+    id              String        @id @default(cuid())
+    medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
+    medicalRecordId String
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    File            File?         @relation(fields: [fileId], references: [id])
+    fileId          String?
+
+    @@index([medicalRecordId])
+    @@index([fileId])
+}
+
+model File {
+    id          String       @id @default(cuid())
+    attachments Attachment[]
+
+    type      String
+    url       String
+    mime      String
+    name      String
+    extension String
+    size      Int
+    height    Int?
+    width     Int?
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 }
 
 // Necessary for Next auth
@@ -27,16 +79,17 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String? @db.Text
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -45,6 +98,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 model User {
@@ -55,6 +110,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Patient       Patient[]
 }
 
 model VerificationToken {
