@@ -15,6 +15,11 @@ datasource db {
     relationMode = "prisma"
 }
 
+enum Gender {
+    male
+    female
+}
+
 model Patient {
     id            String          @id @default(cuid())
     user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -22,6 +27,8 @@ model Patient {
     name          String
     phone         String          @unique
     address       String
+    gender        Gender
+    age           Int
     createdAt     DateTime        @default(now())
     updatedAt     DateTime        @updatedAt
     MedicalRecord MedicalRecord[]
@@ -37,6 +44,7 @@ model MedicalRecord {
     diagnosis  String
     treatment  String
     note       String
+    pay        Int
     createdAt  DateTime     @default(now())
     updatedAt  DateTime     @updatedAt
     Attachment Attachment[]
