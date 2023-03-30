@@ -16,8 +16,11 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.56.0
   '@typescript-eslint/parser': ^5.56.0
   autoprefixer: ^10.4.14
+  class-variance-authority: ^0.4.0
+  clsx: ^1.2.1
   eslint: ^8.36.0
   eslint-config-next: ^13.2.4
+  lucide-react: ^0.129.0
   next: ^13.2.4
   next-auth: ^4.20.1
   next-axiom: ^0.17.0
@@ -28,7 +31,9 @@ specifiers:
   react: 18.2.0
   react-dom: 18.2.0
   superjson: 1.12.2
+  tailwind-merge: ^1.11.0
   tailwindcss: ^3.2.7
+  tailwindcss-animate: ^1.0.5
   typescript: ^5.0.2
   zod: ^3.21.4
 
@@ -40,12 +45,16 @@ dependencies:
   '@trpc/next': 10.18.0_fk7ybuwqrs7skzzxcj6wjc5c3i
   '@trpc/react-query': 10.18.0_rcvfzig2xktluz4p7kugxqlbwi
   '@trpc/server': 10.18.0
+  class-variance-authority: 0.4.0_typescript@5.0.2
+  clsx: 1.2.1
+  lucide-react: 0.129.0_react@18.2.0
   next: 13.2.4_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.20.1_ld2jel3hspngo3u5lti2kgl2sq
   next-axiom: 0.17.0_next@13.2.4
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   superjson: 1.12.2
+  tailwind-merge: 1.11.0
   zod: 3.21.4
 
 devDependencies:
@@ -64,6 +73,7 @@ devDependencies:
   prettier-plugin-tailwindcss: 0.2.5_prettier@2.8.7
   prisma: 4.12.0
   tailwindcss: 3.3.0_postcss@8.4.21
+  tailwindcss-animate: 1.0.5_tailwindcss@3.3.0
   typescript: 5.0.2
 
 packages:
@@ -818,8 +828,24 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /class-variance-authority/0.4.0_typescript@5.0.2:
+    resolution: {integrity: sha512-74enNN8O9ZNieycac/y8FxqgyzZhZbxmCitAtAeUrLPlxjSd5zA7LfpprmxEcOmQBnaGs5hYhiSGnJ0mqrtBLQ==}
+    peerDependencies:
+      typescript: '>= 4.5.5 < 5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 5.0.2
+    dev: false
+
   /client-only/0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
+    dev: false
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
     dev: false
 
   /color-convert/2.0.1:
@@ -1937,6 +1963,14 @@ packages:
     dependencies:
       yallist: 4.0.0
 
+  /lucide-react/0.129.0_react@18.2.0:
+    resolution: {integrity: sha512-kGEZ+pOk9FLKsCr4luL4HYqr23lQdVbmN+3cgTj0Ye6s95FED3CX/DNzB3o8/TimgNmKKw+iq+g3mnTbtS7/ew==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /merge2/1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
@@ -2736,6 +2770,18 @@ packages:
       tslib: 2.5.0
     dev: true
 
+  /tailwind-merge/1.11.0:
+    resolution: {integrity: sha512-oG3/328Y7LrfPMfkgMNxoqEk1ZQdXBxdphf9FFrreo8q0EtVIHt3bQf2IyFhQuVt8puB57lCRBNbazGhYAyz9w==}
+    dev: false
+
+  /tailwindcss-animate/1.0.5_tailwindcss@3.3.0:
+    resolution: {integrity: sha512-UU3qrOJ4lFQABY+MVADmBm+0KW3xZyhMdRvejwtXqYOL7YjHYxmuREFAZdmVG5LPe5E9CAst846SLC4j5I3dcw==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+    dependencies:
+      tailwindcss: 3.3.0_postcss@8.4.21
+    dev: true
+
   /tailwindcss/3.3.0_postcss@8.4.21:
     resolution: {integrity: sha512-hOXlFx+YcklJ8kXiCAfk/FMyr4Pm9ck477G0m/us2344Vuj355IpoEDB5UmGAsSpTBmr+4ZhjzW04JuFXkb/fw==}
     engines: {node: '>=12.13.0'}
@@ -2861,7 +2907,6 @@ packages:
     resolution: {integrity: sha512-wVORMBGO/FAs/++blGNeAVdbNKtIh1rbBL2EyQ1+J9lClJ93KiiKe8PmFIVdXhHcyv44SL9oglmfeSsndo0jRw==}
     engines: {node: '>=12.20'}
     hasBin: true
-    dev: true
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
