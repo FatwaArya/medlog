@@ -1,5 +1,6 @@
 import * as React from "react"
 import { VariantProps, cva } from "class-variance-authority"
+import Link, { LinkProps } from "next/link"
 
 import { cn } from "@/utils/cn"
 
@@ -20,7 +21,15 @@ const buttonVariants = cva(
                     "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100",
                 ghost:
                     "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-100 dark:hover:text-slate-100 data-[state=open]:bg-transparent dark:data-[state=open]:bg-transparent",
-                link: "bg-transparent dark:bg-transparent underline-offset-4 hover:underline text-slate-900 dark:text-slate-100 hover:bg-transparent dark:hover:bg-transparent",
+                link:
+                    "inline-block rounded-lg py-1 px-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+                blue:
+                    "group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-blue-600 text-white hover:text-slate-100 hover:bg-blue-500 active:bg-blue-800 active:text-blue-100 focus-visible:outline-blue-600",
+                solid:
+                    "group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-white text-slate-900 hover:bg-blue-50 active:bg-blue-200 active:text-slate-600 focus-visible:outline-white",
+                outlineWhite:
+                    "group inline-flex ring-1 items-center justify-center rounded-full py-2 px-4 text-sm focus:outline-none ring-slate-700 text-white hover:ring-slate-500 active:ring-slate-700 active:text-slate-400 focus-visible:outline-white",
+
             },
             size: {
                 default: "h-10 py-2 px-4",
@@ -35,18 +44,42 @@ const buttonVariants = cva(
     }
 )
 
+//add href prop in interface if href is provided
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> { }
+    VariantProps<typeof buttonVariants> {
+    href?: string
+}
+
+
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, ...props }, ref) => {
+    ({ className, variant, size, href, ...props }, ref) => {
+        //return Link if href is provided
+        if (href) {
+            return (
+
+                <Link href={href} legacyBehavior>
+                    <button
+                        ref={ref}
+                        className={cn(buttonVariants({ variant, size }), className)}
+                        {...props}
+                    />
+                    {/* {children}
+                    </button> */}
+                </Link>
+            )
+        }
         return (
             <button
-                className={cn(buttonVariants({ variant, size, className }))}
                 ref={ref}
+                className={cn(
+                    buttonVariants({ variant, size }),
+                    className
+                )}
                 {...props}
             />
+
         )
     }
 )
