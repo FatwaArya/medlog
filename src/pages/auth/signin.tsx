@@ -36,7 +36,7 @@ export default function Login() {
         </div>
         <div className="mt-10 grid grid-cols-1 gap-y-8">
           <Button variant='outline' onClick={() => {
-            signIn("google", { callbackUrl: "http://localhost:3000/dashboard/home" })
+            void signIn("google", { callbackUrl: "http://localhost:3000/dashboard/home" })
           }}>
             <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
           </Button>
