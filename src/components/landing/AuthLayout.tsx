@@ -3,7 +3,7 @@ import Image from "next/image";
 import backgroundImage from "@/images/background-auth.jpg";
 import type { PropsWithChildren } from "react";
 
-export function AuthLayout({ children }: PropsWithChildren<{}>) {
+export function AuthLayout({ children }: PropsWithChildren) {
   return (
     <>
       <div className="relative flex min-h-full justify-center md:px-12 lg:px-0 h-screen">

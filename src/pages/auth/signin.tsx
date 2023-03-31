@@ -4,8 +4,6 @@ import Link from "next/link";
 import { AuthLayout } from "@/components/landing/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/Logo";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/landing/Input";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 
