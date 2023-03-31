@@ -28,7 +28,7 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "**/*.css", "src/components/landing/Button.jsx",
+    "**/*.css",
   ],
   "exclude": ["node_modules"]
 }

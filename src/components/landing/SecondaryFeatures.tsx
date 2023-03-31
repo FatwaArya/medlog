@@ -24,7 +24,7 @@ const features = [
       "We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.",
     image: screenshotProfitLoss,
     icon: function ReportingIcon() {
-      let id = useId();
+      const id = useId();
       return (
         <>
           <defs>
