@@ -39,12 +39,14 @@ export const recordRouter = createTRPCRouter({
           userId: ctx.session.user.id,
         },
       },
-      _count: true,
+      _sum: {
+        pay: true,
+      },
       _max: {
         createdAt: true,
       },
     });
-    const total = result._count;
+    const total = result._sum.pay;
     const lastRevenue = result._max;
     return {
       total,

@@ -84,8 +84,13 @@ import { Hero } from '@/components/landing/Hero'
 import { Pricing } from '@/components/landing/Pricing'
 import { PrimaryFeatures } from '@/components/landing/PrimaryFeatures'
 import { SecondaryFeatures } from '@/components/landing/SecondaryFeatures'
+import { api } from '@/utils/api'
 
-export default function Home() {
+
+export default function Index() {
+  // const { data: Revenue } = api.record.getStatRevenue.useQuery()
+  // const { data: Patient } = api.patient.getStatPatients.useQuery()
+  // const { data: chart } = api.patient.getStatLine.useQuery()
   return (
     <>
       <Head>
