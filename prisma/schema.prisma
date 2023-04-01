@@ -25,6 +25,7 @@ model Patient {
     user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String
     name          String
+    NIK           String          @unique
     phone         String          @unique
     address       String
     gender        Gender
