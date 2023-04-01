@@ -20,6 +20,7 @@ export const patientRouter = createTRPCRouter({
         phone: z.string().min(10).max(10),
         gender: z.enum(["male", "female"]),
         address: z.string(),
+        nik: z.string().min(16).max(16),
         age: z.number().min(1).max(120),
         complaint: z.string(),
         diagnosis: z.string(),
@@ -40,7 +41,10 @@ export const patientRouter = createTRPCRouter({
         treatment,
         note,
         pay,
+        nik,
       } = input;
+      //Encrypt NIK
+
       await ctx.prisma.$transaction(async (tx) => {
         const { id } = await tx.patient.create({
           data: {
@@ -48,6 +52,7 @@ export const patientRouter = createTRPCRouter({
             phone,
             gender,
             address,
+            NIK: nik,
             age,
             userId: ctx.session.user.id,
           },
@@ -64,34 +69,39 @@ export const patientRouter = createTRPCRouter({
         });
       });
     }),
-  /**
-   * create medical record procedure
-   *
-   * this procedure only calls when user is creating new medical record for existing patient
-   *
-   */
-  createMedicalRecord: protectedProcedure
-    .input(
-      z.object({
-        patientId: z.string(),
-        complaint: z.string(),
-        diagnosis: z.string(),
-        treatment: z.string(),
-        note: z.string(),
-        pay: z.number().min(0),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const { patientId, complaint, diagnosis, treatment, note, pay } = input;
-      await ctx.prisma.medicalRecord.create({
-        data: {
-          pay,
-          patientId,
-          complaint,
-          diagnosis,
-          treatment,
-          note,
-        },
-      });
-    }),
+  getAllPatients: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.prisma.patient.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+    return result;
+  }),
+  getStatPatients: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.prisma.patient.aggregate({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      _count: true,
+      _max: {
+        createdAt: true,
+      },
+    });
+    const total = result._count;
+    const lastPatient = result._max;
+    return {
+      total,
+      lastPatient,
+    };
+  }),
+  getStatLine: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.prisma.patient.groupBy({
+      by: ["createdAt", "gender"],
+      where: {
+        userId: ctx.session.user.id,
+      },
+      _count: true,
+    });
+    return result;
+  }),
 });
