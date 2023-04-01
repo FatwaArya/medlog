@@ -8,7 +8,7 @@ const config = {
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
       ],
-      files: ["*.ts", "*.tsx"],
+      files: ["*.ts", "*.tsx", "*.css"],
       parserOptions: {
         project: path.join(__dirname, "tsconfig.json"),
       },
@@ -29,6 +29,7 @@ const config = {
       },
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-empty-interface": ["warn"],
   },
 };
 
