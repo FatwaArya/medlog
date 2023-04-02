@@ -1,3 +1,4 @@
+import { LineCharts } from "@/components/dashboard/charts/charts";
 import { StatsUser } from "@/components/dashboard/stats/stats";
 import { api } from "@/utils/api";
 
@@ -8,6 +9,7 @@ export default function Home() {
     return (
         <>
             <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
+            <LineCharts />
         </>
     );
 }

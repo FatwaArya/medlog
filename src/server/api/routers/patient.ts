@@ -5,6 +5,11 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
+import dayjs from "dayjs";
+
+import relativeTime from "dayjs/plugin/relativeTime";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(localeData);
 
 export const patientRouter = createTRPCRouter({
   /**
@@ -96,12 +101,19 @@ export const patientRouter = createTRPCRouter({
   }),
   getStatLine: protectedProcedure.query(async ({ ctx }) => {
     const result = await ctx.prisma.patient.groupBy({
-      by: ["createdAt", "gender"],
+      by: ["gender", "createdAt"],
       where: {
         userId: ctx.session.user.id,
       },
       _count: true,
     });
-    return result;
+
+    return result.map((item) => {
+      return {
+        date: dayjs(item.createdAt).format("MMM"),
+        Male: item.gender === "male" ? item._count : 0,
+        Female: item.gender === "female" ? item._count : 0,
+      };
+    });
   }),
 });
