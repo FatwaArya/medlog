@@ -8,8 +8,14 @@ export default function Home() {
 
     return (
         <>
-            <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
-            <LineCharts />
+            <div className=" bg-slate-200 h-screen mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+                    <LineCharts />
+                    <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
+                </div>
+
+            </div>
+
         </>
     );
 }
