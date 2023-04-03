@@ -1,6 +1,9 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronsLeft, type LucideIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const DialogContentMotion = motion(Dialog.Content);
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -23,50 +26,69 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
   return (
     <div>
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-gray-500/5" />
-          <Dialog.Content className="fixed left-0 top-0 flex h-full w-full max-w-xs flex-col border-r border-l-gray-500 bg-white px-4">
-            <div className="h-0 flex-1 overflow-y-auto pb-4 pt-5">
-              <div className="flex items-center">
-                <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                  alt="Workflow"
-                />
-                <Dialog.Close asChild>
-                  <button className="ml-auto text-slate-700" aria-label="close">
-                    <ChevronsLeft />
-                  </button>
-                </Dialog.Close>
-              </div>
-              <nav className="mt-5 space-y-2">
-                {entries.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                      "group flex items-center rounded-md px-2 py-2 text-base font-medium"
-                    )}
-                  >
-                    <item.icon
-                      className={classNames(
-                        item.current
-                          ? "text-gray-500"
-                          : "text-gray-400 group-hover:text-gray-500",
-                        "mr-4 h-6 w-6 flex-shrink-0"
-                      )}
-                      aria-hidden="true"
+        <AnimatePresence>
+          {open ? (
+            <Dialog.Portal forceMount>
+              <Dialog.Overlay
+                className="data-[state=open]:animate-overlayShow fixed inset-0 bg-gray-500/5"
+                forceMount
+              />
+              <Dialog.Content
+                className="fixed left-0 top-0 flex h-full w-full max-w-xs flex-col border-r border-l-gray-500 bg-white px-4"
+                forceMount
+                asChild
+              >
+                <motion.div
+                  className="h-0 flex-1 overflow-y-auto pb-4 pt-5"
+                  initial={{ left: "-100%" }}
+                  animate={{ left: 0 }}
+                  exit={{ left: "-100%" }}
+                >
+                  <div className="flex items-center">
+                    <img
+                      className="h-8 w-auto"
+                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                      alt="Workflow"
                     />
-                    {item.name}
-                  </a>
-                ))}
-              </nav>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
+                    <Dialog.Close asChild>
+                      <button
+                        className="ml-auto text-slate-700"
+                        aria-label="close"
+                      >
+                        <ChevronsLeft />
+                      </button>
+                    </Dialog.Close>
+                  </div>
+                  <nav className="mt-5 space-y-2">
+                    {entries.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className={classNames(
+                          item.current
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                          "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                        )}
+                      >
+                        <item.icon
+                          className={classNames(
+                            item.current
+                              ? "text-gray-500"
+                              : "text-gray-400 group-hover:text-gray-500",
+                            "mr-4 h-6 w-6 flex-shrink-0"
+                          )}
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </a>
+                    ))}
+                  </nav>
+                </motion.div>
+              </Dialog.Content>
+            </Dialog.Portal>
+          ) : null}
+        </AnimatePresence>
       </Dialog.Root>
 
       {/* Static Sidebar for desktop */}
