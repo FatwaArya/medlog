@@ -1,9 +1,14 @@
 "use client"
 
 import Layout from "@/components/dashboard/Layout"
+import { ReactElement } from "react"
 
 export default function Dashboard() {
   return (
-    <Layout><p>Hello</p></Layout>
+    <p>Hello</p>
   )
+}
+
+Dashboard.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }
