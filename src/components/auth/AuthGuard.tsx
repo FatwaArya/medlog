@@ -38,7 +38,7 @@ const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
-      router.push("/auth/signin");
+      void router.push("/auth/signin");
     }
   }, [sessionStatus]);
 

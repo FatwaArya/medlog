@@ -18,19 +18,19 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-export type NextPageWithLayoutOrAuth<P = {}, IP = P> = NextPage<P, IP> & {
+export type PasienPlusPage<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
   authRequired?: boolean
 }
 
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayoutOrAuth
+type PasienPlusProps = AppProps & {
+  Component: PasienPlusPage
 }
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
-}: AppPropsWithLayout) => {
+}: PasienPlusProps) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const authRequired = Component.authRequired ?? false;
 
@@ -44,14 +44,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
       {
         authRequired ? (
           <AuthGuard>
-            getLayout(<Component {...pageProps} />)
+            {getLayout(<Component {...pageProps} />)}
           </AuthGuard>
         ) : (
           getLayout(<Component {...pageProps} />)
         )
       }
     </SessionProvider>
-    </>
+  </>
   );
 };
 
