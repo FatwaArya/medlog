@@ -22,31 +22,31 @@ export function AdminLayout(props: PropsWithChildren) {
   const [navigation, setNavigation] = useState([
     {
       name: "Dashboard",
-      href: "/app/dashboard",
+      href: "/dashboard/home",
       icon: HomeIcon,
       current: false,
     },
     {
       name: "Patient List",
-      href: "/app/dashboard/patients",
+      href: "/dashboard/patients",
       icon: UsersIcon,
       current: false,
     },
     {
       name: "Sales Order",
-      href: "/app/dashboard/sales",
+      href: "/dashboard/sales",
       icon: ShoppingCartIcon,
       current: false,
     },
     {
       name: "Transaction",
-      href: "/app/dashboard/transactions",
+      href: "/dashboard/transactions",
       icon: FilePlusIcon,
       current: false,
     },
     {
       name: "Report",
-      href: "/app/dashboard/report",
+      href: "/dashboard/report",
       icon: DownloadIcon,
       current: false,
     },

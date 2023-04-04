@@ -1,20 +1,22 @@
 import { MenuIcon, SearchIcon, BellIcon } from "lucide-react";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
+import { cn } from "@/utils/cn";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { signOut, useSession } from "next-auth/react";
 const userNavigation = [
-  { name: "Logout", href: "/auth/signout" },
+  { name: "Logout", href: "/" },
 ];
-
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export function Navbar({
   setSidebarOpen,
 }: {
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
+  const { data: session, status } = useSession();
+
+
   return (
     <div className="flex flex-1 flex-col md:pl-64">
       <div className="sticky top-0 flex h-16 flex-shrink-0 bg-white shadow">
@@ -65,25 +67,29 @@ export function Navbar({
                 >
                   <div>
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
+                    <Avatar>
+                      <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
                   </div>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {userNavigation.map((item) => (
                       <DropdownMenu.Item key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
-                          className={classNames(
+                          className={cn(
                             "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           )}
+                          onClick={() => {
+                            if (item.name === "Logout") {
+                              signOut()
+                            }
+                          }}
                         >
                           {item.name}
-                        </a>
+                        </Link>
                       </DropdownMenu.Item>
                     ))}
                   </DropdownMenu.Content>

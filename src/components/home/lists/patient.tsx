@@ -148,7 +148,7 @@ export default function PatientList() {
 
 
     return (
-        <div className="bg-white overflow-hidden shadow sm:rounded-lg mx-16" >
+        <div className="bg-white overflow-hidden shadow sm:rounded-lg" >
             <div className="px-4 py-5 sm:p-6">  <div className="px-4 sm:px-6 lg:px-8">
                 <div className="sm:flex sm:items-center">
                     <div className="sm:flex-auto">
