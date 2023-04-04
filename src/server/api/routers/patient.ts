@@ -100,12 +100,10 @@ export const patientRouter = createTRPCRouter({
         },
         createdAt: true,
       },
-
       orderBy: {
         createdAt: "desc",
       },
 
-      take: 10,
       distinct: ["patientId", "createdAt"],
     });
     return result;
