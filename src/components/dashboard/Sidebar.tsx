@@ -30,11 +30,18 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
           {open ? (
             <Dialog.Portal forceMount>
               <Dialog.Overlay
-                className="data-[state=open]:animate-overlayShow fixed inset-0 bg-gray-500/5"
                 forceMount
-              />
+                asChild
+              >
+                <motion.div
+                  className="fixed inset-0 cursor-pointer bg-black/50 backdrop-blur-[10px]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.7 }}
+                  exit={{ opacity: 0 }}
+                ></motion.div>
+              </Dialog.Overlay>
               <Dialog.Content
-                className="fixed left-0 top-0 flex h-full w-full max-w-xs flex-col border-r border-l-gray-500 bg-white px-4"
+                className="fixed left-0 top-0 flex h-full w-full max-w-xs flex-col border-r border-l-gray-500 bg-white"
                 forceMount
                 asChild
               >
@@ -44,7 +51,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                   animate={{ left: 0 }}
                   exit={{ left: "-100%" }}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center px-4">
                     <img
                       className="h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
@@ -59,22 +66,22 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                       </button>
                     </Dialog.Close>
                   </div>
-                  <nav className="mt-5 space-y-2">
+                  <nav className="mt-8 space-y-2">
                     {entries.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
                         className={classNames(
                           item.current
-                            ? "bg-gray-100 text-gray-900"
+                            ? "bg-blue-200/50 text-blue-600 before:absolute before:left-0 before:h-full before:w-1 before:rounded-md before:bg-gradient-to-b before:from-blue-600 before:to-blue-200 before:content-['']"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                          "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                          "group relative flex items-center px-7 py-3 text-base font-medium"
                         )}
                       >
                         <item.icon
                           className={classNames(
                             item.current
-                              ? "text-gray-500"
+                              ? "text-blue-600"
                               : "text-gray-400 group-hover:text-gray-500",
                             "mr-4 h-6 w-6 flex-shrink-0"
                           )}
