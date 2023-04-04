@@ -12,3 +12,5 @@ export default function Dashboard() {
 Dashboard.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+Dashboard.authRequired = true;

@@ -11,18 +11,20 @@ import type { AppProps } from 'next/app'
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css"
+import AuthGuard from "@/components/auth/AuthGuard";
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 })
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayoutOrAuth<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
+  authRequired?: boolean
 }
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
+  Component: NextPageWithLayoutOrAuth
 }
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -30,6 +32,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page);
+  const authRequired = Component.authRequired ?? false;
 
   return (<>
     <style jsx global>{`
@@ -38,7 +41,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
       }
     `}</style>
     <SessionProvider session={session}>
-      {getLayout(<Component {...pageProps} />)}
+      {
+        authRequired ? (
+          <AuthGuard>
+            getLayout(<Component {...pageProps} />)
+          </AuthGuard>
+        ) : (
+          getLayout(<Component {...pageProps} />)
+        )
+      }
     </SessionProvider>
     </>
   );
