@@ -1,6 +1,6 @@
-import { LineCharts } from "@/components/dashboard/charts/charts";
-import PatientList from "@/components/dashboard/lists/patient";
-import { StatsUser } from "@/components/dashboard/stats/stats";
+import { LineCharts } from "@/components/home/charts/charts";
+import PatientList from "@/components/home/lists/patient";
+import { StatsUser } from "@/components/home/stats/stats";
 import { api } from "@/utils/api";
 import { ReactElement, useState } from "react";
 import { PasienPlusPage } from "../_app";
