@@ -39,12 +39,14 @@ const buttonVariants = cva(
                     `${baseStyles.solid} bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900`,
                 outlineWhite:
                     `${baseStyles.outline} ring-slate-700 text-white hover:ring-slate-500 active:ring-slate-700 active:text-slate-400 focus-visible:outline-white`,
-                outlineSlate: `${baseStyles.outline} ring-slate-200 text-slate-700 hover:text-slate-900 hover:ring-slate-300 active:bg-slate-100 active:text-slate-600 focus-visible:outline-blue-600 focus-visible:ring-slate-300`
+                outlineSlate: `${baseStyles.outline} ring-slate-200 text-slate-700 hover:text-slate-900 hover:ring-slate-300 active:bg-slate-100 active:text-slate-600 focus-visible:outline-blue-600 focus-visible:ring-slate-300`,
+                outlineBlue:
+                    `${baseStyles.outline} ring-blue-600 text-blue-600 hover:text-white hover:ring-blue-500 hover:bg-blue-600 active:bg-blue-100 active:text-blue-700 focus-visible:outline-blue-600 focus-visible:ring-blue-500`,
             },
             size: {
                 default: "h-10 py-2 px-4",
-                sm: "h-9 px-2 rounded-md",
-                lg: "h-11 px-8 rounded-md",
+                sm: "h-9 px-2",
+                lg: "h-11 px-8",
             },
         },
         defaultVariants: {

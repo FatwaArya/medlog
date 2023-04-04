@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/landing/Container";
 import { Logo } from "@/components/landing/Logo";
 import { NavLink } from "@/components/landing/NavLink";
+import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
 function MobileNavLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (
@@ -89,6 +91,9 @@ function MobileNavigation() {
 }
 
 export function Header() {
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
+
   return (
     <header className="py-10">
       <Container>
@@ -104,11 +109,17 @@ export function Header() {
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
-            <Button href="/auth/signin" variant="solidBlue">
-              <span>
-                Get started <span className="hidden lg:inline">today</span>
-              </span>
-            </Button>
+            {/* if status is loading, disable button */
+              session ? (
+                <Button href="/dashboard/home" variant="outlineBlue" disabled={isLoading}>
+                  <span>Go to Dashboard</span>
+                </Button>
+              ) : (<Button href="/auth/signin" variant="solidBlue" disabled={isLoading}>
+                <span>
+                  Get started <span className="hidden lg:inline">today</span>
+                </span>
+              </Button>)}
+
             <div className="-mr-1 md:hidden">
               <MobileNavigation />
             </div>
