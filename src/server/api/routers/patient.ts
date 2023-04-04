@@ -11,6 +11,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(localeData);
 
+interface GenderCount {
+  date: string;
+  Male: number;
+  Female: number;
+}
+
 export const patientRouter = createTRPCRouter({
   /**
    * create new patient procedure
@@ -26,7 +32,7 @@ export const patientRouter = createTRPCRouter({
         gender: z.enum(["male", "female"]),
         address: z.string(),
         nik: z.string().min(16).max(16),
-        age: z.number().min(1).max(120),
+        birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
         treatment: z.string(),
@@ -40,7 +46,7 @@ export const patientRouter = createTRPCRouter({
         phone,
         gender,
         address,
-        age,
+        birthDate,
         complaint,
         diagnosis,
         treatment,
@@ -58,7 +64,7 @@ export const patientRouter = createTRPCRouter({
             gender,
             address,
             NIK: nik,
-            age,
+            birthDate,
             userId: ctx.session.user.id,
           },
         });
@@ -99,21 +105,137 @@ export const patientRouter = createTRPCRouter({
       lastPatient,
     };
   }),
-  getStatLine: protectedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.prisma.patient.groupBy({
-      by: ["gender", "createdAt"],
-      where: {
-        userId: ctx.session.user.id,
-      },
-      _count: true,
-    });
+  getStatLine: protectedProcedure
+    .input(
+      z
+        .object({
+          sortBy: z.enum(["month", "year", "all"]).nullish(),
+        })
+        .nullish()
+    )
+    .query(async ({ input, ctx }) => {
+      const visits = await ctx.prisma.medicalRecord.findMany({
+        where: {
+          patient: {
+            userId: ctx.session.user.id,
+          },
+        },
+        select: {
+          createdAt: true,
+          patient: {
+            select: {
+              gender: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
 
-    return result.map((item) => {
-      return {
-        date: dayjs(item.createdAt).format("MMM"),
-        Male: item.gender === "male" ? item._count : 0,
-        Female: item.gender === "female" ? item._count : 0,
-      };
-    });
-  }),
+      // const visits = record.reduce((acc: GenderCount[], cur) => {
+      //   const existingCount = acc.find((count) =>
+      //     dayjs(count.date).isSame(cur.createdAt, "day")
+      //   );
+
+      //   if (existingCount) {
+      //     if (cur.patient.gender === "male") {
+      //       existingCount.Male += 1;
+      //     } else if (cur.patient.gender === "female") {
+      //       existingCount.Female += 1;
+      //     }
+      //   } else {
+      //     const newCount = {
+      //       date: dayjs(cur.createdAt).format("DD MMMM YYYY"),
+      //       Male: cur.patient.gender === "male" ? 1 : 0,
+      //       Female: cur.patient.gender === "female" ? 1 : 0,
+      //     };
+      //     acc.push(newCount);
+      //   }
+
+      //   return acc;
+      // }, []);
+      const currentYear = dayjs().format("YYYY");
+      const currentMonthYear = dayjs().format("MMM YYYY");
+      const allTimeVisits = visits.reduce((acc: GenderCount[], cur) => {
+        const existingCount = acc.find((count) =>
+          dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month")
+        );
+
+        if (existingCount) {
+          if (cur.patient.gender === "male") {
+            existingCount.Male += 1;
+          } else if (cur.patient.gender === "female") {
+            existingCount.Female += 1;
+          }
+        } else {
+          const newCount = {
+            date: dayjs(cur.createdAt).format("MMM YYYY"),
+            Male: cur.patient.gender === "male" ? 1 : 0,
+            Female: cur.patient.gender === "female" ? 1 : 0,
+          };
+          acc.push(newCount);
+        }
+
+        return acc;
+      }, []);
+
+      const yearlyVisits = visits.reduce((acc: GenderCount[], cur) => {
+        const createdAt = dayjs(cur.createdAt);
+        if (createdAt.isSame(currentYear, "year")) {
+          const existingCount = acc.find(
+            (count) => count.date === createdAt.format("MMMM YYYY")
+          );
+          if (existingCount) {
+            if (cur.patient.gender === "male") {
+              existingCount.Male += 1;
+            } else if (cur.patient.gender === "female") {
+              existingCount.Female += 1;
+            }
+          } else {
+            const newCount = {
+              date: createdAt.format("MMMM YYYY"),
+              Male: cur.patient.gender === "male" ? 1 : 0,
+              Female: cur.patient.gender === "female" ? 1 : 0,
+            };
+            acc.push(newCount);
+          }
+        }
+        return acc;
+      }, []);
+
+      const monthlyVisits = visits.reduce((acc: GenderCount[], cur) => {
+        const createdAt = dayjs(cur.createdAt);
+        if (createdAt.isSame(currentMonthYear, "month")) {
+          const existingCount = acc.find(
+            (count) => count.date === createdAt.format("DD MMM")
+          );
+          if (existingCount) {
+            if (cur.patient.gender === "male") {
+              existingCount.Male += 1;
+            } else if (cur.patient.gender === "female") {
+              existingCount.Female += 1;
+            }
+          } else {
+            const newCount = {
+              date: createdAt.format("DD MMM"),
+              Male: cur.patient.gender === "male" ? 1 : 0,
+              Female: cur.patient.gender === "female" ? 1 : 0,
+            };
+            acc.push(newCount);
+          }
+        }
+        return acc;
+      }, []);
+      switch (input?.sortBy) {
+        case "month":
+          return monthlyVisits;
+        case "year":
+          return yearlyVisits;
+        case "all":
+          return allTimeVisits;
+        default:
+          return monthlyVisits;
+      }
+    }),
 });

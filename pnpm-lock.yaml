@@ -40,6 +40,7 @@ specifiers:
   prop-types: ^15.8.1
   react: 18.2.0
   react-dom: 18.2.0
+  react-hook-form: ^7.43.9
   react-icons: ^4.8.0
   react-resizable: ^1.11.1
   recharts: ^2.1.10
@@ -77,6 +78,7 @@ dependencies:
   prop-types: 15.8.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-hook-form: 7.43.9_react@18.2.0
   react-icons: 4.8.0_react@18.2.0
   react-resizable: 1.11.1_biqbaboplfbrettd7655fr4n2y
   recharts: 2.5.0_v2m5e27vhdewzwhryxwfaorcca
@@ -3372,6 +3374,15 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /react-hook-form/7.43.9_react@18.2.0:
+    resolution: {integrity: sha512-AUDN3Pz2NSeoxQ7Hs6OhQhDr6gtF9YRuutGDwPQqhSUAHJSgGl2VeY3qN19MG0SucpjgDiuMJ4iC5T5uB+eaNQ==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-icons/4.8.0_react@18.2.0:
