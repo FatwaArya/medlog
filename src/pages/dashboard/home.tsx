@@ -13,7 +13,7 @@ export default function Home() {
         <>
             <div className=" bg-slate-200 h-screen mb-16">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
-                    <LineCharts {...Stats} />
+                    <LineCharts />
                     <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
                 </div>
                 <PatientList />

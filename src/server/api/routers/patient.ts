@@ -80,11 +80,33 @@ export const patientRouter = createTRPCRouter({
         });
       });
     }),
-  getAllPatients: protectedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.prisma.patient.findMany({
+  getNewestPatients: protectedProcedure.query(async ({ ctx }) => {
+    //select newest patients
+    const result = await ctx.prisma.medicalRecord.findMany({
       where: {
-        userId: ctx.session.user.id,
+        patient: {
+          userId: ctx.session.user.id,
+        },
       },
+      select: {
+        patient: {
+          select: {
+            id: true,
+            name: true,
+            birthDate: true,
+            gender: true,
+            NIK: true,
+          },
+        },
+        createdAt: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      take: 10,
+      distinct: ["patientId", "createdAt"],
     });
     return result;
   }),

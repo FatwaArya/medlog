@@ -13,7 +13,6 @@ import { Loader2 } from "lucide-react";
 // import localeData from "dayjs/plugin/localeData";
 dayjs.extend(relativeTime);
 
-type PatientStat = RouterOutputs["patient"]["getStatLine"]
 
 enum Time {
     year = 'year',
@@ -40,7 +39,7 @@ function CustomTooltip({ payload, label, active }: TooltipProps<ValueType, NameT
     return null;
 }
 
-export const LineCharts = (props: PatientStat) => {
+export const LineCharts = () => {
     const { control } = useForm<IForm>();
     const { field } = useController({
         name: 'time',

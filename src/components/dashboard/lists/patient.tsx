@@ -1,13 +1,22 @@
 import { Input } from "@/components/ui/input"
-import { SearchIcon } from "lucide-react"
+import { Loader2, SearchIcon } from "lucide-react"
+import { api } from "@/utils/api";
+import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
+import relativeTime from "dayjs/plugin/relativeTime";
+import 'dayjs/locale/id' // ES 2015 
 
-/* This example requires Tailwind CSS v2.0+ */
-const people = [
-    { name: 'Lindsay Walton', title: 'Front-end Developer', email: 'lindsay.walton@example.com', role: 'Member' },
-    // More people...
-]
+dayjs.extend(relativeTime)
+
+
+
+
 
 export default function PatientList() {
+    const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery()
+
+
+
     return (
         <div className="bg-white overflow-hidden shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">  <div className="px-4 sm:px-6 lg:px-8">
@@ -50,27 +59,38 @@ export default function PatientList() {
                                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                                 EMR
                                             </th>
-                                            <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8">
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                Last Visit
+                                            </th>
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                                 Action
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 bg-white">
-                                        {people.map((person) => (
-                                            <tr key={person.email}>
-                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
-                                                    {person.name}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.title}</td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.role}</td>
-                                                <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 lg:pr-8">
-                                                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                                                        Create Order<span className="sr-only">, {person.name}</span>
-                                                    </a>
-                                                </td>
+                                        {isLoading ? (
+                                            <tr>
+                                                <div className="flex items-center justify-center">
+                                                    <Loader2 className="animate-spin h-8 w-8" />
+                                                </div>
                                             </tr>
-                                        ))}
+                                        ) :
+                                            (patientData?.map((person) => (
+                                                <tr key={person.patient?.id}>
+                                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
+                                                        {person.patient?.name}
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize">{person.patient?.gender}</td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dayjs(person.patient?.birthDate).format('DD MMM YYYY')}</td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.patient?.NIK}</td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.patient?.NIK}</td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dayjs(person.createdAt).fromNow()}</td>
+
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 items-center flex">
+                                                        <Button variant="solidBlue" className=" text-sm font-normal px-6">Create Order</Button>
+                                                    </td>
+                                                </tr>
+                                            )))}
                                     </tbody>
                                 </table>
                             </div>
