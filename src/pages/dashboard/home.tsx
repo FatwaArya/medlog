@@ -5,12 +5,15 @@ import { api } from "@/utils/api";
 import { ReactElement, useState } from "react";
 import { PasienPlusPage } from "../_app";
 import Layout from "@/components/dashboard/Layout";
+import { Loader } from "@/components/auth/AuthGuard";
 
 const Home: PasienPlusPage = () => {
-    const { data: Revenue } = api.record.getStatRevenue.useQuery()
-    const { data: Stats } = api.patient.getStatLine.useQuery()
-    if (!Revenue) return null
-    if (!Stats) return null
+    const { data: Revenue, isLoading } = api.record.getStatRevenue.useQuery()
+
+    if (!Revenue || isLoading) {
+        return <Loader />
+    }
+
     return (
         <>
             <div className="h-screen">

@@ -157,7 +157,7 @@ export default function PatientList() {
                         <DebouncedInput
                             value={globalFilter ?? ''}
                             onChange={value => setGlobalFilter(String(value))}
-                            className="p-2 font-lg shadow border border-block"
+                            className="p-2 font-lg border border-block"
                             placeholder="Search"
                         />
 
@@ -258,7 +258,7 @@ function DebouncedInput({
     return (
         <>
             <div className="mt-1 relative rounded-md shadow-sm">
-                <Input    {...props} value={value} onChange={e => setValue(e.target.value)} />
+                <Input {...props} value={value} onChange={e => setValue(e.target.value)} />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                     <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </div>
