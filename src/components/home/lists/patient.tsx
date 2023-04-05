@@ -146,7 +146,6 @@ export default function PatientList() {
         debugRows: true,
     })
 
-
     return (
         <div className="bg-white overflow-hidden shadow sm:rounded-lg" >
             <div className="px-4 py-5 sm:p-6">  <div className="px-4 sm:px-6 lg:px-8">
@@ -192,6 +191,15 @@ export default function PatientList() {
                                         ))}
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 bg-white">
+                                        {table.getRowModel().rows.length === 0 && (
+                                            <tr>
+                                                <td colSpan={6}>
+                                                    <div className="flex justify-center items-center py-8">
+                                                        <Button variant="solidBlue" className=" text-sm font-normal px-6">Daftar Pasien</Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
                                         {table.getRowModel().rows.map(row => {
                                             return (
                                                 <tr key={row.id} className="">

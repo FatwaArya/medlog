@@ -104,7 +104,7 @@ export const patientRouter = createTRPCRouter({
         createdAt: "desc",
       },
 
-      distinct: ["patientId", "createdAt"],
+      distinct: ["patientId"],
     });
     return result;
   }),

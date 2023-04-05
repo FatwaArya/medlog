@@ -11,11 +11,6 @@ type StatUser = Partial<StatUserPatients> & Partial<StatUserRevenue> & {
 }
 
 
-const statssds = [
-    { id: 1, name: 'Total Subscribers', stat: '71,897', icon: UsersIcon, change: '122', changeType: 'increase' },
-    { id: 2, name: 'Avg. Open Rate', stat: '58.16%', icon: MailOpenIcon, change: '5.4%', changeType: 'increase' },
-    { id: 3, name: 'Avg. Click Rate', stat: '24.57%', icon: MousePointerClickIcon, change: '3.2%', changeType: 'decrease' },
-]
 
 function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
@@ -38,7 +33,13 @@ export const StatsUser = ({ total, lastPatient, lastRevenue, name }: StatUser) =
                         <p className="ml-16 text-lg font-medium text-pink-500 truncate">{name}</p>
                     </div>
                     <div className="flex items-end">
-                        <p className="text-2xl font-semibold text-pink-500">{total}</p>
+                        <p className="text-2xl font-semibold text-pink-500">{
+                            // format to idr
+                            new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                            }).format(total as number)
+                        }</p>
 
                     </div>
                 </div>

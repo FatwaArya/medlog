@@ -82,7 +82,10 @@ export const LineCharts = () => {
                 </div>
             </div>
             <div className="px-4 py-5 sm:p-6">
-                {isLoading ? <div className="flex items-center justify-center h-[297px]">
+                {/* if data is empty array show other things */}
+                {data?.length === 0 ? <div className="flex items-center justify-center h-[297px]">
+                    <p className="text-[#BEBEBE] text-lg font-semibold">No Patients</p>
+                </div> : isLoading ? <div className="flex items-center justify-center h-[297px]">
                     <Loader2 className="animate-spin h-8 w-8" />
                 </div> : <ResponsiveContainer width="100%" height={297} className="flex items-center justify-center">
                     <LineChart data={data} >
@@ -93,8 +96,8 @@ export const LineCharts = () => {
                         <Line type="monotone" dataKey="Male" stroke="#3366FF" strokeWidth="2" dot={false} />
                         <Line type="monotone" dataKey="Female" stroke="#FF3366" strokeWidth="2" dot={false} />
                     </LineChart>
-                </ResponsiveContainer>}
-
+                </ResponsiveContainer>
+                }
             </div>
         </div>
 
