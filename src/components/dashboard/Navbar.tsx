@@ -118,6 +118,7 @@ export function Navbar({
                   <DropdownMenuGroup>
                     {userNavigation.map((item) => (
                       <Link
+                        key={item.name}
                         href={item.href}
                         className={cn(
                           "block  text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
