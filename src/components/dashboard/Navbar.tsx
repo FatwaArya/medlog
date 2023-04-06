@@ -1,12 +1,46 @@
 import { MenuIcon, SearchIcon, BellIcon } from "lucide-react";
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { signOut, useSession } from "next-auth/react";
+import {
+  Cloud,
+  CreditCard,
+  Github,
+  Keyboard,
+  LifeBuoy,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Plus,
+  PlusCircle,
+  Settings,
+  User,
+  UserPlus,
+  Users,
+} from "lucide-react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Loader } from "../auth/AuthGuard";
+
 const userNavigation = [
-  { name: "Logout", href: "/" },
+  { name: "Profile", href: "/profile", icon: User },
+  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Logout", href: "/", icon: LogOut },
 ];
 
 export function Navbar({
@@ -16,6 +50,9 @@ export function Navbar({
 }) {
   const { data: session, status } = useSession();
 
+  if (status === "loading") {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-1 flex-col md:pl-64">
@@ -59,9 +96,9 @@ export function Navbar({
 
             {/* Profile dropdown */}
 
-            <DropdownMenu.Root>
+            <DropdownMenu>
               <div className="relative ml-3">
-                <DropdownMenu.Trigger
+                <DropdownMenuTrigger
                   className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   asChild
                 >
@@ -69,33 +106,39 @@ export function Navbar({
                     <span className="sr-only">Open user menu</span>
                     <Avatar>
                       <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarFallback>{
+                        session?.user.name?.split(" ").map((name) => name[0]).join("")
+                      }</AvatarFallback>
                     </Avatar>
                   </div>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
                     {userNavigation.map((item) => (
-                      <DropdownMenu.Item key={item.name}>
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          )}
-                          onClick={() => {
-                            if (item.name === "Logout") {
-                              signOut()
-                            }
-                          }}
-                        >
-                          {item.name}
-                        </Link>
-                      </DropdownMenu.Item>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "block  text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        )}
+                        onClick={() => {
+                          if (item.name === "Logout") {
+                            signOut({ callbackUrl: "/" })
+                          }
+                        }}
+                      >
+                        <DropdownMenuItem key={item.name}>
+
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span>{item.name}</span>
+
+                        </DropdownMenuItem>  </Link>
                     ))}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
               </div>
-            </DropdownMenu.Root>
+            </DropdownMenu>
           </div>
         </div>
       </div>

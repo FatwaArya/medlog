@@ -20,6 +20,29 @@ enum Gender {
     female
 }
 
+model Medicine {
+    id             String           @id @default(cuid())
+    userId         String
+    user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name           String
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    MedicineDetail MedicineDetail[]
+
+    @@index([userId])
+}
+
+model MedicineDetail {
+    id            String          @id @default(cuid())
+    medicine      Medicine        @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+    medicineId    String
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    MedicalRecord MedicalRecord[]
+
+    @@index([medicineId])
+}
+
 model Patient {
     id            String          @id @default(cuid())
     user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -38,19 +61,22 @@ model Patient {
 }
 
 model MedicalRecord {
-    id         String       @id @default(cuid())
-    patient    Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
-    patientId  String
-    complaint  String
-    diagnosis  String
-    treatment  String
-    note       String
-    pay        Int
-    createdAt  DateTime     @default(now())
-    updatedAt  DateTime     @updatedAt
-    Attachment Attachment[]
+    id               String          @id @default(cuid())
+    patient          Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    patientId        String
+    complaint        String
+    diagnosis        String
+    treatment        String
+    note             String
+    pay              Int
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+    Attachment       Attachment[]
+    MedicineDetail   MedicineDetail? @relation(fields: [medicineDetailId], references: [id])
+    medicineDetailId String?
 
     @@index([patientId])
+    @@index([medicineDetailId])
 }
 
 model Attachment {
@@ -112,14 +138,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String     @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?    @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
     Patient       Patient[]
+    Medicine      Medicine[]
 }
 
 model VerificationToken {

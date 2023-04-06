@@ -2,12 +2,11 @@ import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronsLeft, type LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { cn } from "@/utils/cn";
 
 const DialogContentMotion = motion(Dialog.Content);
 
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
 
 interface SidebarEntry {
   name: string;
@@ -68,10 +67,10 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                   </div>
                   <nav className="mt-8 space-y-2">
                     {entries.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
                         href={item.href}
-                        className={classNames(
+                        className={cn(
                           item.current
                             ? "bg-blue-200/50 text-blue-600 before:absolute before:left-0 before:h-full before:w-1 before:rounded-md before:bg-gradient-to-b before:from-blue-600 before:to-blue-200 before:content-['']"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
@@ -79,7 +78,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                         )}
                       >
                         <item.icon
-                          className={classNames(
+                          className={cn(
                             item.current
                               ? "text-blue-600"
                               : "text-gray-400 group-hover:text-gray-500",
@@ -88,7 +87,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </nav>
                 </motion.div>
@@ -112,10 +111,10 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
             </div>
             <nav className="mt-8 flex-1 space-y-2 bg-white">
               {entries.map((item) => (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
-                  className={classNames(
+                  className={cn(
                     item.current
                       ? "bg-blue-200/50 text-blue-600 before:absolute before:left-0 before:h-full before:w-1 before:rounded-md before:bg-gradient-to-b before:from-blue-600 before:to-blue-200 before:content-['']"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
@@ -123,7 +122,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                   )}
                 >
                   <item.icon
-                    className={classNames(
+                    className={cn(
                       item.current
                         ? "text-blue-600"
                         : "text-gray-400 group-hover:text-gray-500",
@@ -132,7 +131,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                     aria-hidden="true"
                   />
                   {item.name}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>

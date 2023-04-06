@@ -112,7 +112,7 @@ export function Header() {
             {/* if status is loading, disable button */
               session ? (
                 <Button href="/dashboard/home" variant="outlineBlue" disabled={isLoading}>
-                  <span>Go to Dashboard</span>
+                  <span>Dashboard</span>
                 </Button>
               ) : (<Button href="/auth/signin" variant="solidBlue" disabled={isLoading}>
                 <span>

@@ -3,9 +3,10 @@ import PatientList from "@/components/home/lists/patient";
 import { StatsUser } from "@/components/home/stats/stats";
 import { api } from "@/utils/api";
 import { ReactElement, useState } from "react";
-import { PasienPlusPage } from "../_app";
+
 import Layout from "@/components/dashboard/Layout";
 import { Loader } from "@/components/auth/AuthGuard";
+import { PasienPlusPage } from "@/pages/_app";
 
 const Home: PasienPlusPage = () => {
     const { data: Revenue, isLoading } = api.record.getStatRevenue.useQuery()
