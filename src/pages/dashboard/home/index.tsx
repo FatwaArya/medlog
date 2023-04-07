@@ -1,30 +1,25 @@
 import { LineCharts } from "@/components/home/charts/charts";
 import PatientList from "@/components/home/lists/patient";
-import { StatsUser } from "@/components/home/stats/stats";
 import { api } from "@/utils/api";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 
 import Layout from "@/components/dashboard/Layout";
 import { Loader } from "@/components/auth/AuthGuard";
 import { PasienPlusPage } from "@/pages/_app";
+import { RevenueStats } from "@/components/home/stats/revenue";
+
+import { DollarSignIcon } from "lucide-react";
 
 const Home: PasienPlusPage = () => {
-    const { data: Revenue, isLoading } = api.record.getStatRevenue.useQuery()
-
-    if (!Revenue || isLoading) {
-        return <Loader />
-    }
-
     return (
         <>
             <div className="h-screen">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <LineCharts />
-                    <div className="grid grid-rows-1 md:grid-rows-2 gap-8">
-                        <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
-                        <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
+                    <div className="grid grid-rows-1 md:grid-rows-2 gap-4">
+                        <RevenueStats />
+                        <RevenueStats />
                     </div>
-
                 </div>
                 <PatientList />
             </div>
