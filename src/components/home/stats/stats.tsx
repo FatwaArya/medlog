@@ -46,31 +46,6 @@ export const Stats = (props: StatsProps) => {
           ))}
         </ul>
       </div>
-      {/* <div className="ml-16 pb-6 sm:pb-7"> */}
-      {/* <p
-                        className={classNames(
-                            item.changeType === 'increase' ? 'text-green-600' : 'text-red-600',
-                            'ml-2 flex items-baseline text-sm font-semibold'
-                        )}
-                    >
-                        {item.changeType === 'increase' ? (
-                                    <ArrowSmUpIcon className="self-center flex-shrink-0 h-5 w-5 text-green-500" aria-hidden="true" />
-                                ) : (
-                                    <ArrowSmDownIcon className="self-center flex-shrink-0 h-5 w-5 text-red-500" aria-hidden="true" />
-                                )}
-
-                        <span className="sr-only">{item.changeType === 'increase' ? 'Increased' : 'Decreased'} by</span>
-                        {item.change}
-                    </p> */}
-      {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
-                        <div className="text-sm">
-                            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                {' '}
-                                View all<span className="sr-only"> {name} stats</span>
-                            </a>
-                        </div>
-                    </div> */}
-      {/* </div> */}
     </div>
   );
 };
