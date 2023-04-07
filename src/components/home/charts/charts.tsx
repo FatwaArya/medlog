@@ -86,7 +86,7 @@ export const LineCharts = () => {
                     <p className="text-md font-semibold text-[#3366FF] sm:text-xl">
                         Patient Visits
                     </p>
-                    <div className="flex flex-col gap-2 px-4 text-sm">
+                    <div className="flex flex-col gap-2 px-4 text-sm sm:flex-row sm:text-md">
                         <div className="flex items-center gap-1">
                             <span className=" block h-2 w-2 rounded-full bg-[#3366FF] ring-2 ring-white" />
                             Male
@@ -100,9 +100,9 @@ export const LineCharts = () => {
                         name="time"
                         control={control}
                         render={({ field }) => (
-                            <Select {...field} onValueChange={field.onChange}>
-                                <SelectTrigger className="w-[112px]">
-                                    <SelectValue placeholder="This Year" />
+                            <Select onValueChange={field.onChange}>
+                                <SelectTrigger className="w-[112px]" ref={field.ref}>
+                                    <SelectValue placeholder="This Month" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>

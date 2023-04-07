@@ -106,7 +106,7 @@ const patientColumns = [
     }),
     columnHelper.accessor('patient.id', {
         header: 'Action',
-        cell: info => <Button variant="solidBlue" className=" text-sm font-normal px-6">Create Order</Button>,
+        cell: info => <Button variant="solidBlue" className=" text-sm font-normal px-6" size="sm">Check up</Button>,
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     })
