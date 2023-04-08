@@ -150,7 +150,7 @@ export default function PatientList() {
     });
 
     return (
-        <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-2 outline-slate-200">
+        <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
             <div className="px-4 py-5 sm:p-6">
                 <div className="px-4 sm:px-6 lg:px-8">
                     <div className="sm:flex sm:items-center">
