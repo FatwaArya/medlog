@@ -125,6 +125,7 @@ const NewCheckup = () => {
             onSuccess: () => {
                 //reset all fields
                 reset()
+                setPreviewAttachments([])
                 toast.success("Patient successfully created", {
                     position: "top-center"
                 })
