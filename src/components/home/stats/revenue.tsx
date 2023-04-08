@@ -14,7 +14,7 @@ export const RevenueStats = () => {
             title: "Revenue",
             icon: DollarSignIcon,
             bgColor: "bg-pink-200",
-            color: "text-pink-500",
+            color: "text-pink-600",
         },
         stats: {
             value: "Rp 0",

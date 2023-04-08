@@ -15,7 +15,7 @@ export const PatientStats = () => {
             title: "Total Patients",
             icon: UsersIcon,
             bgColor: "bg-blue-200",
-            color: "text-blue-500",
+            color: "text-blue-600",
         },
         stats: {
             value: "0",

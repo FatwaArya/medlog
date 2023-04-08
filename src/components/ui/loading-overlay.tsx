@@ -25,6 +25,8 @@ export function Spinner(props: { className?: string }) {
     );
   }
 
+// NOTE: `rounded-lg` has to be adapted for each round size,
+//       which currently is impractical
 export function LoadingOverlay(props: PropsWithChildren) {
     return (
         <div className="relative w-full h-full rounded-lg overflow-auto">

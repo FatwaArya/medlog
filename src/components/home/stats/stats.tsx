@@ -32,18 +32,20 @@ export const Stats = (props: StatsProps) => {
   const color = props.header.color ?? "text-blue-700";
 
   return (
-    <div className="flex flex-col justify-between h-full rounded-lg bg-white shadow p-6">
+    <div className="flex flex-col h-full rounded-lg bg-white shadow p-6">
       <div
-        className={cn("mb-2 flex items-center", color)}
+        className={cn("flex items-center", color)}
       >
-        <props.header.icon className={cn("p-2 h-9 w-9 rounded-full mr-3 text-xl font-bold hidden sm:block", bgColor)} />
+        <props.header.icon className={cn("p-2 mr-4 h-9 w-9 rounded-full text-xl font-bold", bgColor)} />
         <p className="truncate text-xl font-medium">{props.header.title}</p>
-        <p className="ml-auto truncate text-2xl font-semibold">
+      </div>
+      <div className="flex justify-end items-center grow">
+        <p className={cn("text-center text-3xl font-bold mb-2 py-3", color)}>
           {props.stats.value}
         </p>
       </div>
       <div>
-        <ul className="mt-auto text-sm text-slate-500">
+        <ul className="text-sm text-slate-500">
           {Object.entries(props.stats.metadata).map(([key, value]) => (
             <li>
               <span className="inline-block font-medium">{key}</span>
