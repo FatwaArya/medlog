@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { cn } from "@/utils/cn";
 import { Button } from "../ui/button";
+import { XCircleIcon, XIcon } from "lucide-react";
 
 
 export type AttachmentType = Prisma.AttachmentGetPayload<{
@@ -53,7 +54,10 @@ export const Attachment: React.FC<{
                         variant="ghost"
                         size="sm"
                         onClick={() => onRemoveAttachment(attachment)}
-                    />
+                    >
+                        <XIcon className="h-4 w-4" />
+
+                    </Button>
                 </div>
             )}
             <img
