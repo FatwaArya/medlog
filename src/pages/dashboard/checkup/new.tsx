@@ -9,7 +9,6 @@ import toast from "react-hot-toast"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import { RouterInputs, api } from "@/utils/api"
-import { Prisma } from "@prisma/client"
 import { z } from "zod"
 import Attachments, { AttachmentType } from "@/components/checkup/Attachment"
 import { v4 as uuidv4 } from "uuid";
@@ -444,10 +443,10 @@ const NewCheckup = () => {
     )
 }
 
-export default newCheckup
+export default NewCheckup
 
-newCheckup.getLayout = function getLayout(page: ReactElement) {
+NewCheckup.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>
 }
 
-newCheckup.authRequired = true;
+NewCheckup.authRequired = true;
