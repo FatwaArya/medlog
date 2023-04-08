@@ -4,11 +4,9 @@ import { api } from "@/utils/api";
 import { ReactElement, useEffect, useState } from "react";
 
 import Layout from "@/components/dashboard/Layout";
-import { Loader } from "@/components/auth/AuthGuard";
 import { PasienPlusPage } from "@/pages/_app";
 import { RevenueStats } from "@/components/home/stats/revenue";
-
-import { DollarSignIcon } from "lucide-react";
+import { PatientStats } from "@/components/home/stats/patient";
 
 const Home: PasienPlusPage = () => {
     return (
@@ -18,7 +16,7 @@ const Home: PasienPlusPage = () => {
                     <LineCharts />
                     <div className="grid grid-rows-1 md:grid-rows-2 gap-4">
                         <RevenueStats />
-                        <RevenueStats />
+                        <PatientStats />
                     </div>
                 </div>
                 <PatientList />

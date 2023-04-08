@@ -27,7 +27,7 @@ export const Stats = (props: StatsProps) => {
       <div
         className={`mb-2 flex items-center text-blue-700`}
       >
-        <props.header.icon className={`p-2 h-9 w-9 bg-blue-200 rounded-full mr-2 text-xl font-bold hidden sm:block`} />
+        <props.header.icon className={`p-2 h-9 w-9 bg-blue-200 rounded-full mr-3 text-xl font-bold hidden sm:block`} />
         <p className="truncate text-xl font-medium">{props.header.title}</p>
         <p className="ml-auto truncate text-2xl font-semibold">
           {props.stats.value}
