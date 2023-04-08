@@ -110,7 +110,6 @@ const NewCheckup = () => {
         }
         mutate({
             name: data.name,
-            nik: data.nik.toString(),
             phone: data.phone.toString(),
             address: data.address,
             gender: data.gender,
@@ -177,18 +176,6 @@ const NewCheckup = () => {
                                             />
                                         </div>
 
-                                        <div className="col-span-6 sm:col-span-3">
-                                            <label htmlFor="NIK" className="block text-sm font-medium text-gray-700">
-                                                NIK {redAsterisk}
-                                            </label>
-                                            <Input
-                                                type="number"
-                                                id="NIK"
-                                                autoComplete="NIK"
-                                                className="mt-1 bg-white"
-                                                {...register("nik", { required: true, maxLength: 16 })}
-                                            />
-                                        </div>
 
                                         <div className="col-span-6 sm:col-span-3">
                                             <label htmlFor="phone-number" className="block text-sm font-medium text-gray-700">

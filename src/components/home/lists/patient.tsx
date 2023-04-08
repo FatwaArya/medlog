@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
-    Column,
-    Table,
     useReactTable,
     ColumnFiltersState,
     getCoreRowModel,
@@ -20,15 +18,13 @@ import {
     getSortedRowModel,
     FilterFn,
     SortingFn,
-    ColumnDef,
     flexRender,
-    FilterFns,
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
 dayjs.extend(relativeTime);
-type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
+type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
 
 import {
     RankingInfo,
@@ -86,15 +82,9 @@ const patientColumns = [
         header: "Sex",
         cell: (info) => <span className="capitalize">{info.getValue()}</span>,
     }),
-    columnHelper.accessor("patient.birthDate", {
+    columnHelper.accessor('patient.birthDate', {
         header: "Date of Birth",
         cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.NIK", {
-        header: "NIK",
-        cell: (info) => info.getValue(),
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     }),
@@ -104,7 +94,7 @@ const patientColumns = [
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     }),
-    columnHelper.accessor("patient.id", {
+    columnHelper.accessor('patient.id', {
         header: "Action",
         cell: (info) => (
             <Button
@@ -112,7 +102,8 @@ const patientColumns = [
                 className=" px-6 text-sm font-normal"
                 size="sm"
             >
-                Check up
+
+                Periksa
             </Button>
         ),
         filterFn: fuzzyFilter,

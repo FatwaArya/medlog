@@ -67,7 +67,6 @@ export const patientRouter = createTRPCRouter({
           .length(12, { message: "Phone number must be 12 digits" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
-        nik: z.string().length(16, { message: "NIK must be 16 digits" }),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
@@ -97,7 +96,6 @@ export const patientRouter = createTRPCRouter({
         treatment,
         note,
         pay,
-        nik,
         files,
       } = input;
       await ctx.prisma.$transaction(async (tx) => {
@@ -107,7 +105,6 @@ export const patientRouter = createTRPCRouter({
             phone,
             gender,
             address,
-            NIK: nik,
             birthDate,
             userId: ctx.session.user.id,
           },
@@ -233,7 +230,6 @@ export const patientRouter = createTRPCRouter({
             name: true,
             birthDate: true,
             gender: true,
-            NIK: true,
           },
         },
         createdAt: true,
