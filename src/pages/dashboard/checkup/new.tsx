@@ -25,7 +25,7 @@ const redAsterisk = <span className="text-red-500">*</span>
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
 
-const newCheckup = () => {
+const NewCheckup = () => {
     const { register, handleSubmit, control, reset } = useForm<CheckupNewPatient>()
     const { mutate, isLoading } = api.patient.createNewPatient.useMutation()
     const utils = api.useContext()
