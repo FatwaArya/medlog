@@ -1,5 +1,5 @@
 import Layout from "@/components/dashboard/Layout"
-import { ReactElement } from "react"
+import { ReactElement, useState } from "react"
 import { CameraIcon, Loader2, UserIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/router"
@@ -9,18 +9,106 @@ import toast from "react-hot-toast"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import { RouterInputs, api } from "@/utils/api"
+import { Prisma } from "@prisma/client"
+import { z } from "zod"
+import Attachments, { AttachmentType } from "@/components/checkup/Attachment"
+import { v4 as uuidv4 } from "uuid";
+
 
 type CheckupNewPatient = RouterInputs['patient']['createNewPatient']
+
 
 
 const redAsterisk = <span className="text-red-500">*</span>
 
 
+type FileAndAttachment = { file: File; attachment: AttachmentType };
+
+
 const newCheckup = () => {
     const { register, handleSubmit, control, reset } = useForm<CheckupNewPatient>()
     const { mutate, isLoading } = api.patient.createNewPatient.useMutation()
-    const onSubmit: SubmitHandler<CheckupNewPatient> = async (data) => {
+    const utils = api.useContext()
+    const [previewAttachments, setPreviewAttachments] = useState<
+        FileAndAttachment[]
+    >([]);
+    const presignedUrls = api.patient.createPresignedUrl.useQuery(
+        {
+            count: previewAttachments.length,
+        },
+        {
+            enabled: previewAttachments.length > 0,
+        }
+    )
 
+    const onRemoveAttachment = (attachment: AttachmentType) => {
+        const newPreviewAttachments = previewAttachments.filter(
+            (p) => p.attachment !== attachment
+        );
+
+        setPreviewAttachments(newPreviewAttachments);
+    };
+    const onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const newPreviewAttachments = [];
+
+            for (const file of e.target.files) {
+                const attachment = {
+                    id: uuidv4(),
+                    medicalRecordId: uuidv4(),
+                    fileId: uuidv4(),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    File: {
+                        id: uuidv4(),
+                        type: "IMAGE",
+                        url: URL.createObjectURL(file),
+                        mime: file.type,
+                        name: file.name,
+                        extension: file.name.split(".").pop() as string,
+                        size: file.size,
+                        height: null,
+                        width: null,
+                        createdAt: new Date(),
+                    },
+                };
+
+                newPreviewAttachments.push({
+                    file,
+                    attachment,
+                });
+            }
+
+            setPreviewAttachments([
+                ...previewAttachments,
+                ...newPreviewAttachments,
+            ]);
+        }
+    };
+
+    const onSubmit: SubmitHandler<CheckupNewPatient> = async (data) => {
+        const uploads: { key: string; ext: string }[] = [];
+
+        if (previewAttachments.length && presignedUrls.data) {
+            for (let i = 0; i < previewAttachments.length; i++) {
+                const previewAttachment = previewAttachments[i];
+                const data = presignedUrls.data[i];
+
+                if (previewAttachment && data && data.key && data.url) {
+                    const { attachment, file } = previewAttachment;
+
+                    await fetch(data.url, {
+                        method: "PUT",
+                        body: file,
+                    });
+
+                    uploads.push({
+                        key: data.key,
+                        ext: attachment.File?.extension as string,
+                    });
+                }
+            }
+        }
         mutate({
             name: data.name,
             nik: data.nik.toString(),
@@ -33,6 +121,7 @@ const newCheckup = () => {
             treatment: data.treatment,
             note: data.note,
             pay: data.pay,
+            files: uploads,
         }, {
             onSuccess: () => {
                 //reset all fields
@@ -40,13 +129,17 @@ const newCheckup = () => {
                 toast.success("Patient successfully created", {
                     position: "top-center"
                 })
+                utils.patient.getNewestPatients.invalidate()
             },
             onError: (e) => {
-                const errorMessage = e.data?.zodError?.fieldErrors.content;
-                if (errorMessage && errorMessage[0]) {
-                    toast.error(errorMessage[0])
+                if (e instanceof z.ZodError) {
+                    toast.error(e.message, {
+                        position: "top-center"
+                    })
                 } else {
-                    toast.error("Please try again later.");
+                    toast.error("Something went wrong", {
+                        position: "top-center"
+                    })
                 }
             },
 
@@ -301,7 +394,7 @@ const newCheckup = () => {
                                                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
                                                     >
                                                         <span>Upload a file</span>
-                                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={onFilesChange} />
                                                     </label>
                                                     <p className="pl-1">or drag and drop</p>
                                                 </div>
@@ -313,6 +406,17 @@ const newCheckup = () => {
                             </div>
                         </div>
                     </div>
+
+                    {previewAttachments && (
+                        <div className="mt-3.5 grid gap-2">
+                            <Attachments
+                                attachments={previewAttachments.map(
+                                    (attachment) => attachment.attachment
+                                )}
+                                onRemoveAttachment={onRemoveAttachment}
+                            />
+                        </div>
+                    )}
 
 
                     <div className="flex justify-end">
