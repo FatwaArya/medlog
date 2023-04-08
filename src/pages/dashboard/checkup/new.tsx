@@ -171,7 +171,7 @@ const NewCheckup = () => {
                                                 type="text"
                                                 id="first-name"
                                                 autoComplete="given-name"
-                                                className="mt-1"
+                                                className="mt-1 bg-white"
                                                 {...register("name", { required: true })}
                                             />
                                         </div>
@@ -184,7 +184,7 @@ const NewCheckup = () => {
                                                 type="number"
                                                 id="NIK"
                                                 autoComplete="NIK"
-                                                className="mt-1"
+                                                className="mt-1 bg-white"
                                                 {...register("nik", { required: true, maxLength: 16 })}
                                             />
                                         </div>
@@ -202,7 +202,7 @@ const NewCheckup = () => {
                                                     id="phone-number"
                                                     autoComplete="phone-number"
                                                     // className="mt-1 "
-                                                    className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md"
+                                                    className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md bg-white"
 
                                                     {...register("phone", { required: true, maxLength: 13 })}
                                                 />
@@ -217,7 +217,7 @@ const NewCheckup = () => {
                                                 type="text"
                                                 id="street-address"
                                                 autoComplete="street-address"
-                                                className="mt-1"
+                                                className="mt-1 bg-white"
                                                 {...register("address", { required: true })}
 
                                             />
@@ -232,7 +232,7 @@ const NewCheckup = () => {
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Select onValueChange={field.onChange}>
-                                                        <SelectTrigger className="w-full mt-1" ref={field.ref}>
+                                                        <SelectTrigger className="w-full mt-1 bg-white" ref={field.ref}>
                                                             <SelectValue placeholder="Select gender" />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -255,7 +255,7 @@ const NewCheckup = () => {
                                                 type="date"
                                                 id="date-of-birth"
                                                 autoComplete="date-of-birth"
-                                                className="mt-1"
+                                                className="mt-1 bg-white"
                                                 {...register("birthDate", { required: true, valueAsDate: true })}
                                             />
                                         </div>
@@ -316,7 +316,7 @@ const NewCheckup = () => {
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Select onValueChange={field.onChange}>
-                                                        <SelectTrigger className="w-full" ref={field.ref}>
+                                                        <SelectTrigger className="w-full bg-white" ref={field.ref}>
                                                             <SelectValue placeholder="Select drugs">
                                                                 <span className="capitalize">{field.value}</span>
                                                             </SelectValue>
@@ -364,7 +364,7 @@ const NewCheckup = () => {
                                                 id="fee"
                                                 min={0}
                                                 {...register("pay", { required: true, valueAsNumber: true })}
-                                                className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md"
+                                                className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md bg-white"
                                             />
                                         </div>
                                     </div>

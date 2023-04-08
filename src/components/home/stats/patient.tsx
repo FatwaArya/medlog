@@ -39,7 +39,7 @@ export const PatientStats = () => {
         }
     }, [isLoading, patient]);
 
-    if (isLoading) return <LoadingOverlay children={<Stats {...stats} />} />;
+    if (isLoading) return <LoadingOverlay><Stats {...stats} /></LoadingOverlay>;
 
     return <Stats {...stats} />
 }

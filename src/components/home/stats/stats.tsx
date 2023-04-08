@@ -32,7 +32,7 @@ export const Stats = (props: StatsProps) => {
   const color = props.header.color ?? "text-blue-700";
 
   return (
-    <div className="flex flex-col h-full rounded-lg bg-white shadow p-6">
+    <div className="flex flex-col h-full rounded-lg bg-white shadow p-6 outline outline-1 outline-slate-200">
       <div
         className={cn("flex items-center", color)}
       >
@@ -47,7 +47,7 @@ export const Stats = (props: StatsProps) => {
       <div>
         <ul className="text-sm text-slate-500">
           {Object.entries(props.stats.metadata).map(([key, value]) => (
-            <li>
+            <li key={key}>
               <span className="inline-block font-medium">{key}</span>
               <span className="inline-block float-right">{value}</span>
             </li>
