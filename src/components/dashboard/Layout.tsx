@@ -58,7 +58,6 @@ export function AdminLayout(props: PropsWithChildren) {
   useEffect(() => {
     if (pathname) {
       const newNavigation = navigation.map((nav) => {
-        console.log(nav.href);
         return {
           ...nav,
           current: pathname === nav.href || pathname.startsWith(nav.href),

@@ -80,7 +80,7 @@ export const LineCharts = () => {
     });
 
     return (
-        <div className="col-span-2 divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
+        <div className="col-span-2 divide-gray-200 overflow-hidden rounded-lg bg-white shadow outline outline-1 outline-slate-200">
             <div className="px-4 pt-5 sm:px-6">
                 <div className="flex items-center justify-between gap-2">
                     <p className="text-md font-semibold text-[#3366FF] sm:text-xl">
