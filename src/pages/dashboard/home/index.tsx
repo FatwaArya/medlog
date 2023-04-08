@@ -17,18 +17,14 @@ const Home: PasienPlusPage = () => {
 
     return (
         <>
-            <div className="h-screen">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <LineCharts />
-                    <div className="grid grid-rows-1 md:grid-rows-2 gap-8">
-                        <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
-                        <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
-                    </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <LineCharts />
+                <div className="grid grid-rows-1 md:grid-rows-2 gap-8">
+                    <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
+                    <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
                 </div>
-                <PatientList />
             </div>
-
+            <PatientList />
         </>
     );
 }
