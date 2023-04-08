@@ -29,9 +29,8 @@ const Home: PasienPlusPage = () => {
                         <StatsUser lastRevenue={Revenue.lastRevenue} total={Revenue.total as number} name='Revenue' />
                     </div>
                 </div>
-                <PatientList />
             </div>
-
+            <PatientList />
         </>
     );
 }

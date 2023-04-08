@@ -9,3 +9,6 @@
       margin: 0;
     }
   }
+html, body, #__next {
+    @apply h-full;
+}
