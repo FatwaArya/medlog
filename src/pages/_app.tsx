@@ -12,6 +12,7 @@ import { api } from "@/utils/api";
 
 import "@/styles/globals.css"
 import AuthGuard from "@/components/auth/AuthGuard";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,6 +42,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
       }
     `}</style>
     <SessionProvider session={session}>
+      <Toaster />
+
       {
         authRequired ? (
           <AuthGuard>

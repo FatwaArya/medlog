@@ -11,6 +11,7 @@ import {
   ShoppingCartIcon,
   FilePlusIcon,
   DownloadIcon,
+  Activity,
 } from "lucide-react";
 import { Navbar } from "./Navbar";
 import ContentArea from "./ContentArea";
@@ -27,15 +28,15 @@ export function AdminLayout(props: PropsWithChildren) {
       current: false,
     },
     {
-      name: "Patient List",
-      href: "/dashboard/patients",
-      icon: UsersIcon,
+      name: "Checkup",
+      href: "/dashboard/checkup",
+      icon: Activity,
       current: false,
     },
     {
-      name: "Sales Order",
-      href: "/dashboard/sales",
-      icon: ShoppingCartIcon,
+      name: "Patient List",
+      href: "/dashboard/patients",
+      icon: UsersIcon,
       current: false,
     },
     {
@@ -59,11 +60,12 @@ export function AdminLayout(props: PropsWithChildren) {
       const newNavigation = navigation.map((nav) => {
         return {
           ...nav,
-          current: pathname === nav.href,
+          current: pathname === nav.href || pathname.startsWith(nav.href),
         };
       });
       setNavigation(newNavigation);
     }
+
   }, [pathname]);
 
   if (status === "loading") {

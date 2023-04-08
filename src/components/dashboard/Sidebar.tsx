@@ -23,7 +23,7 @@ interface SidebarProps {
 
 export function Sidebar({ entries, open, setOpen }: SidebarProps) {
   return (
-    <div>
+    <>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <AnimatePresence>
           {open ? (
@@ -98,7 +98,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
       </Dialog.Root>
 
       {/* Static Sidebar for desktop */}
-      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+      <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         {/* Sidebar component, swap this element with another Sidebar if you like */}
         <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div className="flex flex-1 flex-col overflow-y-auto pb-4 pt-5">
@@ -136,7 +136,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
             </nav>
           </div>
         </div>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 }
