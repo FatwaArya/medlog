@@ -28,16 +28,18 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        phone: z.string().min(10).max(10),
+        phone: z
+          .string()
+          .length(12, { message: "Phone number must be 12 digits" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
-        nik: z.string().min(16).max(16),
+        nik: z.string().length(16, { message: "NIK must be 16 digits" }),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
         treatment: z.string(),
         note: z.string(),
-        pay: z.number().min(0),
+        pay: z.number().min(0, { message: "Fee tidak boleh kosong" }),
       })
     )
     .mutation(async ({ input, ctx }) => {

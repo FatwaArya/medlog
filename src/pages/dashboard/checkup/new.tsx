@@ -1,120 +1,312 @@
 import Layout from "@/components/dashboard/Layout"
 import { ReactElement } from "react"
-import { CameraIcon, UserIcon } from "lucide-react"
+import { CameraIcon, Loader2, UserIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/router"
 import Head from "next/head"
+import { Button } from "@/components/ui/button"
+import toast from "react-hot-toast"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Controller, useForm, SubmitHandler } from "react-hook-form"
+import { RouterInputs, api } from "@/utils/api"
+
+type CheckupNewPatient = RouterInputs['patient']['createNewPatient']
+
+
+const redAsterisk = <span className="text-red-500">*</span>
 
 
 const newCheckup = () => {
+    const { register, handleSubmit, control, reset } = useForm<CheckupNewPatient>()
+    const { mutate, isLoading } = api.patient.createNewPatient.useMutation()
+    const onSubmit: SubmitHandler<CheckupNewPatient> = async (data) => {
 
+        mutate({
+            name: data.name,
+            nik: data.nik.toString(),
+            phone: data.phone.toString(),
+            address: data.address,
+            gender: data.gender,
+            birthDate: data.birthDate,
+            complaint: data.complaint,
+            diagnosis: data.diagnosis,
+            treatment: data.treatment,
+            note: data.note,
+            pay: data.pay,
+        }, {
+            onSuccess: () => {
+                //reset all fields
+                reset()
+                toast.success("Patient successfully created", {
+                    position: "top-center"
+                })
+            },
+            onError: (e) => {
+                const errorMessage = e.data?.zodError?.fieldErrors.content;
+                if (errorMessage && errorMessage[0]) {
+                    toast.error(errorMessage[0])
+                } else {
+                    toast.error("Please try again later.");
+                }
+            },
+
+        })
+    }
 
     return (
         <>
             <Head>
                 <title>Pasien Plus | Register New Patient</title>
             </Head>
-
-            <form className="space-y-8 divide-y divide-gray-200">
-                <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-                    <div>
-                        <div>
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">Profile</h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                This information will be displayed publicly so be careful what you share.
-                            </p>
-                        </div>
-
-                        <div className="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Username
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <div className="max-w-lg flex rounded-md shadow-sm">
-                                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                            workcation.com/
-                                        </span>
-                                        <input
-                                            type="text"
-                                            name="username"
-                                            id="username"
-                                            autoComplete="username"
-                                            className="flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-                                        />
-                                    </div>
-                                </div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="space-y-6">
+                    <div >
+                        <div className="md:grid md:grid-cols-3 md:gap-6">
+                            <div className="md:col-span-1">
+                                <h3 className="text-lg font-medium leading-6 text-gray-900">Patient</h3>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Isi data pasien disini dengan benar, agar pencarian data pasien lebih mudah.
+                                </p>
                             </div>
+                            <div className="mt-5 md:mt-0 md:col-span-2">
+                                <div >
+                                    <div className="grid grid-cols-6 gap-6">
+                                        <div className="col-span-6 sm:col-span-3">
+                                            <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                                                Patient name {redAsterisk}
+                                            </label>
+                                            <Input
+                                                type="text"
+                                                id="first-name"
+                                                autoComplete="given-name"
+                                                className="mt-1"
+                                                {...register("name", { required: true })}
+                                            />
+                                        </div>
 
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="about" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    About
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <textarea
-                                        id="about"
-                                        name="about"
-                                        rows={3}
-                                        className="max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                                        defaultValue={''}
-                                    />
-                                    <p className="mt-2 text-sm text-gray-500">Write a few sentences about yourself.</p>
-                                </div>
-                            </div>
+                                        <div className="col-span-6 sm:col-span-3">
+                                            <label htmlFor="NIK" className="block text-sm font-medium text-gray-700">
+                                                NIK {redAsterisk}
+                                            </label>
+                                            <Input
+                                                type="number"
+                                                id="NIK"
+                                                autoComplete="NIK"
+                                                className="mt-1"
+                                                {...register("nik", { required: true, maxLength: 16 })}
+                                            />
+                                        </div>
 
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
-                                    Photo
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <div className="flex items-center">
-                                        <span className="h-12 w-12 rounded-full overflow-hidden bg-gray-100">
-                                            <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                        </span>
-                                        <button
-                                            type="button"
-                                            className="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                        >
-                                            Change
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div className="col-span-6 sm:col-span-3">
+                                            <label htmlFor="phone-number" className="block text-sm font-medium text-gray-700">
+                                                Phone number {redAsterisk}
+                                            </label>
+                                            <div className="mt-1 relative rounded-md shadow-sm">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <span className="text-gray-500 sm:text-sm">+62</span>
+                                                </div>
+                                                <Input
+                                                    type="number"
+                                                    id="phone-number"
+                                                    autoComplete="phone-number"
+                                                    // className="mt-1 "
+                                                    className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md"
 
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="cover-photo" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Cover photo
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <div className="max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                        <div className="space-y-1 text-center">
-                                            <svg
-                                                className="mx-auto h-12 w-12 text-gray-400"
-                                                stroke="currentColor"
-                                                fill="none"
-                                                viewBox="0 0 48 48"
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                    strokeWidth={2}
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
+                                                    {...register("phone", { required: true, maxLength: 13 })}
                                                 />
-                                            </svg>
-                                            <div className="flex text-sm text-gray-600">
-                                                <label
-                                                    htmlFor="file-upload"
-                                                    className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                                            </div>
+                                        </div>
+
+                                        <div className="col-span-6">
+                                            <label htmlFor="street-address" className="block text-sm font-medium text-gray-700">
+                                                Street address {redAsterisk}
+                                            </label>
+                                            <Input
+                                                type="text"
+                                                id="street-address"
+                                                autoComplete="street-address"
+                                                className="mt-1"
+                                                {...register("address", { required: true })}
+
+                                            />
+                                        </div>
+
+                                        <div className="col-span-6">
+                                            <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+                                                Gender {redAsterisk}
+                                            </label>
+                                            <Controller
+                                                name="gender"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Select onValueChange={field.onChange}>
+                                                        <SelectTrigger className="w-full mt-1" ref={field.ref}>
+                                                            <SelectValue placeholder="Select gender" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="male">Male</SelectItem>
+                                                                <SelectItem value="female">Female</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
+                                            />
+                                        </div>
+
+
+                                        <div className="col-span-6">
+                                            <label htmlFor="street-address" className="block text-sm font-medium text-gray-700">
+                                                Date of birth {redAsterisk}
+                                            </label>
+                                            <Input
+                                                type="date"
+                                                id="date-of-birth"
+                                                autoComplete="date-of-birth"
+                                                className="mt-1"
+                                                {...register("birthDate", { required: true, valueAsDate: true })}
+                                            />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div >
+                        <div className="md:grid md:grid-cols-3 md:gap-6">
+                            <div className="md:col-span-1">
+                                <h3 className="text-lg font-medium leading-6 text-gray-900">Check up</h3>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Isi data pemeriksaan disini dengan benar, agar pencarian data pemeriksaan lebih mudah.
+                                </p>
+                            </div>
+                            <div className="mt-5 md:mt-0 md:col-span-2">
+                                <div className="space-y-6">
+                                    <div>
+                                        <label htmlFor="complaint" className="block text-sm font-medium text-gray-700">
+                                            Complaint {redAsterisk}
+                                        </label>
+                                        <div className="mt-1">
+                                            <textarea
+                                                id="complaint"
+                                                rows={3}
+                                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                                placeholder="Patient had slight headache, and felt dizzy"
+                                                defaultValue={''}
+                                                {...register("complaint", { required: true })}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700">
+                                            Diagnosis {redAsterisk}
+                                        </label>
+                                        <div className="mt-1">
+                                            <textarea
+                                                id="diagnosis"
+                                                rows={3}
+                                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                                placeholder="Patient maybe had a migraine, and need to take paracetamol"
+                                                defaultValue={''}
+                                                {...register("diagnosis", { required: true })}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="treatment" className="block text-sm font-medium text-gray-700">
+                                            Treatment {redAsterisk}
+                                        </label>
+                                        <div className="mt-1">
+                                            <Controller
+                                                name="treatment"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Select onValueChange={field.onChange}>
+                                                        <SelectTrigger className="w-full" ref={field.ref}>
+                                                            <SelectValue placeholder="Select drugs">
+                                                                <span className="capitalize">{field.value}</span>
+                                                            </SelectValue>
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="paracetamol">Paracetamol</SelectItem>
+                                                                <SelectItem value="ibuprofen">Ibuprofen</SelectItem>
+                                                                <SelectItem value="aspirin">Aspirin</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+                                            Notes {redAsterisk}
+                                        </label>
+                                        <div className="mt-1">
+                                            <textarea
+                                                id="notes"
+                                                rows={3}
+                                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                                placeholder='Patient need to take paracetamol 3 times a day, and need to rest for 2 days'
+                                                defaultValue={''}
+                                                {...register("note", { required: true })}
+                                            />
+                                        </div>
+                                    </div>
+
+
+                                    <div>
+                                        <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+                                            Fee {redAsterisk}
+                                        </label>
+                                        <div className="mt-1 relative rounded-md shadow-sm">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span className="text-gray-500 sm:text-sm">IDR</span>
+                                            </div>
+                                            <Input
+                                                type="number"
+                                                id="fee"
+                                                min={0}
+                                                {...register("pay", { required: true, valueAsNumber: true })}
+                                                className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-11 pr-12 sm:text-sm border-gray-300 rounded-md"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">Foto luka (optional) </label>
+                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                            <div className="space-y-1 text-center">
+                                                <svg
+                                                    className="mx-auto h-12 w-12 text-gray-400"
+                                                    stroke="currentColor"
+                                                    fill="none"
+                                                    viewBox="0 0 48 48"
+                                                    aria-hidden="true"
                                                 >
-                                                    <span>Upload a file</span>
-                                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                                                </label>
-                                                <p className="pl-1">or drag and drop</p>
+                                                    <path
+                                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                                        strokeWidth={2}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                                <div className="flex text-sm text-gray-600">
+                                                    <label
+                                                        htmlFor="file-upload"
+                                                        className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                                                    >
+                                                        <span>Upload a file</span>
+                                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                                    </label>
+                                                    <p className="pl-1">or drag and drop</p>
+                                                </div>
+                                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                             </div>
-                                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
                                 </div>
@@ -122,287 +314,25 @@ const newCheckup = () => {
                         </div>
                     </div>
 
-                    <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
-                        <div>
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">Personal Information</h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
-                        </div>
-                        <div className="space-y-6 sm:space-y-5">
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    First name
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="first-name"
-                                        id="first-name"
-                                        autoComplete="given-name"
-                                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
 
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Last name
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="last-name"
-                                        id="last-name"
-                                        autoComplete="family-name"
-                                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Email address
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="country" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Country
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <select
-                                        id="country"
-                                        name="country"
-                                        autoComplete="country-name"
-                                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    >
-                                        <option>United States</option>
-                                        <option>Canada</option>
-                                        <option>Mexico</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="street-address" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    Street address
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="street-address"
-                                        id="street-address"
-                                        autoComplete="street-address"
-                                        className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="city" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    City
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="city"
-                                        id="city"
-                                        autoComplete="address-level2"
-                                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="region" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    State / Province
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="region"
-                                        id="region"
-                                        autoComplete="address-level1"
-                                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                <label htmlFor="postal-code" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                    ZIP / Postal code
-                                </label>
-                                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <input
-                                        type="text"
-                                        name="postal-code"
-                                        id="postal-code"
-                                        autoComplete="postal-code"
-                                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="divide-y divide-gray-200 pt-8 space-y-6 sm:pt-10 sm:space-y-5">
-                        <div>
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">Notifications</h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                We'll always let you know about important changes, but you pick what else you want to hear about.
-                            </p>
-                        </div>
-                        <div className="space-y-6 sm:space-y-5 divide-y divide-gray-200">
-                            <div className="pt-6 sm:pt-5">
-                                <div role="group" aria-labelledby="label-email">
-                                    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
-                                        <div>
-                                            <div className="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-email">
-                                                By Email
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 sm:mt-0 sm:col-span-2">
-                                            <div className="max-w-lg space-y-4">
-                                                <div className="relative flex items-start">
-                                                    <div className="flex items-center h-5">
-                                                        <input
-                                                            id="comments"
-                                                            name="comments"
-                                                            type="checkbox"
-                                                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                                                        />
-                                                    </div>
-                                                    <div className="ml-3 text-sm">
-                                                        <label htmlFor="comments" className="font-medium text-gray-700">
-                                                            Comments
-                                                        </label>
-                                                        <p className="text-gray-500">Get notified when someones posts a comment on a posting.</p>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="relative flex items-start">
-                                                        <div className="flex items-center h-5">
-                                                            <input
-                                                                id="candidates"
-                                                                name="candidates"
-                                                                type="checkbox"
-                                                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                                                            />
-                                                        </div>
-                                                        <div className="ml-3 text-sm">
-                                                            <label htmlFor="candidates" className="font-medium text-gray-700">
-                                                                Candidates
-                                                            </label>
-                                                            <p className="text-gray-500">Get notified when a candidate applies for a job.</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="relative flex items-start">
-                                                        <div className="flex items-center h-5">
-                                                            <input
-                                                                id="offers"
-                                                                name="offers"
-                                                                type="checkbox"
-                                                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                                                            />
-                                                        </div>
-                                                        <div className="ml-3 text-sm">
-                                                            <label htmlFor="offers" className="font-medium text-gray-700">
-                                                                Offers
-                                                            </label>
-                                                            <p className="text-gray-500">Get notified when a candidate accepts or rejects an offer.</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="pt-6 sm:pt-5">
-                                <div role="group" aria-labelledby="label-notifications">
-                                    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
-                                        <div>
-                                            <div
-                                                className="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700"
-                                                id="label-notifications"
-                                            >
-                                                Push Notifications
-                                            </div>
-                                        </div>
-                                        <div className="sm:col-span-2">
-                                            <div className="max-w-lg">
-                                                <p className="text-sm text-gray-500">These are delivered via SMS to your mobile phone.</p>
-                                                <div className="mt-4 space-y-4">
-                                                    <div className="flex items-center">
-                                                        <input
-                                                            id="push-everything"
-                                                            name="push-notifications"
-                                                            type="radio"
-                                                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                                                        />
-                                                        <label htmlFor="push-everything" className="ml-3 block text-sm font-medium text-gray-700">
-                                                            Everything
-                                                        </label>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <input
-                                                            id="push-email"
-                                                            name="push-notifications"
-                                                            type="radio"
-                                                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                                                        />
-                                                        <label htmlFor="push-email" className="ml-3 block text-sm font-medium text-gray-700">
-                                                            Same as email
-                                                        </label>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <input
-                                                            id="push-nothing"
-                                                            name="push-notifications"
-                                                            type="radio"
-                                                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                                                        />
-                                                        <label htmlFor="push-nothing" className="ml-3 block text-sm font-medium text-gray-700">
-                                                            No push notifications
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="pt-5">
                     <div className="flex justify-end">
                         <button
                             type="button"
-                            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            disabled={isLoading}
+                            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                             Save
                         </button>
                     </div>
                 </div>
-            </form>
+            </form >
+
         </>
     )
 }
