@@ -5,20 +5,30 @@ import { api } from "@/utils/api";
 import { readableDate, rupiah } from "@/utils/intlformat";
 
 import { Stats, StatsProps } from "./stats";
+import { LoadingOverlay } from "@/components/ui/loading-overlay";
 
 export const PatientStats = () => {
-    const [stats, setStats] = useState<StatsProps | null>(null);
     const { data: patient, isLoading } = api.patient.getStatPatients.useQuery();
+
+    const [stats, setStats] = useState<StatsProps>({
+        header: {
+            title: "Total Patients",
+            icon: UsersIcon,
+            bgColor: "bg-blue-200",
+            color: "text-blue-500",
+        },
+        stats: {
+            value: "0",
+            metadata: {
+                "Last Visit": readableDate.format(new Date("1-1-2000"))
+            }
+        }
+    });
 
     useEffect(() => {
         if (!isLoading && patient) {
             setStats({
-                header: {
-                    title: "Total Patients",
-                    icon: UsersIcon,
-                    bgColor: "bg-blue-200",
-                    color: "text-blue-500",
-                },
+                header: stats.header,
                 stats: {
                     value: patient.total!.toString(),
                     metadata: {
@@ -29,7 +39,7 @@ export const PatientStats = () => {
         }
     }, [isLoading, patient]);
 
-    if (!stats) return <div>Loading...</div>
+    if (isLoading) return <LoadingOverlay children={<Stats {...stats} />} />;
 
     return <Stats {...stats} />
 }
