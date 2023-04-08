@@ -14,8 +14,10 @@ export const PatientStats = () => {
         if (!isLoading && patient) {
             setStats({
                 header: {
-                    title: "Patients",
-                    icon: UsersIcon
+                    title: "Total Patients",
+                    icon: UsersIcon,
+                    bgColor: "bg-blue-200",
+                    color: "text-blue-500",
                 },
                 stats: {
                     value: patient.total!.toString(),

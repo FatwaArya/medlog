@@ -15,7 +15,9 @@ export const RevenueStats = () => {
             setStats({
                 header: {
                     title: "Revenue",
-                    icon: DollarSignIcon
+                    icon: DollarSignIcon,
+                    bgColor: "bg-pink-200",
+                    color: "text-pink-500",
                 },
                 stats: {
                     value: rupiah.format(revenue.total!),
