@@ -8,6 +8,12 @@ export interface StatsProps {
     /// Title of the stats
     title: string;
     icon: LucideIcon;
+
+    /// Tailwind background color for the icon
+    bgColor?: string;
+
+    /// Tailwind text color for the header
+    color?: string
   };
 
   stats: {
@@ -22,12 +28,15 @@ export interface StatsProps {
 }
 
 export const Stats = (props: StatsProps) => {
+  const bgColor = props.header.bgColor ?? "bg-blue-200"
+  const color = props.header.color ?? "text-blue-700";
+
   return (
     <div className="flex flex-col justify-between h-full rounded-lg bg-white shadow p-6">
       <div
-        className={`mb-2 flex items-center text-blue-700`}
+        className={cn("mb-2 flex items-center", color)}
       >
-        <props.header.icon className={`p-2 h-9 w-9 bg-blue-200 rounded-full mr-3 text-xl font-bold hidden sm:block`} />
+        <props.header.icon className={cn("p-2 h-9 w-9 rounded-full mr-3 text-xl font-bold hidden sm:block", bgColor)} />
         <p className="truncate text-xl font-medium">{props.header.title}</p>
         <p className="ml-auto truncate text-2xl font-semibold">
           {props.stats.value}
