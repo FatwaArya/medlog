@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
-    Column,
-    Table,
     useReactTable,
     ColumnFiltersState,
     getCoreRowModel,
@@ -20,21 +18,20 @@ import {
     getSortedRowModel,
     FilterFn,
     SortingFn,
-    ColumnDef,
     flexRender,
-    FilterFns,
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
 dayjs.extend(relativeTime);
-type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
+type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
 
 import {
     RankingInfo,
     rankItem,
     compareItems,
 } from "@tanstack/match-sorter-utils";
+import { Spinner } from "@/components/ui/loading-overlay";
 
 declare module "@tanstack/table-core" {
     interface FilterFns {
@@ -86,25 +83,22 @@ const patientColumns = [
         header: "Sex",
         cell: (info) => <span className="capitalize">{info.getValue()}</span>,
     }),
-    columnHelper.accessor("patient.birthDate", {
+    columnHelper.accessor('patient.birthDate', {
         header: "Date of Birth",
         cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     }),
-    columnHelper.accessor("patient.NIK", {
-        header: "NIK",
-        cell: (info) => info.getValue(),
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
     columnHelper.accessor("createdAt", {
         header: "Visit",
-        cell: (info) => dayjs(info.getValue()).fromNow(),
+        cell: (info) => {
+            dayjs.locale("id")
+            return dayjs(info.getValue()).fromNow();
+        },
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     }),
-    columnHelper.accessor("patient.id", {
+    columnHelper.accessor('patient.id', {
         header: "Action",
         cell: (info) => (
             <Button
@@ -112,7 +106,8 @@ const patientColumns = [
                 className=" px-6 text-sm font-normal"
                 size="sm"
             >
-                Check up
+
+                Periksa
             </Button>
         ),
         filterFn: fuzzyFilter,
@@ -156,7 +151,7 @@ export default function PatientList() {
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <h1 className="text-xl font-semibold text-[#3366FF]">
-                                Create Order
+                                Pemeriksaan Pasien
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -202,7 +197,17 @@ export default function PatientList() {
                                             ))}
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
-                                            {table.getRowModel().rows.length === 0 && (
+                                            {isLoading && (
+                                                <tr>
+                                                    <td colSpan={6}>
+                                                        <div className="flex items-center justify-center py-8">
+                                                            <Spinner />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+
+                                            {!isLoading && table.getRowModel().rows.length === 0 && (
                                                 <tr>
                                                     <td colSpan={6}>
                                                         <div className="flex items-center justify-center py-8">
@@ -217,6 +222,7 @@ export default function PatientList() {
                                                     </td>
                                                 </tr>
                                             )}
+
                                             {table.getRowModel().rows.map((row) => {
                                                 return (
                                                     <tr key={row.id} className="">

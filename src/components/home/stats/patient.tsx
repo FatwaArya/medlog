@@ -12,7 +12,7 @@ export const PatientStats = () => {
 
     const [stats, setStats] = useState<StatsProps>({
         header: {
-            title: "Total Patients",
+            title: "Total Pasien",
             icon: UsersIcon,
             bgColor: "bg-blue-200",
             color: "text-blue-600",
@@ -20,7 +20,7 @@ export const PatientStats = () => {
         stats: {
             value: "0",
             metadata: {
-                "Last Visit": readableDate.format(new Date("1-1-2000"))
+                "Pemeriksaan Terakhir": readableDate.format(new Date("1-1-2000"))
             }
         }
     });
@@ -30,9 +30,9 @@ export const PatientStats = () => {
             setStats({
                 header: stats.header,
                 stats: {
-                    value: patient.total!.toString(),
+                    value: `${patient.total!.toString()} Pasien`,
                     metadata: {
-                        "Last Visit": readableDate.format(patient.lastPatient.createdAt!)
+                        "Pemeriksaan Terakhir": readableDate.format(patient.lastPatient.createdAt!)
                     }
                 }
             })
