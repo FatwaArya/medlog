@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { cn } from "@/utils/cn";
 import { Button } from "../ui/button";
-import { XCircleIcon, XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 
 
 export type AttachmentType = Prisma.AttachmentGetPayload<{
@@ -45,7 +45,6 @@ export const Attachment: React.FC<{
     const className = cn("overflow-hidden rounded-lg relative shadow", {
         "row-span-2": fill,
     });
-
     return (
         <div className={className}>
             {onRemoveAttachment && (
@@ -60,11 +59,17 @@ export const Attachment: React.FC<{
                     </Button>
                 </div>
             )}
-            <img
-                className="h-full w-full object-cover"
-                alt="Attachment"
-                src={attachment.File?.url}
-            />
+            {/* if file ext is pdf use react -f */}
+            {attachment.File?.extension === "pdf" ? (
+                <embed src={attachment.File?.url} type="application/pdf" width="100%" height="100%" />
+
+            ) : (
+                <img
+                    className="h-full w-full object-cover"
+                    alt="Attachment"
+                    src={attachment.File?.url}
+                />
+            )}
         </div>
     );
 };

@@ -166,17 +166,16 @@ export const patientRouter = createTRPCRouter({
 
             const fileType = await probe(object.Body as Readable);
 
-            // if (
-            //   !object.ContentLength ||
-            //   !fileType ||
-            //   upload.ext !== fileType.type
-            // ) {
-            //   console.log("Invalid file uploaded.");
-            //   throw new TRPCError({
-            //     code: "BAD_REQUEST",
-            //     message: "Invalid file uploaded.",
-            //   });
-            // }
+            if (
+              !object.ContentLength ||
+              !fileType ||
+              (upload.ext !== fileType.type && upload.ext !== "pdf")
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid file uploaded.",
+              });
+            }
 
             const file = await tx.file.create({
               data: {

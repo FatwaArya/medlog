@@ -31,6 +31,7 @@ import {
     rankItem,
     compareItems,
 } from "@tanstack/match-sorter-utils";
+import { Spinner } from "@/components/ui/loading-overlay";
 
 declare module "@tanstack/table-core" {
     interface FilterFns {
@@ -196,7 +197,17 @@ export default function PatientList() {
                                             ))}
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
-                                            {table.getRowModel().rows.length === 0 && (
+                                            {isLoading && (
+                                                <tr>
+                                                    <td colSpan={6}>
+                                                        <div className="flex items-center justify-center py-8">
+                                                            <Spinner />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+
+                                            {!isLoading && table.getRowModel().rows.length === 0 && (
                                                 <tr>
                                                     <td colSpan={6}>
                                                         <div className="flex items-center justify-center py-8">
@@ -211,6 +222,7 @@ export default function PatientList() {
                                                     </td>
                                                 </tr>
                                             )}
+
                                             {table.getRowModel().rows.map((row) => {
                                                 return (
                                                     <tr key={row.id} className="">

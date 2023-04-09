@@ -499,6 +499,8 @@ const NewCheckup = () => {
                                                                 name="file-upload"
                                                                 type="file"
                                                                 className="sr-only"
+                                                                //only accept image files
+                                                                accept="image/*"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />
@@ -590,6 +592,8 @@ const NewCheckup = () => {
                                                                 type="file"
                                                                 className="sr-only"
                                                                 multiple
+                                                                //accpet pdf files and images
+                                                                accept="image/*, application/pdf"
                                                                 onChange={onLabFilesChange}
                                                             />
                                                         </label>
