@@ -90,7 +90,10 @@ const patientColumns = [
     }),
     columnHelper.accessor("createdAt", {
         header: "Visit",
-        cell: (info) => dayjs(info.getValue()).fromNow(),
+        cell: (info) => {
+            dayjs.locale("id")
+            return dayjs(info.getValue()).fromNow();
+        },
         filterFn: fuzzyFilter,
         sortingFn: fuzzySort,
     }),
@@ -147,7 +150,7 @@ export default function PatientList() {
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <h1 className="text-xl font-semibold text-[#3366FF]">
-                                Create Order
+                                Pemeriksaan Pasien
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">

@@ -11,7 +11,7 @@ export const RevenueStats = () => {
     const { data: revenue, isLoading } = api.record.getStatRevenue.useQuery();
     const [stats, setStats] = useState<StatsProps>({
         header: {
-            title: "Revenue",
+            title: "Pendapatan",
             icon: DollarSignIcon,
             bgColor: "bg-pink-200",
             color: "text-pink-600",
@@ -19,7 +19,7 @@ export const RevenueStats = () => {
         stats: {
             value: "Rp 0",
             metadata: {
-                "Last Transaction": readableDate.format(new Date("1-1-2000"))
+                "Transaksi Terakhir": readableDate.format(new Date("1-1-2000"))
             }
         }
     });
@@ -31,7 +31,7 @@ export const RevenueStats = () => {
                 stats: {
                     value: rupiah.format(revenue.total!),
                     metadata: {
-                        "Last Transaction": readableDate.format(revenue.lastRevenue.createdAt!)
+                        "Transaksi Terakhir": readableDate.format(revenue.lastRevenue.createdAt!)
                     }
                 }
             })

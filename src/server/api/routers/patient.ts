@@ -30,7 +30,7 @@ interface GenderCount {
 
 export const patientRouter = createTRPCRouter({
   createPresignedUrl: protectedProcedure
-    .input(z.object({ count: z.number().gte(1).lte(4) }))
+    .input(z.object({ count: z.number().gte(1).lte(8) }))
     .query(async ({ input }) => {
       const urls = [];
 
@@ -64,13 +64,14 @@ export const patientRouter = createTRPCRouter({
         name: z.string(),
         phone: z
           .string()
-          .length(12, { message: "Phone number must be 12 digits" }),
+          .length(11, { message: "Phone number must be 12 digits" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
         treatment: z.string(),
+        labNote: z.string(),
         note: z.string(),
         pay: z.number().min(0, { message: "Fee tidak boleh kosong" }),
         files: z
@@ -80,8 +81,17 @@ export const patientRouter = createTRPCRouter({
               ext: z.string().min(1),
             })
           )
-          .max(4)
+          .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
+        // labFiles: z
+        //   .array(
+        //     z.object({
+        //       key: z.string().min(1),
+        //       ext: z.string().min(1),
+        //     })
+        //   )
+        //   .max(4, { message: "Maksimal 4 foto" })
+        //   .nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -97,7 +107,12 @@ export const patientRouter = createTRPCRouter({
         note,
         pay,
         files,
+        // labFiles,
+        labNote,
       } = input;
+      //merge files and labFiles
+      // const allFiles = files?.concat(labFiles ?? []);
+
       await ctx.prisma.$transaction(async (tx) => {
         const patient = await tx.patient.create({
           data: {
@@ -116,6 +131,7 @@ export const patientRouter = createTRPCRouter({
             complaint,
             diagnosis,
             treatment,
+            labNote,
             note,
           },
         });
