@@ -14,11 +14,12 @@ import { Controller, useFormContext } from "react-hook-form";
 import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
+import type { CheckupExistingPatient } from "@/pages/dashboard/checkup/[id]/new";
 
 
 
 export function CheckupForm() {
-    const { register, control } = useFormContext()
+    const { register, control } = useFormContext<CheckupExistingPatient>()
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
@@ -73,26 +74,26 @@ export function CheckupForm() {
                                     className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     placeholder="Patient had slight headache, and felt dizzy"
                                     defaultValue={""}
-                                    {...register("complaint", { required: true })}
+                                    {...register('complaint', { required: true })}
                                 />
                             </div>
                         </div>
 
                         <div>
                             <label
-                                htmlFor="diagnosis"
+                                htmlFor="checkup"
                                 className="block text-sm font-medium text-gray-700"
                             >
                                 Pemeriksaan {redAsterisk}
                             </label>
                             <div className="mt-1">
                                 <textarea
-                                    id="diagnosis"
+                                    id="checkup"
                                     rows={3}
                                     className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     placeholder="Patient maybe had a migraine, and need to take paracetamol"
                                     defaultValue={""}
-                                    {...register("diagnosis", { required: true })}
+                                    {...register('checkup', { required: true })}
                                 />
                             </div>
                         </div>

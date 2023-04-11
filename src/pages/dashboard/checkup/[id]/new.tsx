@@ -22,7 +22,7 @@ import { Spinner } from "@/components/ui/loading-overlay";
 import dayjs from "dayjs";
 
 
-type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
+export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
 type PatientInfo = RouterOutputs["patient"]["getPatientById"];
 
 const PatientDescription = (props: PatientInfo) => {
@@ -142,6 +142,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 diagnosis: data.diagnosis,
                 treatment: data.treatment,
                 note: data.note,
+                checkup: data.checkup,
                 pay: data.pay,
                 files: uploads,
                 labNote: data.labNote,
