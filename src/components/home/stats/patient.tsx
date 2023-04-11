@@ -32,7 +32,7 @@ export const PatientStats = () => {
                 stats: {
                     value: `${patient.total!.toString()} Pasien`,
                     metadata: {
-                        "Pemeriksaan Terakhir": readableDate.format(patient.lastPatient.createdAt!)
+                        "Pemeriksaan Terakhir": readableDate.format(patient.lastVisit!)
                     }
                 }
             })

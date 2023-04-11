@@ -35,8 +35,8 @@ model Patient {
   id            String          @id @default(cuid())
   userId        String
   name          String
-  phone         String          @unique
-  address       String
+  phone         String?         @unique
+  address       String?
   gender        Gender
   birthDate     DateTime
   createdAt     DateTime        @default(now())
@@ -54,6 +54,7 @@ model MedicalRecord {
   diagnosis        String
   treatment        String
   note             String
+  checkup          String?
   pay              Int
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
