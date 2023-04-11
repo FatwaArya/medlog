@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { FileAndAttachment, createAttachment, redAsterisk, removeAttachment } from "@/pages/dashboard/checkup/new";
+import { FileAndAttachment, createAttachment, redAsterisk } from "@/pages/dashboard/checkup/new";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Attachments, { AttachmentType } from "@/components/checkup/Attachment";
@@ -80,7 +80,7 @@ export function LabForm() {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Foto hasil lab
+                            Foto hasil lab dan ronsen
                         </label>
                         <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5">
                             {previewLabAttachments.length > 0 ? (

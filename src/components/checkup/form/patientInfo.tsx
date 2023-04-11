@@ -50,7 +50,7 @@ export function PatientInfoForm() {
                                     htmlFor="phone-number"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Nomor telfon {redAsterisk}
+                                    Nomor telfon
                                 </label>
                                 <div className="relative mt-1 rounded-md shadow-sm">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

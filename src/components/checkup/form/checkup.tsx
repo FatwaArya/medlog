@@ -8,10 +8,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { FileAndAttachment, createAttachment, redAsterisk, removeAttachment } from "@/pages/dashboard/checkup/new";
+import { FileAndAttachment, createAttachment, redAsterisk, } from "@/pages/dashboard/checkup/new";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import Attachments, { AttachmentType } from "@/components/checkup/Attachment";
+import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
 
@@ -77,12 +77,13 @@ export function CheckupForm() {
                                 />
                             </div>
                         </div>
+
                         <div>
                             <label
                                 htmlFor="diagnosis"
                                 className="block text-sm font-medium text-gray-700"
                             >
-                                Diagnosis {redAsterisk}
+                                Pemeriksaan {redAsterisk}
                             </label>
                             <div className="mt-1">
                                 <textarea
@@ -95,6 +96,8 @@ export function CheckupForm() {
                                 />
                             </div>
                         </div>
+
+
                         <div>
                             <label
                                 htmlFor="treatment"
@@ -152,7 +155,26 @@ export function CheckupForm() {
 
                         <div>
                             <label
-                                htmlFor="notes"
+                                htmlFor="fee"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Diagnosis {redAsterisk}
+                            </label>
+
+                            <Input
+                                type="text"
+                                id="diagnosis"
+                                {...register('diagnosis', {
+                                    required: true,
+                                })}
+                                placeholder="Open Wound"
+                                className="mt-1"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="fee"
                                 className="block text-sm font-medium text-gray-700"
                             >
                                 Fee {redAsterisk}
