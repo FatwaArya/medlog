@@ -134,6 +134,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 }
             }
         }
+        console.log(data);
 
         mutate(
             {
@@ -183,7 +184,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
             <h1 className="text-xl font-bold">Patient not found</h1>
         </div>
     }
-
     return (
         <>
             <Head>
