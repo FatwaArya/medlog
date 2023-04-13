@@ -21,14 +21,17 @@ model Medicine {
 }
 
 model MedicineDetail {
-  id            String          @id @default(cuid())
-  medicineId    String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  medicine      Medicine        @relation(fields: [medicineId], references: [id], onDelete: Cascade)
-  MedicalRecord MedicalRecord[]
+  id              String @id @default(cuid())
+  medicineId      String
+  medicalRecordId String
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  medicine      Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  medicalRecord MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
 
   @@index([medicineId])
+  @@index([medicalRecordId])
 }
 
 model Patient {
@@ -47,25 +50,26 @@ model Patient {
   @@index([userId])
 }
 
+//todo
+// remove treatment
+// make checkup required
 model MedicalRecord {
-  id               String          @id @default(cuid())
-  patientId        String
-  complaint        String
-  diagnosis        String
-  treatment        String
-  note             String
-  checkup          String?
-  pay              Int
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  medicineDetailId String?
-  labNote          String?
-  patient          Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  Attachment       Attachment[]
-  MedicineDetail   MedicineDetail? @relation(fields: [medicineDetailId], references: [id])
+  id             String           @id @default(cuid())
+  patientId      String
+  complaint      String
+  diagnosis      String
+  treatment      String?
+  note           String
+  checkup        String?
+  pay            Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  labNote        String?
+  patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  Attachment     Attachment[]
+  MedicineDetail MedicineDetail[]
 
   @@index([patientId])
-  @@index([medicineDetailId])
 }
 
 model Attachment {

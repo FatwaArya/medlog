@@ -25,6 +25,7 @@ import dayjs from "dayjs";
 export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
 type PatientInfo = RouterOutputs["patient"]["getPatientById"];
 
+
 const PatientDescription = (props: PatientInfo) => {
 
     return (
@@ -134,15 +135,16 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 }
             }
         }
+        console.log(data);
 
         mutate(
             {
                 patientId: id,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
-                treatment: data.treatment,
                 note: data.note,
                 checkup: data.checkup,
+                treatment: data.treatment,
                 pay: data.pay,
                 files: uploads,
                 labNote: data.labNote,
@@ -151,6 +153,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 onSuccess: () => {
                     //reset all fields
                     methods.reset();
+                    methods.resetField('treatment')
                     clearPreviewCheckUpAttachments()
                     clearPreviewLabAttachments()
                     toast.success("Patient successfully created", {
@@ -159,14 +162,11 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                     utils.patient.getNewestPatients.invalidate();
                 },
                 onError: (e) => {
-                    if (e instanceof z.ZodError) {
-                        toast.error(e.message, {
-                            position: "top-center",
-                        });
+                    const errorMessage = e.data?.zodError?.fieldErrors.phone
+                    if (errorMessage && errorMessage[0]) {
+                        toast.error(errorMessage[0]);
                     } else {
-                        toast.error("Something went wrong", {
-                            position: "top-center",
-                        });
+                        toast.error(e.message);
                     }
                 },
             }
@@ -183,7 +183,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
             <h1 className="text-xl font-bold">Patient not found</h1>
         </div>
     }
-
     return (
         <>
             <Head>
