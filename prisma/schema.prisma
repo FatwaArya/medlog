@@ -50,6 +50,9 @@ model Patient {
   @@index([userId])
 }
 
+//todo
+// remove treatment
+// make checkup required
 model MedicalRecord {
   id             String           @id @default(cuid())
   patientId      String

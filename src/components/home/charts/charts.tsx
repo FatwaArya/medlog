@@ -30,6 +30,7 @@ import { useForm, Controller, useController } from "react-hook-form";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/loading-overlay";
 // import localeData from "dayjs/plugin/localeData";
 dayjs.extend(relativeTime);
 
@@ -126,7 +127,7 @@ export const LineCharts = () => {
                     </div>
                 ) : isLoading ? (
                     <div className="flex h-[297px] items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <Spinner />
                     </div>
                 ) : (
                     // <ResponsiveContainer

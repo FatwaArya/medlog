@@ -1,15 +1,6 @@
 
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { FileAndAttachment, createAttachment, redAsterisk, } from "@/pages/dashboard/checkup/new";
-import { useState } from "react";
+import { createAttachment, redAsterisk, } from "@/pages/dashboard/checkup/new";
 import { Controller, useFormContext } from "react-hook-form";
 import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
@@ -17,6 +8,7 @@ import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
 import type { CheckupExistingPatient } from "@/pages/dashboard/checkup/[id]/new";
 import CreatableSelect from 'react-select/creatable';
 import { api } from "@/utils/api";
+
 
 export function CheckupForm() {
     const { register, control } = useFormContext<CheckupExistingPatient>()

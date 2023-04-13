@@ -25,6 +25,7 @@ import dayjs from "dayjs";
 export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
 type PatientInfo = RouterOutputs["patient"]["getPatientById"];
 
+
 const PatientDescription = (props: PatientInfo) => {
 
     return (
@@ -152,6 +153,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 onSuccess: () => {
                     //reset all fields
                     methods.reset();
+                    methods.resetField('treatment')
                     clearPreviewCheckUpAttachments()
                     clearPreviewLabAttachments()
                     toast.success("Patient successfully created", {
