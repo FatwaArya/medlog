@@ -141,9 +141,9 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 patientId: id,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
-                treatment: data.treatment,
                 note: data.note,
                 checkup: data.checkup,
+                treatment: data.treatment,
                 pay: data.pay,
                 files: uploads,
                 labNote: data.labNote,
@@ -160,14 +160,11 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                     utils.patient.getNewestPatients.invalidate();
                 },
                 onError: (e) => {
-                    if (e instanceof z.ZodError) {
-                        toast.error(e.message, {
-                            position: "top-center",
-                        });
+                    const errorMessage = e.data?.zodError?.fieldErrors.phone
+                    if (errorMessage && errorMessage[0]) {
+                        toast.error(errorMessage[0]);
                     } else {
-                        toast.error("Something went wrong", {
-                            position: "top-center",
-                        });
+                        toast.error(e.message);
                     }
                 },
             }

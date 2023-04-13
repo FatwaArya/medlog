@@ -6,13 +6,20 @@ import {
 import { z } from "zod";
 
 export const medicineRouter = createTRPCRouter({
-  get: publicProcedure.query(async ({ ctx }) => {
+  gets: publicProcedure.query(async ({ ctx }) => {
     const medicines = await ctx.prisma.medicine.findMany({
       where: {
         userId: ctx.session?.user.id,
       },
+      select: {
+        id: true,
+        name: true,
+      },
     });
-    return medicines;
+    return medicines.map((medicine) => ({
+      value: medicine.id,
+      label: medicine.name,
+    }));
   }),
   create: protectedProcedure
     .input(

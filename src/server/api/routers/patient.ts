@@ -20,6 +20,7 @@ import probe from "probe-image-size";
 import relativeTime from "dayjs/plugin/relativeTime";
 import localeData from "dayjs/plugin/localeData";
 import { TRPCError } from "@trpc/server";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 dayjs.extend(localeData);
 
 interface GenderCount {
@@ -64,13 +65,18 @@ export const patientRouter = createTRPCRouter({
         name: z.string(),
         phone: z
           .string()
-          .length(11, { message: "Phone number must be 12 digits" }),
+          .length(11, { message: "Pastikan nomor telfon 12 digit" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.string(),
+        treatment: z.array(
+          z.object({
+            value: z.string(),
+            label: z.string(),
+          })
+        ),
         labNote: z.string(),
         note: z.string(),
         pay: z.number().min(0, { message: "Fee tidak boleh kosong" }),
@@ -105,6 +111,19 @@ export const patientRouter = createTRPCRouter({
       // const allFiles = files?.concat(labFiles ?? []);
 
       await ctx.prisma.$transaction(async (tx) => {
+        const isNumberUnique = await tx.patient.findFirst({
+          where: {
+            phone,
+          },
+        });
+
+        if (isNumberUnique) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Nomor telfon sudah terdaftar",
+          });
+        }
+
         const patient = await tx.patient.create({
           data: {
             name,
@@ -115,16 +134,23 @@ export const patientRouter = createTRPCRouter({
             userId: ctx.session.user.id,
           },
         });
-        const medicalRecord = await tx.medicalRecord.create({
+
+        const record = await tx.medicalRecord.create({
           data: {
             pay,
             patientId: patient.id,
             complaint,
             diagnosis,
-            treatment,
             labNote,
             note,
           },
+        });
+
+        await tx.medicineDetail.createMany({
+          data: treatment.map((medicine) => ({
+            medicalRecordId: record.id,
+            medicineId: medicine.value,
+          })),
         });
 
         if (files) {
@@ -157,17 +183,16 @@ export const patientRouter = createTRPCRouter({
 
             const fileType = await probe(object.Body as Readable);
 
-            //file validation
-            // if (
-            //   !object.ContentLength ||
-            //   !fileType ||
-            //   (upload.ext !== fileType.type && upload.ext !== "pdf")
-            // ) {
-            //   throw new TRPCError({
-            //     code: "BAD_REQUEST",
-            //     message: "Invalid file uploaded.",
-            //   });
-            // }
+            if (
+              !object.ContentLength ||
+              !fileType ||
+              (upload.ext !== fileType.type && upload.ext !== "jpeg")
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid file uploaded.",
+              });
+            }
 
             const file = await tx.file.create({
               data: {
@@ -184,7 +209,7 @@ export const patientRouter = createTRPCRouter({
 
             await tx.attachment.create({
               data: {
-                medicalRecordId: medicalRecord.id,
+                medicalRecordId: record.id,
                 fileId: file.id,
               },
             });
@@ -204,7 +229,12 @@ export const patientRouter = createTRPCRouter({
         patientId: z.string(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.string(),
+        treatment: z.array(
+          z.object({
+            value: z.string(),
+            label: z.string(),
+          })
+        ),
         labNote: z.string(),
         note: z.string(),
         checkup: z.string(),
@@ -225,12 +255,12 @@ export const patientRouter = createTRPCRouter({
         patientId,
         complaint,
         diagnosis,
-        treatment,
         note,
         checkup,
         pay,
         labNote,
         files,
+        treatment,
       } = input;
 
       await ctx.prisma.$transaction(async (tx) => {
@@ -241,10 +271,16 @@ export const patientRouter = createTRPCRouter({
             complaint,
             diagnosis,
             checkup,
-            treatment,
             note,
             labNote,
           },
+        });
+
+        await tx.medicineDetail.createMany({
+          data: treatment.map((medicine) => ({
+            medicalRecordId: record.id,
+            medicineId: medicine.value,
+          })),
         });
 
         if (files) {

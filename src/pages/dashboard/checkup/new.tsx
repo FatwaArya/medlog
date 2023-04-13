@@ -5,7 +5,6 @@ import Head from "next/head";
 import toast from "react-hot-toast";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { type RouterInputs, api } from "@/utils/api";
-import { z } from "zod";
 import { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { PatientInfoForm } from "@/components/checkup/form/patientInfo";
@@ -122,14 +121,11 @@ const NewCheckup = () => {
                     utils.patient.getNewestPatients.invalidate();
                 },
                 onError: (e) => {
-                    if (e instanceof z.ZodError) {
-                        toast.error(e.message, {
-                            position: "top-center",
-                        });
+                    const errorMessage = e.data?.zodError?.fieldErrors.phone
+                    if (errorMessage && errorMessage[0]) {
+                        toast.error(errorMessage[0]);
                     } else {
-                        toast.error("Something went wrong", {
-                            position: "top-center",
-                        });
+                        toast.error(e.message);
                     }
                 },
             }
