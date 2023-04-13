@@ -219,7 +219,7 @@ export default function PatientList() {
                                             )}
                                             {table.getRowModel().rows.map((row) => {
                                                 return (
-                                                    <tr key={row.id} className="">
+                                                    <tr key={row.id} className="hover:bg-slate-700/10 cursor-pointer">
                                                         {row.getVisibleCells().map((cell) => {
                                                             return (
                                                                 <td
