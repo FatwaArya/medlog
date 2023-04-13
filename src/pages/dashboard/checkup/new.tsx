@@ -1,23 +1,11 @@
 import Layout from "@/components/dashboard/Layout";
-import { ReactElement, useEffect, useState } from "react";
-import { CameraIcon, Loader2, UserIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/router";
+import { type ReactElement, useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import Head from "next/head";
-import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Controller, useForm, SubmitHandler, FormProvider } from "react-hook-form";
-import { RouterInputs, api } from "@/utils/api";
-import { z } from "zod";
-import Attachments, { AttachmentType } from "@/components/checkup/Attachment";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { type RouterInputs, api } from "@/utils/api";
+import { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { PatientInfoForm } from "@/components/checkup/form/patientInfo";
 import { CheckupForm } from "@/components/checkup/form/checkup";
@@ -27,6 +15,7 @@ import { LabForm } from "@/components/checkup/form/lab";
 export const redAsterisk = <span className="text-red-500">*</span>;
 
 export type FileAndAttachment = { file: File; attachment: AttachmentType };
+
 type CheckupNewPatient = RouterInputs["patient"]["createNewPatient"]
 
 export const createAttachment = (file: File, medicalRecordId: string) => {
@@ -50,18 +39,6 @@ export const createAttachment = (file: File, medicalRecordId: string) => {
         },
     };
 };
-
-export const removeAttachment = (
-    attachment: AttachmentType,
-    attachments: Array<{ file: File; attachment: AttachmentType }>,
-    setAttachments: React.Dispatch<
-        React.SetStateAction<Array<{ file: File; attachment: AttachmentType }>>
-    >
-) => {
-    const newAttachments = attachments.filter((p) => p.attachment !== attachment);
-    setAttachments(newAttachments);
-};
-
 const NewCheckup = () => {
     // { register, handleSubmit, control, reset }
     const methods = useForm<CheckupNewPatient>();
@@ -144,14 +121,11 @@ const NewCheckup = () => {
                     utils.patient.getNewestPatients.invalidate();
                 },
                 onError: (e) => {
-                    if (e instanceof z.ZodError) {
-                        toast.error(e.message, {
-                            position: "top-center",
-                        });
+                    const errorMessage = e.data?.zodError?.fieldErrors.phone
+                    if (errorMessage && errorMessage[0]) {
+                        toast.error(errorMessage[0]);
                     } else {
-                        toast.error("Something went wrong", {
-                            position: "top-center",
-                        });
+                        toast.error(e.message);
                     }
                 },
             }
@@ -171,12 +145,6 @@ const NewCheckup = () => {
                         <LabForm />
 
                         <div className="flex justify-end">
-                            <button
-                                type="button"
-                                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                Cancel
-                            </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}

@@ -1,32 +1,29 @@
 
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { FileAndAttachment, createAttachment, redAsterisk, removeAttachment } from "@/pages/dashboard/checkup/new";
-import { useState } from "react";
+import { createAttachment, redAsterisk, } from "@/pages/dashboard/checkup/new";
 import { Controller, useFormContext } from "react-hook-form";
-import Attachments, { AttachmentType } from "@/components/checkup/Attachment";
+import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
-
+import type { CheckupExistingPatient } from "@/pages/dashboard/checkup/[id]/new";
+import CreatableSelect from 'react-select/creatable';
+import { api } from "@/utils/api";
 
 
 export function CheckupForm() {
-    const { register, control } = useFormContext()
+    const { register, control } = useFormContext<CheckupExistingPatient>()
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
+    const { mutate, isLoading } = api.medicine.create.useMutation()
+    const utils = api.useContext()
+    const { data: medicineOptions } = api.medicine.gets.useQuery()
+
+
 
     const onRemoveAttachment = (attachment: AttachmentType) => {
         removeAttachment(attachment);
     };
-
 
     const onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -44,6 +41,15 @@ export function CheckupForm() {
             setPreviewCheckup([...previewCheckUpAttachments, ...newPreviewAttachments])
         }
     };
+
+    const handleCreate = async (inputValue: string) => {
+        mutate({ name: inputValue }, {
+            onSuccess: () => {
+                utils.medicine.gets.invalidate()
+            }
+        })
+    }
+
 
     return (
         <div>
@@ -73,28 +79,31 @@ export function CheckupForm() {
                                     className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     placeholder="Patient had slight headache, and felt dizzy"
                                     defaultValue={""}
-                                    {...register("complaint", { required: true })}
+                                    {...register('complaint', { required: true })}
                                 />
                             </div>
                         </div>
+
                         <div>
                             <label
-                                htmlFor="diagnosis"
+                                htmlFor="checkup"
                                 className="block text-sm font-medium text-gray-700"
                             >
-                                Diagnosis {redAsterisk}
+                                Pemeriksaan {redAsterisk}
                             </label>
                             <div className="mt-1">
                                 <textarea
-                                    id="diagnosis"
+                                    id="checkup"
                                     rows={3}
                                     className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     placeholder="Patient maybe had a migraine, and need to take paracetamol"
                                     defaultValue={""}
-                                    {...register("diagnosis", { required: true })}
+                                    {...register('checkup', { required: true })}
                                 />
                             </div>
                         </div>
+
+
                         <div>
                             <label
                                 htmlFor="treatment"
@@ -104,28 +113,30 @@ export function CheckupForm() {
                             </label>
                             <div className="mt-1">
                                 <Controller
-                                    name="treatment"
+                                    name='treatment'
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange}>
-                                            <SelectTrigger
-                                                className="w-full bg-white"
-                                                ref={field.ref}
-                                            >
-                                                <SelectValue placeholder="Select drugs" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectItem value="paracetamol">
-                                                        Paracetamol
-                                                    </SelectItem>
-                                                    <SelectItem value="ibuprofen">
-                                                        Ibuprofen
-                                                    </SelectItem>
-                                                    <SelectItem value="aspirin">Aspirin</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <CreatableSelect
+                                            {...field}
+                                            isMulti
+                                            isDisabled={isLoading}
+                                            isLoading={isLoading}
+                                            onChange={(value) => field.onChange(value)}
+                                            onCreateOption={handleCreate}
+                                            value={field.value}
+                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                            // @ts-ignore
+                                            options={medicineOptions}
+                                            styles={{
+                                                input: (base) => ({
+                                                    ...base,
+                                                    'input:focus': {
+                                                        boxShadow: 'none',
+                                                    },
+                                                }),
+                                            }}
+                                            formatCreateLabel={(inputValue) => `Tambahkan obat "${inputValue}"`}
+                                        />
                                     )}
                                 />
                             </div>
@@ -152,7 +163,26 @@ export function CheckupForm() {
 
                         <div>
                             <label
-                                htmlFor="notes"
+                                htmlFor="fee"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Diagnosis {redAsterisk}
+                            </label>
+
+                            <Input
+                                type="text"
+                                id="diagnosis"
+                                {...register('diagnosis', {
+                                    required: true,
+                                })}
+                                placeholder="Open Wound"
+                                className="mt-1"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="fee"
                                 className="block text-sm font-medium text-gray-700"
                             >
                                 Fee {redAsterisk}

@@ -105,6 +105,7 @@ const patientColumns = [
                 variant="solidBlue"
                 className=" px-6 text-sm font-normal"
                 size="sm"
+                href={`/dashboard/checkup/${info.getValue()}/new`}
             >
 
                 Periksa

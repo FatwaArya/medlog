@@ -20,6 +20,7 @@ import probe from "probe-image-size";
 import relativeTime from "dayjs/plugin/relativeTime";
 import localeData from "dayjs/plugin/localeData";
 import { TRPCError } from "@trpc/server";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 dayjs.extend(localeData);
 
 interface GenderCount {
@@ -64,13 +65,18 @@ export const patientRouter = createTRPCRouter({
         name: z.string(),
         phone: z
           .string()
-          .length(11, { message: "Phone number must be 12 digits" }),
+          .length(11, { message: "Pastikan nomor telfon 12 digit" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.string(),
+        treatment: z.array(
+          z.object({
+            value: z.string(),
+            label: z.string(),
+          })
+        ),
         labNote: z.string(),
         note: z.string(),
         pay: z.number().min(0, { message: "Fee tidak boleh kosong" }),
@@ -83,15 +89,6 @@ export const patientRouter = createTRPCRouter({
           )
           .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
-        // labFiles: z
-        //   .array(
-        //     z.object({
-        //       key: z.string().min(1),
-        //       ext: z.string().min(1),
-        //     })
-        //   )
-        //   .max(4, { message: "Maksimal 4 foto" })
-        //   .nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -114,6 +111,19 @@ export const patientRouter = createTRPCRouter({
       // const allFiles = files?.concat(labFiles ?? []);
 
       await ctx.prisma.$transaction(async (tx) => {
+        const isNumberUnique = await tx.patient.findFirst({
+          where: {
+            phone,
+          },
+        });
+
+        if (isNumberUnique) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Nomor telfon sudah terdaftar",
+          });
+        }
+
         const patient = await tx.patient.create({
           data: {
             name,
@@ -124,16 +134,153 @@ export const patientRouter = createTRPCRouter({
             userId: ctx.session.user.id,
           },
         });
-        const medicalRecord = await tx.medicalRecord.create({
+
+        const record = await tx.medicalRecord.create({
           data: {
             pay,
             patientId: patient.id,
             complaint,
             diagnosis,
-            treatment,
             labNote,
             note,
           },
+        });
+
+        await tx.medicineDetail.createMany({
+          data: treatment.map((medicine) => ({
+            medicalRecordId: record.id,
+            medicineId: medicine.value,
+          })),
+        });
+
+        if (files) {
+          for (const upload of files) {
+            const uuid = uuidv4();
+            const name = uuid + "." + upload.ext;
+
+            await s3Client.send(
+              new CopyObjectCommand({
+                Bucket: "pasienplus",
+                CopySource: "pasienplus/" + upload.key,
+                Key: name,
+                ACL: "public-read",
+              })
+            );
+
+            await s3Client.send(
+              new DeleteObjectCommand({
+                Bucket: "pasienplus",
+                Key: upload.key,
+              })
+            );
+
+            const object = await s3Client.send(
+              new GetObjectCommand({
+                Bucket: "pasienplus",
+                Key: name,
+              })
+            );
+
+            const fileType = await probe(object.Body as Readable);
+
+            if (
+              !object.ContentLength ||
+              !fileType ||
+              (upload.ext !== fileType.type && upload.ext !== "jpeg")
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid file uploaded.",
+              });
+            }
+
+            const file = await tx.file.create({
+              data: {
+                type: "IMAGE",
+                url: "https://pasienplus.sgp1.digitaloceanspaces.com/" + name,
+                mime: fileType.mime,
+                extension: upload.ext,
+                name,
+                size: object.ContentLength as number,
+                width: fileType.height,
+                height: fileType.width,
+              },
+            });
+
+            await tx.attachment.create({
+              data: {
+                medicalRecordId: record.id,
+                fileId: file.id,
+              },
+            });
+          }
+        }
+      });
+    }),
+  /**
+   * create medical record procedure
+   *
+   * this procedure only calls when user is creating new medical record for existing patient
+   *
+   */
+  createMedicalRecord: protectedProcedure
+    .input(
+      z.object({
+        patientId: z.string(),
+        complaint: z.string(),
+        diagnosis: z.string(),
+        treatment: z.array(
+          z.object({
+            value: z.string(),
+            label: z.string(),
+          })
+        ),
+        labNote: z.string(),
+        note: z.string(),
+        checkup: z.string(),
+        pay: z.number().min(0),
+        files: z
+          .array(
+            z.object({
+              key: z.string().min(1),
+              ext: z.string().min(1),
+            })
+          )
+          .max(8, { message: "Maksimal 8 foto" })
+          .nullish(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const {
+        patientId,
+        complaint,
+        diagnosis,
+        note,
+        checkup,
+        pay,
+        labNote,
+        files,
+        treatment,
+      } = input;
+
+      await ctx.prisma.$transaction(async (tx) => {
+        const record = await ctx.prisma.medicalRecord.create({
+          data: {
+            pay,
+            patientId,
+            complaint,
+            diagnosis,
+            checkup,
+            note,
+            labNote,
+          },
+        });
+
+        await tx.medicineDetail.createMany({
+          data: treatment.map((medicine) => ({
+            medicalRecordId: record.id,
+            medicineId: medicine.value,
+          })),
         });
 
         if (files) {
@@ -193,42 +340,12 @@ export const patientRouter = createTRPCRouter({
 
             await tx.attachment.create({
               data: {
-                medicalRecordId: medicalRecord.id,
+                medicalRecordId: record.id,
                 fileId: file.id,
               },
             });
           }
         }
-      });
-    }),
-  /**
-   * create medical record procedure
-   *
-   * this procedure only calls when user is creating new medical record for existing patient
-   *
-   */
-  createMedicalRecord: protectedProcedure
-    .input(
-      z.object({
-        patientId: z.string(),
-        complaint: z.string(),
-        diagnosis: z.string(),
-        treatment: z.string(),
-        note: z.string(),
-        pay: z.number().min(0),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const { patientId, complaint, diagnosis, treatment, note, pay } = input;
-      await ctx.prisma.medicalRecord.create({
-        data: {
-          pay,
-          patientId,
-          complaint,
-          diagnosis,
-          treatment,
-          note,
-        },
       });
     }),
   getNewestPatients: protectedProcedure.query(async ({ ctx }) => {
@@ -259,20 +376,27 @@ export const patientRouter = createTRPCRouter({
     return result;
   }),
   getStatPatients: protectedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.prisma.patient.aggregate({
+    const patientCount = await ctx.prisma.patient.count({
       where: {
         userId: ctx.session.user.id,
       },
-      _count: true,
-      _max: {
+    });
+    const lastVisit = await ctx.prisma.medicalRecord.findFirst({
+      where: {
+        patient: {
+          userId: ctx.session.user.id,
+        },
+      },
+      select: {
         createdAt: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
-    const total = result._count;
-    const lastPatient = result._max;
     return {
-      total,
-      lastPatient,
+      total: patientCount,
+      lastVisit: lastVisit?.createdAt,
     };
   }),
   getStatLine: protectedProcedure
@@ -384,5 +508,19 @@ export const patientRouter = createTRPCRouter({
         default:
           return monthlyVisits;
       }
+    }),
+  getPatientById: protectedProcedure
+    .input(
+      z.object({
+        patientId: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const patient = await ctx.prisma.patient.findUnique({
+        where: {
+          id: input.patientId,
+        },
+      });
+      return patient;
     }),
 });
