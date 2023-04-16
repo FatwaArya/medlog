@@ -1,24 +1,14 @@
 
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { FileAndAttachment, createAttachment, redAsterisk } from "@/pages/dashboard/checkup/new";
-import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import Attachments, { AttachmentType } from "@/components/checkup/Attachment";
+import { createAttachment } from "@/pages/dashboard/checkup/new";
+import { useFormContext } from "react-hook-form";
+import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { useLabsAttachmentStore } from "@/store/previewAttachment";
 
 
 
 export function LabForm() {
-    const { register, control } = useFormContext()
+    const { register } = useFormContext()
     const previewLabAttachments = useLabsAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewLab = useLabsAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useLabsAttachmentStore((state) => state.removeFileAndAttachment);
@@ -121,13 +111,13 @@ export function LabForm() {
                                                 className="sr-only"
                                                 multiple
                                                 //accpet pdf files and images
-                                                accept="image/*, application/pdf"
+                                                accept="image/*"
                                                 onChange={onLabFilesChange}
                                             />
                                         </label>
                                         <p className="pl-1">or drag and drop</p>
                                     </div>
-                                    <p className="text-xs text-gray-500">PDF</p>
+                                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             )}
                         </div>

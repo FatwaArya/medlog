@@ -23,4 +23,26 @@ export const recordRouter = createTRPCRouter({
       lastRevenue,
     };
   }),
+  getRecordById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const record = await ctx.prisma.medicalRecord.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          patient: true,
+          Attachment: {
+            include: {
+              File: true,
+            },
+          },
+        },
+      });
+      return record;
+    }),
 });

@@ -18,6 +18,9 @@ const config = {
     locales: ["id"],
     defaultLocale: "id",
   },
+  images: {
+    domains: ["pasienplus.sgp1.digitaloceanspaces.com"],
+  },
 };
 
 export default withAxiom(config);

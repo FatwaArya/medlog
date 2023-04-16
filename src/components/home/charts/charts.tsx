@@ -84,8 +84,8 @@ export const LineCharts = () => {
         <div className="col-span-2 divide-gray-200 overflow-hidden rounded-lg bg-white shadow outline outline-1 outline-slate-200">
             <div className="px-4 pt-5 sm:px-6">
                 <div className="flex items-center justify-between gap-2">
-                    <p className="text-md font-semibold text-[#3366FF] sm:text-xl">
-                        Patient Visits
+                    <p className="font-semibold text-[#3366FF] sm:text-2xl leading-6  scroll-m-20 text-base tracking-tight ">
+                        Kunjungan Pasien
                     </p>
                     <div className="flex flex-col gap-2 px-4 text-sm sm:flex-row sm:text-md">
                         <div className="flex items-center gap-1">
@@ -103,14 +103,14 @@ export const LineCharts = () => {
                         render={({ field }) => (
                             <Select onValueChange={field.onChange}>
                                 <SelectTrigger className="w-[112px]" ref={field.ref}>
-                                    <SelectValue placeholder="This Month" />
+                                    <SelectValue placeholder="Bulan Ini" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="month">This Month</SelectItem>
-                                        <SelectItem value="year">This Year</SelectItem>
+                                        <SelectItem value="month">Bulan Ini</SelectItem>
+                                        <SelectItem value="year">Tahun Ini</SelectItem>
                                         <SelectItem value="all" className="font-sans">
-                                            All Time
+                                            Sepanjang Masa
                                         </SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
@@ -119,7 +119,7 @@ export const LineCharts = () => {
                     />
                 </div>
             </div>
-            <div className="px-4 py-5 sm:p-6 overflow-auto">
+            <div className="pl-1 pr-4 py-5 overflow-auto">
                 {/* if data is empty array show other things */}
                 {data?.length === 0 ? (
                     <div className="flex h-[297px] items-center justify-center">
@@ -135,8 +135,8 @@ export const LineCharts = () => {
                     //     height={297}
                     // >
                     <LineChart data={data}
-                        width={680}
-                        height={297}
+                        width={700}
+                        height={300}
                     >
                         <CartesianGrid vertical={false} strokeDasharray="4" y={20} />
                         <XAxis

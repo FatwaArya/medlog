@@ -70,7 +70,7 @@ export function CheckupForm() {
                                 htmlFor="complaint"
                                 className="block text-sm font-medium text-gray-700"
                             >
-                                Komplain {redAsterisk}
+                                Keluhan {redAsterisk}
                             </label>
                             <div className="mt-1">
                                 <textarea

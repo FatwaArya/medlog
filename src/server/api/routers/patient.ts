@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import dayjs from "dayjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "../../s3";
@@ -15,12 +11,11 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-import { Readable } from "stream";
+import { type Readable } from "stream";
 import probe from "probe-image-size";
-import relativeTime from "dayjs/plugin/relativeTime";
 import localeData from "dayjs/plugin/localeData";
 import { TRPCError } from "@trpc/server";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+
 dayjs.extend(localeData);
 
 interface GenderCount {
@@ -310,20 +305,18 @@ export const patientRouter = createTRPCRouter({
                 Key: name,
               })
             );
-
             const fileType = await probe(object.Body as Readable);
 
-            //file validation
-            // if (
-            //   !object.ContentLength ||
-            //   !fileType ||
-            //   (upload.ext !== fileType.type && upload.ext !== "pdf")
-            // ) {
-            //   throw new TRPCError({
-            //     code: "BAD_REQUEST",
-            //     message: "Invalid file uploaded.",
-            //   });
-            // }
+            if (
+              !object.ContentLength ||
+              !fileType ||
+              upload.ext !== fileType.type
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid file uploaded.",
+              });
+            }
 
             const file = await tx.file.create({
               data: {
@@ -333,8 +326,8 @@ export const patientRouter = createTRPCRouter({
                 extension: upload.ext,
                 name,
                 size: object.ContentLength as number,
-                width: fileType.height,
-                height: fileType.width,
+                width: fileType.height || 0,
+                height: fileType.width || 0,
               },
             });
 
@@ -522,5 +515,32 @@ export const patientRouter = createTRPCRouter({
         },
       });
       return patient;
+    }),
+  getPatientByIdWithRecord: protectedProcedure
+    .input(
+      z.object({
+        patientId: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const patientWithRecord = await ctx.prisma.patient.findUnique({
+        where: {
+          id: input.patientId,
+        },
+        include: {
+          MedicalRecord: {
+            orderBy: {
+              createdAt: "desc",
+            },
+            select: {
+              id: true,
+              complaint: true,
+              createdAt: true,
+              pay: true,
+            },
+          },
+        },
+      });
+      return patientWithRecord;
     }),
 });

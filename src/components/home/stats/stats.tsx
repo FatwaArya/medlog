@@ -37,7 +37,7 @@ export const Stats = (props: StatsProps) => {
         className={cn("flex items-center", color)}
       >
         <props.header.icon className={cn("p-2 mr-4 h-9 w-9 rounded-full text-xl font-bold", bgColor)} />
-        <p className="truncate text-xl font-medium">{props.header.title}</p>
+        <p className="leading-6  scroll-m-20 text-xl font-semibold tracking-tight ">{props.header.title}</p>
       </div>
       <div className="flex justify-end items-center grow">
         <p className={cn("text-center text-3xl font-bold mb-2 py-3", color)}>
