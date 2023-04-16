@@ -1,40 +1,39 @@
 import Layout from "@/components/dashboard/Layout";
-import { type ReactElement, useEffect, useState, Fragment } from "react";
-import { Loader2, PaperclipIcon } from "lucide-react";
+import { type ReactElement, useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import Head from "next/head";
 import toast from "react-hot-toast";
 
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { type RouterInputs, api, RouterOutputs } from "@/utils/api";
-import { z } from "zod";
+import { type RouterInputs, api, type RouterOutputs } from "@/utils/api";
 import { CheckupForm } from "@/components/checkup/form/checkup";
 import { useCheckUpAttachmentStore, useLabsAttachmentStore } from "@/store/previewAttachment";
 import { LabForm } from "@/components/checkup/form/lab";
 import { type PasienPlusPage } from "@/pages/_app";
 import { type FileAndAttachment } from "../new";
 
-import { createServerSideHelpers } from '@trpc/react-query/server';
 import { type GetStaticPropsContext, type GetStaticPaths } from 'next';
-import { appRouter } from "@/server/api/root";
-import superjson from 'superjson';
 import { prisma } from "@/server/db";
 import { Spinner } from "@/components/ui/loading-overlay";
 import dayjs from "dayjs";
+import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 
 
 export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
 type PatientInfo = RouterOutputs["patient"]["getPatientById"];
 
 
-const PatientDescription = (props: PatientInfo) => {
+export const PatientDescription = (
+    props: PatientInfo
+) => {
 
     return (
         <>
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4">
+            <div className="bg-white shadow overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
                 <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">Informasi Pasien</h3>
                     <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                        Informasi dasar pasien yang akan dilakukan pemeriksaan.
+                        Informasi dasar pasien pada pemeriksaan.
                     </p>
                 </div>
                 <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
@@ -95,7 +94,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
     const previewLabAttachments = useLabsAttachmentStore((state) => state.fileAndAttachment);
     const clearPreviewLabAttachments = useLabsAttachmentStore((state) => state.clearFileAndAttachment);
 
-
     const [allPreviewAttachments, setAllPreviewAttachments] = useState<FileAndAttachment[]>([]);
 
     useEffect(() => {
@@ -111,6 +109,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
         }
     );
 
+    console.log(allPreviewAttachments)
 
     const onSubmit: SubmitHandler<CheckupExistingPatient> = async (data) => {
         const uploads: { key: string; ext: string }[] = [];
@@ -135,7 +134,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
                 }
             }
         }
-        console.log(data);
 
         mutate(
             {
@@ -224,12 +222,9 @@ export async function getStaticProps(
     context: GetStaticPropsContext<{ id: string }>,
 ) {
 
-    const ssg = createServerSideHelpers({
-        router: appRouter,
-        ctx: { prisma, session: null },
-        transformer: superjson,
-    });
+    const ssg = generateSSGHelper();
     const id = context.params?.id as string;
+
 
     await ssg.patient.getPatientById.prefetch({ patientId: id })
 

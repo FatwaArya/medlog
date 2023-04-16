@@ -1,24 +1,13 @@
-import { MenuIcon, SearchIcon, BellIcon } from "lucide-react";
+import { MenuIcon, BellIcon } from "lucide-react";
 
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { signOut, useSession } from "next-auth/react";
 import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
   LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
   Settings,
   User,
-  UserPlus,
-  Users,
 } from "lucide-react"
 
 import {
@@ -27,15 +16,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Loader } from "../auth/AuthGuard";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 const userNavigation = [
   { name: "Profile", href: "/profile", icon: User },
@@ -49,6 +35,14 @@ export function Navbar({
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
   const { data: session, status } = useSession();
+  const [time, setTime] = useState(dayjs());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(dayjs());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (status === "loading") {
     return <Loader />;
@@ -67,23 +61,10 @@ export function Navbar({
         </button>
         <div className="flex flex-1 justify-between px-4">
           <div className="flex flex-1">
-            <form className="flex w-full md:ml-0" action="#" method="GET">
-              <label htmlFor="search-field" className="sr-only">
-                Search
-              </label>
-              <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                  <SearchIcon className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <input
-                  id="search-field"
-                  className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-                  placeholder="Search"
-                  type="search"
-                  name="search"
-                />
-              </div>
-            </form>
+            <div className="flex w-full md:ml-0 items-center" >
+              {/* show realtime locale hours */}
+              <span className="">{time.format('dddd D MMMM YYYY')}, {time.format('h:mm')}</span>
+            </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
             <button

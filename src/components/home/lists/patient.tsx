@@ -1,13 +1,13 @@
 import { Input } from "@/components/ui/input";
-import { Loader2, SearchIcon } from "lucide-react";
-import { api, RouterOutputs } from "@/utils/api";
+import { ArrowLeft, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, Loader2, SearchIcon } from "lucide-react";
+import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
     useReactTable,
-    ColumnFiltersState,
+    type ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
     getFacetedRowModel,
@@ -16,8 +16,8 @@ import {
     getPaginationRowModel,
     sortingFns,
     getSortedRowModel,
-    FilterFn,
-    SortingFn,
+    type FilterFn,
+    type SortingFn,
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
@@ -27,7 +27,7 @@ dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
 
 import {
-    RankingInfo,
+    type RankingInfo,
     rankItem,
     compareItems,
 } from "@tanstack/match-sorter-utils";
@@ -72,59 +72,89 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
 
 const columnHelper = createColumnHelper<PatientColumn>();
 
-const patientColumns = [
-    columnHelper.accessor("patient.name", {
-        header: "Patient",
-        cell: (info) => info.getValue(),
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.gender", {
-        header: "Sex",
-        cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor('patient.birthDate', {
-        header: "Date of Birth",
-        cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("createdAt", {
-        header: "Visit",
-        cell: (info) => {
-            dayjs.locale("id")
-            return dayjs(info.getValue()).fromNow();
-        },
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor('patient.id', {
-        header: "Action",
-        cell: (info) => (
-            <Button
-                variant="solidBlue"
-                className=" px-6 text-sm font-normal"
-                size="sm"
-                href={`/dashboard/checkup/${info.getValue()}/new`}
-            >
+interface PatientListProps {
+    pageSize?: number;
+    isPaginated?: boolean;
+    isDetailed?: boolean;
+}
 
-                Periksa
-            </Button>
-        ),
-        filterFn: fuzzyFilter,
-        sortingFn: fuzzySort,
-    }),
-];
-
-export default function PatientList() {
-    const { data: patientData, isLoading } =
-        api.patient.getNewestPatients.useQuery();
+export default function PatientList({ pageSize = 10, isPaginated = true, isDetailed = true }: PatientListProps) {
+    const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery();
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
+
+    const patientColumns = [
+        columnHelper.accessor("patient.name", {
+            header: "Nama Pasien",
+            cell: (info) => info.getValue(),
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor("patient.gender", {
+            header: "Jenis Kelamin",
+            cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+        }),
+        columnHelper.accessor('patient.birthDate', {
+            header: "Tanggal Lahir",
+            cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor("createdAt", {
+            header: "Kunjungan Terakhir",
+            cell: (info) => {
+                dayjs.locale("id")
+                return dayjs(info.getValue()).fromNow();
+            },
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('patient.id', {
+            header: "Aksi",
+            cell: (info) => (
+                <>
+                    <div className="flex gap-2 flex-col sm:flex-row">
+                        {isDetailed ? (
+                            <Button
+                                variant="solidBlue"
+                                className=" px-6 text-sm font-normal"
+                                size="sm"
+                                href={`/dashboard/patients/timeline/${info.getValue()}`}
+                            >
+                                Detail
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="solidBlue"
+                                className=" px-6 text-sm font-normal"
+                                size="sm"
+                                href={`/dashboard/checkup/${info.getValue()}/new`}
+                            >
+                                Periksa
+                            </Button>
+                        )}
+
+
+
+                    </div>
+                </>
+
+
+            ),
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+    ];
+
 
     const table = useReactTable({
         data: patientData || [],
         columns: patientColumns,
+        initialState: {
+            pagination: {
+                pageSize,
+            }
+        },
         filterFns: {
             fuzzy: fuzzyFilter,
         },
@@ -142,16 +172,15 @@ export default function PatientList() {
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
-        debugRows: true,
     });
 
     return (
         <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
             <div className="px-4 py-5 sm:p-6">
-                <div className="px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
-                            <h1 className="text-xl font-semibold text-[#3366FF]">
+                            <h1 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">
                                 Pemeriksaan Pasien
                             </h1>
                         </div>
@@ -164,11 +193,11 @@ export default function PatientList() {
                             />
                         </div>
                     </div>
-                    <div className="mt-8 flex flex-col">
+                    <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full divide-gray-300 py-2 align-middle">
+                            <div className="inline-block min-w-full divide-gray-300 align-middle">
                                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
-                                    <table className="min-w-full divide-y divide-gray-300">
+                                    <table className="min-w-full divide-y divide-gray-300 ">
                                         <thead className="bg-white">
                                             {table.getHeaderGroups().map((headerGroup) => (
                                                 <tr key={headerGroup.id}>
@@ -178,9 +207,7 @@ export default function PatientList() {
                                                                 key={header.id}
                                                                 scope="col"
                                                                 className={
-                                                                    header.column.columnDef.header === "Patient"
-                                                                        ? "py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8"
-                                                                        : "px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                                    "px-3 py-3.5 text-left text-sm  font-normal"
                                                                 }
                                                             >
                                                                 {header.isPlaceholder ? null : (
@@ -226,7 +253,7 @@ export default function PatientList() {
 
                                             {table.getRowModel().rows.map((row) => {
                                                 return (
-                                                    <tr key={row.id} className="">
+                                                    <tr key={row.id} className="hover:bg-slate-700/10 cursor-pointer">
                                                         {row.getVisibleCells().map((cell) => {
                                                             return (
                                                                 <td
@@ -250,6 +277,32 @@ export default function PatientList() {
                                         </tbody>
                                     </table>
                                 </div>
+                                {isPaginated && (
+                                    <div className="flex items-center gap-2 justify-center mt-4 flex-row">
+                                        <span className="flex items-center gap-1">
+                                            {table.getState().pagination.pageIndex + 1} dari{' '}
+                                            {table.getPageCount()}
+                                        </span>
+                                        <div className="flex gap-4">
+                                            <button
+                                                className={`border rounded p-1 ${!table.getCanPreviousPage() ? 'bg-gray-200' : ''
+                                                    }`}
+                                                onClick={() => table.previousPage()}
+                                                disabled={!table.getCanPreviousPage()}
+                                            >
+                                                <ChevronLeftIcon className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                className={`border rounded p-1 ${!table.getCanNextPage() ? 'bg-gray-200' : ''
+                                                    }`}
+                                                onClick={() => table.nextPage()}
+                                                disabled={!table.getCanNextPage()}
+                                            >
+                                                <ChevronRightIcon className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                    </div>)}
                             </div>
                         </div>
                     </div>
