@@ -63,7 +63,7 @@ export function Navbar({
           <div className="flex flex-1">
             <div className="flex w-full md:ml-0 items-center" >
               {/* show realtime locale hours */}
-              <span className="">{time.format('dddd D MMMM YYYY')}, {time.format('h:mm')}</span>
+              <span className="sm:text-sm">{time.format('dddd D MMMM YYYY')}, {time.format('h:mm')}</span>
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">

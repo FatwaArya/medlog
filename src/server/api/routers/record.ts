@@ -45,4 +45,20 @@ export const recordRouter = createTRPCRouter({
       });
       return record;
     }),
+  getRecords: protectedProcedure.query(async ({ ctx }) => {
+    const records = await ctx.prisma.medicalRecord.findMany({
+      where: {
+        patient: {
+          userId: ctx.session.user.id,
+        },
+      },
+      include: {
+        patient: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return records;
+  }),
 });
