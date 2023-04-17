@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/Logo";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
+import { GetServerSidePropsContext } from "next/types";
+import { getServerAuthSession } from "@/server/auth";
 
 export default function Login() {
   return (
@@ -45,4 +47,21 @@ export default function Login() {
       </AuthLayout>
     </>
   );
+}
+
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(ctx);
+  //if session exists, redirect to dashboard
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard/home",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 }

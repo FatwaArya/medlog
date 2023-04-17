@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
@@ -26,5 +27,9 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/line-clamp"),
+  ],
 };

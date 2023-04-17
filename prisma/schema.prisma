@@ -1,65 +1,85 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider     = "mysql"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
 
-enum Gender {
-    male
-    female
+model Medicine {
+    id             String           @id @default(cuid())
+    userId         String
+    name           String
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    MedicineDetail MedicineDetail[]
+
+    @@index([userId])
+}
+
+model MedicineDetail {
+    id              String @id @default(cuid())
+    medicineId      String
+    medicalRecordId String
+
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    medicine      Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+    medicalRecord MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
+
+    @@index([medicineId])
+    @@index([medicalRecordId])
 }
 
 model Patient {
     id            String          @id @default(cuid())
-    user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String
     name          String
-    phone         String          @unique
-    address       String
+    phone         String?         @unique
+    address       String?
     gender        Gender
-    age           Int
+    birthDate     DateTime
     createdAt     DateTime        @default(now())
     updatedAt     DateTime        @updatedAt
+    user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     MedicalRecord MedicalRecord[]
 
     @@index([userId])
 }
 
+//todo
+// remove treatment
+// make checkup required
 model MedicalRecord {
-    id         String       @id @default(cuid())
-    patient    Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
-    patientId  String
-    complaint  String
-    diagnosis  String
-    treatment  String
-    note       String
-    pay        Int
-    createdAt  DateTime     @default(now())
-    updatedAt  DateTime     @updatedAt
-    Attachment Attachment[]
+    id             String           @id @default(cuid())
+    patientId      String
+    complaint      String           @db.VarChar(700)
+    diagnosis      String           @db.VarChar(700)
+    treatment      String?
+    note           String           @db.VarChar(700)
+    checkup        String?          @db.VarChar(200)
+    pay            Int
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    labNote        String?          @db.VarChar(700)
+    patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    Attachment     Attachment[]
+    MedicineDetail MedicineDetail[]
 
     @@index([patientId])
 }
 
 model Attachment {
     id              String        @id @default(cuid())
-    medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
     medicalRecordId String
     createdAt       DateTime      @default(now())
     updatedAt       DateTime      @updatedAt
-    File            File?         @relation(fields: [fileId], references: [id])
     fileId          String?
+    medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
+    File            File?         @relation(fields: [fileId], references: [id])
 
     @@index([medicalRecordId])
     @@index([fileId])
@@ -67,20 +87,18 @@ model Attachment {
 
 model File {
     id          String       @id @default(cuid())
+    type        String
+    url         String
+    mime        String
+    name        String
+    extension   String
+    size        Int
+    height      Int?
+    width       Int?
+    createdAt   DateTime     @default(now())
     attachments Attachment[]
-
-    type      String
-    url       String
-    mime      String
-    name      String
-    extension String
-    size      Int
-    height    Int?
-    width     Int?
-    createdAt DateTime @default(now())
 }
 
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -111,14 +129,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String     @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?    @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
     Patient       Patient[]
+    Medicine      Medicine[]
 }
 
 model VerificationToken {
@@ -127,4 +146,9 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum Gender {
+    male
+    female
 }
