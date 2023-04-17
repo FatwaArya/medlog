@@ -74,8 +74,6 @@ export default function CheckupList({ pageSize = 10, isPaginated = true }: ListP
             cell: (info) => {
                 return <Button href={`/dashboard/checkup/${info.getValue()}`} variant='solidBlue' size="sm" className=" px-6 text-sm font-normal">Lihat</Button>
             },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
         })
     ]
     const table = useReactTable({

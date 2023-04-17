@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, Loader2, SearchIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ import {
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
@@ -141,8 +141,6 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
 
 
             ),
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
         }),
     ];
 
