@@ -1,5 +1,3 @@
-import { Input } from "@/components/ui/input";
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -14,140 +12,73 @@ import {
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
     getPaginationRowModel,
-    sortingFns,
     getSortedRowModel,
-    type FilterFn,
-    type SortingFn,
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { DebouncedInput, type ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
+import { Spinner } from "@/components/ui/loading-overlay";
+import { rupiah } from "@/utils/intlformat";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 dayjs.extend(relativeTime);
-type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
 
-import {
-    type RankingInfo,
-    rankItem,
-    compareItems,
-} from "@tanstack/match-sorter-utils";
-import { Spinner } from "@/components/ui/loading-overlay";
+type CheckupColumn = RouterOutputs["record"]['getRecords'][number]
 
-declare module "@tanstack/table-core" {
-    interface FilterFns {
-        fuzzy: FilterFn<unknown>;
-    }
-    interface FilterMeta {
-        itemRank: RankingInfo;
-    }
-}
+const columnHelper = createColumnHelper<CheckupColumn>();
 
-export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
-    const itemRank = rankItem(row.getValue(columnId), value);
 
-    // Store the itemRank info
-    addMeta({
-        itemRank,
-    });
-
-    // Return if the item should be filtered in/out
-    return itemRank.passed;
-};
-
-export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-    let dir = 0;
-
-    // Only sort by rank if the column has ranking information
-    if (rowA.columnFiltersMeta[columnId]) {
-        dir = compareItems(
-            rowA.columnFiltersMeta[columnId]?.itemRank!,
-            rowB.columnFiltersMeta[columnId]?.itemRank!
-        );
-    }
-
-    // Provide an alphanumeric fallback for when the item ranks are equal
-    return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-};
-
-const columnHelper = createColumnHelper<PatientColumn>();
-
-export interface ListProps {
-    pageSize?: number;
-    isPaginated?: boolean;
-    isDetailed?: boolean;
-}
-
-export default function PatientList({ pageSize = 10, isPaginated = true, isDetailed = true }: ListProps) {
-    const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery();
+export default function CheckupList({ pageSize = 10, isPaginated = true }: ListProps) {
+    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery();
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
-    const patientColumns = [
-        columnHelper.accessor("patient.name", {
-            header: "Nama Pasien",
-            cell: (info) => info.getValue(),
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("patient.gender", {
-            header: "Jenis Kelamin",
-            cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-        }),
-        columnHelper.accessor('patient.birthDate', {
-            header: "Tanggal Lahir",
-            cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("createdAt", {
-            header: "Kunjungan Terakhir",
+    const CheckupColumns = [
+        columnHelper.accessor('createdAt', {
+            header: 'Tanggal Pemeriksaan',
             cell: (info) => {
-                dayjs.locale("id")
-                return dayjs(info.getValue()).fromNow();
+                return dayjs(info.getValue()).format('DD MMMM YYYY')
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
-        columnHelper.accessor('patient.id', {
-            header: "Aksi",
-            cell: (info) => (
-                <>
-                    <div className="flex gap-2 flex-col sm:flex-row">
-                        {isDetailed ? (
-                            <Button
-                                variant="solidBlue"
-                                className=" px-6 text-sm font-normal"
-                                size="sm"
-                                href={`/dashboard/patients/timeline/${info.getValue()}`}
-                            >
-                                Detail
-                            </Button>
-                        ) : (
-                            <Button
-                                variant="solidBlue"
-                                className=" px-6 text-sm font-normal"
-                                size="sm"
-                                href={`/dashboard/checkup/${info.getValue()}/new`}
-                            >
-                                Periksa
-                            </Button>
-                        )}
-
-
-
-                    </div>
-                </>
-
-
-            ),
+        columnHelper.accessor('patient.name', {
+            header: 'Nama Pasien',
+            cell: (info) => {
+                return info.getValue()
+            },
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
         }),
-    ];
-
-
+        columnHelper.accessor('patient.gender', {
+            header: 'Jenis Kelamin',
+            cell: (info) => {
+                return <span className="capitalize">{info.getValue()}</span>
+            },
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('pay', {
+            header: 'Biaya',
+            cell: (info) => {
+                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {rupiah.format(info.getValue())}
+                </span>
+            },
+            filterFn: fuzzyFilter,
+            sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('id', {
+            header: 'Aksi',
+            cell: (info) => {
+                return <Button href={`/dashboard/checkup/${info.getValue()}`} variant='solidBlue' size="sm" className=" px-6 text-sm font-normal">Lihat</Button>
+            },
+        })
+    ]
     const table = useReactTable({
-        data: patientData || [],
-        columns: patientColumns,
+        data: CheckupData || [],
+        columns: CheckupColumns,
         initialState: {
             pagination: {
                 pageSize,
@@ -179,7 +110,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <h1 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">
-                                Daftar Pasien
+                                Pemeriksaan Pasien
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -307,46 +238,5 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                 </div>
             </div>
         </div>
-    );
-}
-
-// A debounced input react component
-export function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
-}: {
-    value: string | number;
-    onChange: (value: string | number) => void;
-    debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-    const [value, setValue] = useState(initialValue);
-
-    useEffect(() => {
-        setValue(initialValue);
-    }, [initialValue]);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            onChange(value);
-        }, debounce);
-
-        return () => clearTimeout(timeout);
-    }, [value]);
-
-    return (
-        <>
-            <div className="relative mt-1 rounded-md shadow-sm">
-                <Input
-                    {...props}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                />
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </div>
-            </div>
-        </>
-    );
+    )
 }
