@@ -1,5 +1,5 @@
 import Layout from "@/components/dashboard/Layout";
-import { PasienPlusPage } from "@/pages/_app";
+import type { PasienPlusPage } from "@/pages/_app";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
 import { CalendarDatePicker } from "@/components/ui/datepicker/calendarDatePicker";
 
@@ -8,8 +8,12 @@ const Report: PasienPlusPage = () => {
     return (
         <>
             <h1>Report</h1>
-            <CalendarDateRangePicker />
-            <CalendarDatePicker />
+            <div className="flex justify-between">
+                <CalendarDatePicker />
+
+                <CalendarDateRangePicker />
+            </div>
+
         </>
     )
 }

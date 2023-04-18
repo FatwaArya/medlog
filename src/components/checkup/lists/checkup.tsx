@@ -15,74 +15,98 @@ import {
     getSortedRowModel,
     flexRender,
     createColumnHelper,
+    Column,
+    Table,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import { DebouncedInput, type ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
+import { useMemo, useState } from "react";
+import {
+    DebouncedInput,
+    type ListProps,
+    fuzzyFilter,
+    fuzzySort,
+} from "@/components/home/lists/patient";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { rupiah } from "@/utils/intlformat";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import {
+    ChevronDownIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    ChevronUpIcon,
+} from "lucide-react";
 
 dayjs.extend(relativeTime);
 
-type CheckupColumn = RouterOutputs["record"]['getRecords'][number]
+type CheckupColumn = RouterOutputs["record"]["getRecords"][number];
 
 const columnHelper = createColumnHelper<CheckupColumn>();
 
-
-export default function CheckupList({ pageSize = 10, isPaginated = true }: ListProps) {
+export default function CheckupList({
+    pageSize = 10,
+    isPaginated = true,
+}: ListProps) {
     const { data: CheckupData, isLoading } = api.record.getRecords.useQuery();
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
     const CheckupColumns = [
-        columnHelper.accessor('createdAt', {
-            header: 'Tanggal Pemeriksaan',
+        columnHelper.accessor("createdAt", {
+            header: "Tanggal Pemeriksaan",
             cell: (info) => {
-                return dayjs(info.getValue()).format('DD MMMM YYYY')
+                return dayjs(info.getValue()).format("DD MMMM YYYY");
+            },
+
+        }),
+        columnHelper.accessor("patient.name", {
+            header: "Nama Pasien",
+            cell: (info) => {
+                return info.getValue();
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
-        columnHelper.accessor('patient.name', {
-            header: 'Nama Pasien',
+        columnHelper.accessor("patient.gender", {
+            header: "Jenis Kelamin",
             cell: (info) => {
-                return info.getValue()
+                return <span className="capitalize">{info.getValue()}</span>;
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
-        columnHelper.accessor('patient.gender', {
-            header: 'Jenis Kelamin',
+        columnHelper.accessor("pay", {
+            header: "Biaya",
             cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>
+                return (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        {rupiah.format(info.getValue())}
+                    </span>
+                );
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
-        columnHelper.accessor('pay', {
-            header: 'Biaya',
+        columnHelper.accessor("id", {
+            header: "Aksi",
             cell: (info) => {
-                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {rupiah.format(info.getValue())}
-                </span>
+                return (
+                    <Button
+                        href={`/dashboard/checkup/${info.getValue()}`}
+                        variant="solidBlue"
+                        size="sm"
+                        className=" px-6 text-sm font-normal"
+                    >
+                        Lihat
+                    </Button>
+                );
             },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
         }),
-        columnHelper.accessor('id', {
-            header: 'Aksi',
-            cell: (info) => {
-                return <Button href={`/dashboard/checkup/${info.getValue()}`} variant='solidBlue' size="sm" className=" px-6 text-sm font-normal">Lihat</Button>
-            },
-        })
-    ]
+    ];
     const table = useReactTable({
         data: CheckupData || [],
         columns: CheckupColumns,
         initialState: {
             pagination: {
                 pageSize,
-            }
+            },
         },
         filterFns: {
             fuzzy: fuzzyFilter,
@@ -104,12 +128,12 @@ export default function CheckupList({ pageSize = 10, isPaginated = true }: ListP
     });
 
     return (
-        <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
+        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
                 <div className="">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
-                            <h1 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">
+                            <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
                                 Pemeriksaan Pasien
                             </h1>
                         </div>
@@ -134,20 +158,66 @@ export default function CheckupList({ pageSize = 10, isPaginated = true }: ListP
                                                         return (
                                                             <th
                                                                 key={header.id}
-                                                                scope="col"
-                                                                className={
-                                                                    "px-3 py-3.5 text-left text-sm  font-normal"
-                                                                }
+                                                                colSpan={header.colSpan}
+                                                                className="px-3 py-3.5 text-left text-sm  font-normal"
                                                             >
                                                                 {header.isPlaceholder ? null : (
                                                                     <>
-                                                                        {flexRender(
-                                                                            header.column.columnDef.header,
-                                                                            header.getContext()
-                                                                        )}
+                                                                        <div
+                                                                            {...{
+                                                                                className: header.column.getCanSort()
+                                                                                    ? "cursor-pointer select-none"
+                                                                                    : "",
+                                                                                onClick:
+                                                                                    header.column.getToggleSortingHandler(),
+                                                                            }}
+                                                                            className="flex items-center gap-1"
+                                                                        >
+                                                                            {flexRender(
+                                                                                header.column.columnDef.header,
+                                                                                header.getContext()
+                                                                            )}
+                                                                            {{
+                                                                                asc: <ChevronUpIcon />,
+                                                                                desc: <ChevronDownIcon />,
+                                                                            }[
+                                                                                header.column.getIsSorted() as string
+                                                                            ] ?? null}
+                                                                        </div>
                                                                     </>
                                                                 )}
                                                             </th>
+                                                            // <th
+                                                            //     key={header.id}
+                                                            //     scope="col"
+                                                            //     className={
+                                                            //         "px-3 py-3.5 text-left text-sm  font-normal"
+                                                            //     }
+                                                            // >
+                                                            //     {header.isPlaceholder ? null : (
+                                                            //         <div
+                                                            //             {...{
+                                                            //                 className: header.column.getCanSort()
+                                                            //                     ? 'cursor-pointer select-none'
+                                                            //                     : '',
+                                                            //                 onClick: header.column.getToggleSortingHandler(),
+                                                            //             }}
+
+                                                            //         >
+                                                            //             <>
+                                                            //                 {flexRender(
+                                                            //                     header.column.columnDef.header,
+                                                            //                     header.getContext()
+                                                            //                 )}
+                                                            //                 {{
+                                                            //                     asc: ChevronUpIcon,
+                                                            //                     desc: ChevronDownIcon,
+                                                            //                 }[header.column.getIsSorted() as string] ?? null}
+
+                                                            //             </>
+                                                            //         </div>
+                                                            //     )}
+                                                            // </th>
                                                         );
                                                     })}
                                                 </tr>
@@ -182,7 +252,10 @@ export default function CheckupList({ pageSize = 10, isPaginated = true }: ListP
 
                                             {table.getRowModel().rows.map((row) => {
                                                 return (
-                                                    <tr key={row.id} className="hover:bg-slate-700/10 cursor-pointer">
+                                                    <tr
+                                                        key={row.id}
+                                                        className="cursor-pointer hover:bg-slate-700/10"
+                                                    >
                                                         {row.getVisibleCells().map((cell) => {
                                                             return (
                                                                 <td
@@ -207,36 +280,111 @@ export default function CheckupList({ pageSize = 10, isPaginated = true }: ListP
                                     </table>
                                 </div>
                                 {isPaginated && (
-                                    <div className="flex items-center gap-2 justify-center mt-4 flex-row">
+                                    <div className="mt-4 flex flex-row items-center justify-center gap-2">
                                         <span className="flex items-center gap-1">
-                                            {table.getState().pagination.pageIndex + 1} dari{' '}
+                                            {table.getState().pagination.pageIndex + 1} dari{" "}
                                             {table.getPageCount()}
                                         </span>
                                         <div className="flex gap-4">
                                             <button
-                                                className={`border rounded p-1 ${!table.getCanPreviousPage() ? 'bg-gray-200' : ''
+                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""
                                                     }`}
                                                 onClick={() => table.previousPage()}
                                                 disabled={!table.getCanPreviousPage()}
                                             >
-                                                <ChevronLeftIcon className="w-4 h-4" />
+                                                <ChevronLeftIcon className="h-4 w-4" />
                                             </button>
                                             <button
-                                                className={`border rounded p-1 ${!table.getCanNextPage() ? 'bg-gray-200' : ''
+                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""
                                                     }`}
                                                 onClick={() => table.nextPage()}
                                                 disabled={!table.getCanNextPage()}
                                             >
-                                                <ChevronRightIcon className="w-4 h-4" />
+                                                <ChevronRightIcon className="h-4 w-4" />
                                             </button>
                                         </div>
-
-                                    </div>)}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
+
+// function Filter({
+//     column,
+//     table,
+// }: {
+//     column: Column<CheckupColumn, unknown>
+//     table: Table<CheckupColumn>
+// }) {
+//     const firstValue = table
+//         .getPreFilteredRowModel()
+//         .flatRows[0]?.getValue(column.id)
+
+//     const columnFilterValue = column.getFilterValue()
+
+//     const sortedUniqueValues = useMemo(
+//         () =>
+//             typeof firstValue === 'number'
+//                 ? []
+//                 : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+//         [column.getFacetedUniqueValues()]
+//     )
+
+//     return typeof firstValue === 'number' ? (
+//         <div>
+//             <div className="flex space-x-2">
+//                 <DebouncedInput
+//                     type="number"
+//                     min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
+//                     max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
+//                     value={(columnFilterValue as [number, number])?.[0] ?? ''}
+//                     onChange={value =>
+//                         column.setFilterValue((old: [number, number]) => [value, old?.[1]])
+//                     }
+//                     placeholder={`Min ${column.getFacetedMinMaxValues()?.[0]
+//                         ? `(${column.getFacetedMinMaxValues()?.[0]})`
+//                         : ''
+//                         }`}
+//                     className="w-24 border shadow rounded"
+//                 />
+//                 <DebouncedInput
+//                     type="number"
+//                     min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
+//                     max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
+//                     value={(columnFilterValue as [number, number])?.[1] ?? ''}
+//                     onChange={value =>
+//                         column.setFilterValue((old: [number, number]) => [old?.[0], value])
+//                     }
+//                     placeholder={`Max ${column.getFacetedMinMaxValues()?.[1]
+//                         ? `(${column.getFacetedMinMaxValues()?.[1]})`
+//                         : ''
+//                         }`}
+//                     className="w-24 border shadow rounded"
+//                 />
+//             </div>
+//             <div className="h-1" />
+//         </div>
+//     ) : (
+//         <>
+//             <datalist id={column.id + 'list'}>
+//                 {sortedUniqueValues.slice(0, 5000).map((value: any) => (
+//                     <option value={value} key={value} />
+//                 ))}
+//             </datalist>
+//             <DebouncedInput
+//                 type="text"
+//                 value={(columnFilterValue ?? '') as string}
+//                 onChange={value => column.setFilterValue(value)}
+//                 placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
+//                 className="w-36 border shadow rounded"
+//                 list={column.id + 'list'}
+//             />
+//             <div className="h-1" />
+//         </>
+//     )
+// }
