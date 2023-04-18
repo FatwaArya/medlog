@@ -9,6 +9,9 @@ import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
 import CheckupList from "@/components/checkup/lists/checkup";
+// import { CalendarDatePicker } from "@/components/ui/datepicker/calendarDatepicker";
+// import { CalendarDateRangePicker } from "@/components/ui/datepicker/CalendarDateRangePicker";
+import { CalendarDatePickerWithPresets } from "@/components/ui/datepicker/calendarDatePickerWithPresets";
 
 const Home: PasienPlusPage = () => {
     return (
@@ -26,6 +29,9 @@ const Home: PasienPlusPage = () => {
                 </div>
             </div>
             <PatientList pageSize={10} isPaginated={false} isDetailed={false} />
+            {/* <CalendarDatePicker />
+            <CalendarDateRangePicker /> */}
+            <CalendarDatePickerWithPresets />
         </>
     );
 }
