@@ -2,17 +2,36 @@ import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
 import { CalendarDatePicker } from "@/components/ui/datepicker/calendarDatePicker";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
+import { useState } from "react";
+import { api } from "@/utils/api";
 
 
 const Report: PasienPlusPage = () => {
+    const [date, setDate] = useState<DateRange | undefined>({
+        from: new Date(),
+        to: addDays(new Date(), 20),
+    })
+    const { data: reportsData } = api.record.getRecordReports.useQuery({
+        from: date?.from as Date,
+        to: date?.to as Date,
+    })
+
+
+
+
     return (
         <>
             <h1>Report</h1>
             <div className="flex justify-between">
                 <CalendarDatePicker />
 
-                <CalendarDateRangePicker />
+                <CalendarDateRangePicker date={date} setDate={setDate} />
             </div>
+            <pre>
+                {JSON.stringify(reportsData, null, 2)}
+            </pre>
 
         </>
     )

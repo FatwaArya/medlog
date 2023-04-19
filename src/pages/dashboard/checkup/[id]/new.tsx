@@ -17,6 +17,7 @@ import { prisma } from "@/server/db";
 import { Spinner } from "@/components/ui/loading-overlay";
 import dayjs from "dayjs";
 import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
+import { useRouter } from "next/router";
 
 
 export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
@@ -79,8 +80,9 @@ export const PatientDescription = (
 }
 
 
-const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
-    const { data: patient, isLoading: isLoadingPatient } = api.patient.getPatientById.useQuery({ patientId: id });
+const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
+    const { id } = useRouter().query;
+    const { data: patient, isLoading: isLoadingPatient } = api.patient.getPatientById.useQuery({ patientId: id as string });
 
 
     const methods = useForm<CheckupExistingPatient>();
@@ -109,7 +111,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
         }
     );
 
-    console.log(allPreviewAttachments)
 
     const onSubmit: SubmitHandler<CheckupExistingPatient> = async (data) => {
         const uploads: { key: string; ext: string }[] = [];
@@ -137,7 +138,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
 
         mutate(
             {
-                patientId: id,
+                patientId: id as string,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
                 note: data.note,
@@ -218,42 +219,42 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
 export default ContinueCheckup
 
 
-export async function getStaticProps(
-    context: GetStaticPropsContext<{ id: string }>,
-) {
+// export async function getStaticProps(
+//     context: GetStaticPropsContext<{ id: string }>,
+// ) {
 
-    const ssg = generateSSGHelper();
-    const id = context.params?.id as string;
+//     const ssg = generateSSGHelper();
+//     const id = context.params?.id as string;
 
 
-    await ssg.patient.getPatientById.prefetch({ patientId: id })
+//     await ssg.patient.getPatientById.prefetch({ patientId: id })
 
-    return {
-        props: {
-            trpcState: ssg.dehydrate(),
-            id,
-        },
-        revalidate: 1,
-    };
-}
+//     return {
+//         props: {
+//             trpcState: ssg.dehydrate(),
+//             id,
+//         },
+//         revalidate: 1,
+//     };
+// }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await prisma.patient.findMany({
-        select: {
-            id: true,
-        },
-    });
+// export const getStaticPaths: GetStaticPaths = async () => {
+//     const paths = await prisma.patient.findMany({
+//         select: {
+//             id: true,
+//         },
+//     });
 
-    return {
-        paths: paths.map((path) => ({
-            params: {
-                id: path.id,
-            },
-        })),
+//     return {
+//         paths: paths.map((path) => ({
+//             params: {
+//                 id: path.id,
+//             },
+//         })),
 
-        fallback: 'blocking',
-    };
-};
+//         fallback: 'blocking',
+//     };
+// };
 
 
 
