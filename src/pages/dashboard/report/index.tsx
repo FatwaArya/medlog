@@ -6,6 +6,7 @@ import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
 import { useState } from "react";
 import { api } from "@/utils/api";
+import Head from "next/head";
 
 
 const Report: PasienPlusPage = () => {
@@ -23,7 +24,11 @@ const Report: PasienPlusPage = () => {
 
     return (
         <>
-            <h1>Report</h1>
+            <Head>
+                <title>
+                    Pasien Plus | Laporan
+                </title>
+            </Head>
             <div className="flex justify-between">
                 <CalendarDatePicker />
 
