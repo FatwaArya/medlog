@@ -41,6 +41,11 @@ export const recordRouter = createTRPCRouter({
               File: true,
             },
           },
+          MedicineDetail: {
+            include: {
+              medicine: true,
+            },
+          },
         },
       });
       return record;
