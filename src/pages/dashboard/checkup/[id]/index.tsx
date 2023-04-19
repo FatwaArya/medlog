@@ -19,6 +19,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
+import {ImageOffIcon} from "lucide-react"
 
 type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patient']
 
@@ -59,119 +60,101 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                 <PatientDescription {...report?.patient as PatientInfo} />
                 <div className="bg-white overflow-hidden shadow sm:rounded-lg outline outline-1 outline-slate-200">
                     <div className="px-4 py-5 sm:p-6">
-                        <div className="max-w-full flex flex-col gap-6">
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Complaint </dt>
-                                    <dt>:</dt>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">Detail Pemeriksaan</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            Informasi detail pasien pada pemeriksaan.
+                        </p>
+                    </div>
+                    <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                        <div className=" max-w-full flex flex-col gap-y-8">
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Komplain </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.complaint ?? "Belum ada komplain"}</dd>
                                 </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.complaint ?? "Belum ada komplain"}</dd>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Diagnosa </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.diagnosis ?? "Belum ada diagnosis"}</dd>
                                 </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Diagnosis </dt>
-                                    <dt>:</dt>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Checkup </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.checkup ?? "Belum ada checkup"}</dd>
                                 </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.diagnosis ?? "Belum ada diagnosis"}</dd>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Perawatan </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.treatment ?? "Belum ada perawatan"}</dd>
                                 </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Checkup </dt>
-                                    <dt>:</dt>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Catatan Lab </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.labNote ?? "Belum ada catatan lab"}</dd>
                                 </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.checkup ?? "Belum ada checkup"}</dd>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Nominal Pembayaran </dt>
+                                    <dd className="text-gray-900 text-sm mt-1">{report?.pay.toLocaleString('id-ID',  { style: 'currency', currency: 'IDR' }) ?? "Belum ada nominal pembayaran"}</dd>
                                 </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Treatment </dt>
-                                    <dt>:</dt>
-                                </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.treatment ?? "Belum ada treatment"}</dd>
-                                </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Catatan Lab </dt>
-                                    <dt>:</dt>
-                                </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.labNote ?? "Belum ada catatan lab"}</dd>
-                                </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-center">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Nominal Bayar </dt>
-                                    <dt>:</dt>
-                                </div>
-                                <div className="flex-1">
-                                    <dd className="text-gray-900 text-sm">{report?.pay.toLocaleString('id-ID',  { style: 'currency', currency: 'IDR' }) ?? "Belum ada nominal"}</dd>
-                                </div>
-                            </div>
-                            <div className="w-full flex gap-4 items-start">
-                                <div className="w-1/5 flex justify-between items-center font-medium text-gray-500 text-sm">
-                                    <dt>Attachment </dt>
-                                    <dt>:</dt>
-                                </div>
-                                <div className="flex-1 max-w-sm">
-                                    <div className="flex items-center justify-start">
-                                        {attachment.map((item, i) => (
-                                            <div 
-                                                key={i}
-                                                className={`${
-                                                    i === activeSlide
-                                                    ? "opacity-100 z-10"
-                                                    : "opacity-0 z-0 absolute"
-                                                } transition-opacity duration-500 ease-in-out w-full max-w-sm rounded-sm border p-2 border-gray-200`}
-                                            >
-                                                <div className="relative">
-                                                    <Image 
-                                                        src={item?.File?.url as string }
-                                                        alt={item?.File?.name as string}
-                                                        width={576}
-                                                        height={20}
-                                                        className="rounded-sm max-h-52 h-full object-cover hover:brightness-75 cursor-pointer"
-                                                    />
-                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                            <Dialog>
-                                                                <DialogTrigger>
-                                                                    <Button size="sm" variant="solidWhite">Lihat Detail</Button>
-                                                                </DialogTrigger>
-                                                                    <DialogContent className="max-w-3xl w-full">
-                                                                        <DialogHeader>
-                                                                            <DialogTitle>Attachment Detail</DialogTitle>
-                                                                            <DialogDescription>
+                                <div className="w-full flex flex-col items-start sm:col-span-1">
+                                    <dt className="font-medium text-gray-500 text-sm">Foto Luka </dt>
+                                    <div className="flex flex-col items-center justify-start mt-1">
+                                            {attachment.length !== 0 ? attachment.map((item, i) => (
+                                                <div 
+                                                    key={i}
+                                                    className={`${
+                                                        i === activeSlide
+                                                        ? "opacity-100 z-10"
+                                                        : "opacity-0 z-0 absolute"
+                                                    } transition-opacity duration-500 ease-in-out w-full max-w-sm rounded-sm border p-2 border-gray-200`}
+                                                >
+                                                    <div className="relative">
+                                                        <Image 
+                                                            src={item?.File?.url as string }
+                                                            alt={item?.File?.name as string}
+                                                            width={576}
+                                                            height={20}
+                                                            className="rounded-sm max-h-52 h-full object-cover hover:brightness-75 cursor-pointer"
+                                                        />
+                                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                                <Dialog>
+                                                                    <DialogTrigger>
+                                                                        <Button size="sm" variant="solidWhite">Lihat Detail</Button>
+                                                                    </DialogTrigger>
+                                                                        <DialogContent className="min-w-[1200px] w-full ">
+                                                                            <DialogHeader>
+                                                                                <DialogTitle>Attachment Detail</DialogTitle>
+                                                                            </DialogHeader>
+                                                                            {isLoading 
+                                                                                ? <div className="flex h-full justify-center items-center"><Spinner/></div> 
+                                                                                : (
                                                                                 <Image 
                                                                                     src={item?.File?.url as string }
                                                                                     alt={item?.File?.name as string} 
-                                                                                    width={576} 
+                                                                                    width={1280} 
                                                                                     height={20}
-                                                                                    className="max-h-96 object-cover h-full"
-                                                                                />
-                                                                            </DialogDescription>
-                                                                        </DialogHeader>
-                                                                    </DialogContent>
-                                                            </Dialog>
-                                                        </div>
+                                                                                    quality={100}
+                                                                                    className="max-h-[800px] object-cover h-full overflow-y-scroll"
+                                                                                /> )
+                                                                            }
+                                                                        </DialogContent>
+                                                                </Dialog>
+                                                            </div>
+                                                    </div>
                                                 </div>
+                                            )) : (
+                                                <div className="w-[576px] rounded-sm border p-2 flex justify-center items-center border-gray-200 h-[208px]">
+                                                    <div className="flex flex-col items-center gap-4">
+                                                        <ImageOffIcon className="text-gray-400" />
+                                                        <p className="text-sm text-gray-400 font-medium">Belum ada foto luka</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        {attachment.length !== 0 && (
+                                            <div className="flex w-full items-center justify-between mt-3">
+                                                <Button size="sm" variant="ghost" onClick={goToPrevSlide}>Prev</Button>
+                                                <p className="text-sm font-medium text-gray-600">{activeSlide + 1} / {attachment.length}</p>
+                                                <Button size="sm" variant="ghost" onClick={goToNextSlide}>Next</Button>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <div className="flex items-center justify-between mt-3">
-                                        <Button size="sm" variant="ghost" onClick={goToPrevSlide}>Prev</Button>
-                                        <p className="text-sm font-medium text-gray-600">{activeSlide + 1} / {attachment.length}</p>
-                                        <Button size="sm" variant="ghost" onClick={goToNextSlide}>Next</Button>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
+                        </div> 
                     </div>
                 </div>
             </div>
