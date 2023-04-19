@@ -14,9 +14,11 @@ import { v4 as uuidv4 } from "uuid";
 import { type Readable } from "stream";
 import probe from "probe-image-size";
 import localeData from "dayjs/plugin/localeData";
+import isBetween from "dayjs/plugin/isBetween";
 import { TRPCError } from "@trpc/server";
 
 dayjs.extend(localeData);
+dayjs.extend(isBetween);
 
 interface GenderCount {
   date: string;
@@ -396,7 +398,7 @@ export const patientRouter = createTRPCRouter({
     .input(
       z
         .object({
-          sortBy: z.enum(["month", "year", "all"]).nullish(),
+          sortBy: z.enum(["month", "year", "all", "week"]).nullish(),
         })
         .nullish()
     )
@@ -421,6 +423,36 @@ export const patientRouter = createTRPCRouter({
       });
       const currentYear = dayjs().format("YYYY");
       const currentMonthYear = dayjs().format("MMM YYYY");
+
+      const startOfWeek = dayjs().startOf("week");
+
+      const weeklyVisits = Array.from({ length: 7 }, (_, i) => {
+        const date = startOfWeek.add(i, "day");
+        const dateString = date.format("DD MMM");
+        const dayVisits = visits
+          .filter((visit) => {
+            const createdAt = dayjs(visit.createdAt);
+            return createdAt.isSame(date, "day");
+          })
+          .reduce(
+            (counts, visit) => {
+              if (visit.patient.gender === "male") {
+                counts.Male += 1;
+              } else if (visit.patient.gender === "female") {
+                counts.Female += 1;
+              }
+              return counts;
+            },
+            { Male: 0, Female: 0 }
+          );
+
+        return {
+          date: dateString,
+          Male: dayVisits.Male,
+          Female: dayVisits.Female,
+        };
+      });
+
       const allTimeVisits = visits.reduce((acc: GenderCount[], cur) => {
         const existingCount = acc.find((count) =>
           dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month")
@@ -491,7 +523,10 @@ export const patientRouter = createTRPCRouter({
         }
         return acc;
       }, []);
+
       switch (input?.sortBy) {
+        case "week":
+          return weeklyVisits;
         case "month":
           return monthlyVisits;
         case "year":
