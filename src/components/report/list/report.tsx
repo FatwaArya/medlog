@@ -1,11 +1,10 @@
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DownloadIcon } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
-import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
     useReactTable,
-    type ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
     getFacetedRowModel,
@@ -16,91 +15,96 @@ import {
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import {
-    DebouncedInput,
-    type ListProps,
-    fuzzyFilter,
-    fuzzySort,
-} from "@/components/home/lists/patient";
-import { Spinner } from "@/components/ui/loading-overlay";
+import { useEffect, useRef, useState } from "react";
+import { type ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
+import { addDays } from "date-fns";
+import { type DateRange } from "react-day-picker";
 import { rupiah } from "@/utils/intlformat";
-import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    ChevronUpIcon,
-} from "lucide-react";
+import { Spinner } from "@/components/ui/loading-overlay";
+import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
+import ReactToPrint from "react-to-print";
 
-dayjs.extend(relativeTime);
 
-type CheckupColumn = RouterOutputs["record"]["getRecords"][number];
+type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
 
-const columnHelper = createColumnHelper<CheckupColumn>();
+const columnHelper = createColumnHelper<ReportColumn>();
+const ReportColumns = [
+    columnHelper.accessor("createdAt", {
+        header: "Tanggal Pemeriksaan",
+        cell: (info) => {
+            return dayjs(info.getValue()).format("DD MMMM YYYY");
+        },
 
-export default function CheckupList({
-    pageSize = 10,
-    isPaginated = true,
-}: ListProps) {
-    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery();
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [globalFilter, setGlobalFilter] = useState("");
+    }),
+    columnHelper.accessor("patient.name", {
+        header: "Nama Pasien",
+        cell: (info) => {
+            return info.getValue();
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.address', {
+        header: "Alamat Pasien",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.phone', {
+        header: "Nomor Telepon",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.user.name', {
+        header: "Nama Perawat",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor("pay", {
+        header: "Biaya",
+        cell: (info) => {
+            return (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    {rupiah.format(info.getValue())}
+                </span>
+            );
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+]
 
-    const CheckupColumns = [
-        columnHelper.accessor("createdAt", {
-            header: "Tanggal Pemeriksaan",
-            cell: (info) => {
-                return dayjs(info.getValue()).format("DD MMMM YYYY");
-            },
 
-        }),
-        columnHelper.accessor("patient.name", {
-            header: "Nama Pasien",
-            cell: (info) => {
-                return info.getValue();
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("patient.gender", {
-            header: "Jenis Kelamin",
-            cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>;
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("pay", {
-            header: "Biaya",
-            cell: (info) => {
-                return (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                        {rupiah.format(info.getValue())}
-                    </span>
-                );
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("id", {
-            header: "Aksi",
-            cell: (info) => {
-                return (
-                    <Button
-                        href={`/dashboard/checkup/${info.getValue()}`}
-                        variant="solidBlue"
-                        size="sm"
-                        className=" px-6 text-sm font-normal"
-                    >
-                        Lihat
-                    </Button>
-                );
-            },
-        }),
-    ];
+export default function ReportList(props: ListProps) {
+    const { pageSize = 10, isPaginated = true } = props
+    const [date, setDate] = useState<DateRange | undefined>({
+        from: new Date(),
+        to: addDays(new Date(), 20),
+    })
+    const { data, isLoading } = api.record.getRecordReports.useQuery({
+        from: date?.from as Date,
+        to: date?.to as Date,
+    })
+
+    const [reportsData, setReportsData] = useState<ReportColumn[]>(data || [])
+
+    useEffect(() => {
+        setReportsData(data || [])
+    }, [data])
+    const componentRef = useRef(null);
+
+
     const table = useReactTable({
-        data: CheckupData || [],
-        columns: CheckupColumns,
+        data: reportsData || [],
+        columns: ReportColumns,
         initialState: {
             pagination: {
                 pageSize,
@@ -109,13 +113,6 @@ export default function CheckupList({
         filterFns: {
             fuzzy: fuzzyFilter,
         },
-        state: {
-            columnFilters,
-            globalFilter,
-        },
-        onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: fuzzyFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -124,25 +121,28 @@ export default function CheckupList({
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
-
+    //https://www.npmjs.com/package/react-to-print
     return (
-        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
+        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg" ref={componentRef}>
             <div className="px-4 py-5 sm:p-6">
                 <div className="">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
-                                Pemeriksaan Pasien
+                                Laporan Pasien
                             </h1>
                         </div>
-                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-
-                            <DebouncedInput
-                                value={globalFilter ?? ""}
-                                onChange={(value) => setGlobalFilter(String(value))}
-                                className="font-lg border-block border p-2"
-                                placeholder="Search"
+                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center gap-2">
+                            <ReactToPrint
+                                trigger={() => {
+                                    return <Button disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                        <DownloadIcon className=" h-4 w-4" />
+                                    </Button>
+                                }}
+                                content={() => componentRef.current}
                             />
+
+                            <CalendarDateRangePicker setDate={setDate} date={date} />
                         </div>
                     </div>
                     <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
@@ -237,13 +237,15 @@ export default function CheckupList({
                                                 <tr>
                                                     <td colSpan={6}>
                                                         <div className="flex items-center justify-center py-8">
-                                                            <Button
+                                                            {/* <Button
                                                                 variant="solidBlue"
                                                                 className=" px-6 text-sm font-normal"
                                                                 href="/dashboard/checkup/new"
                                                             >
                                                                 Daftar Pasien
-                                                            </Button>
+                                                            </Button> */}
+                                                            {/*  */}
+                                                            Pasien tidak ditemukan atau coba ganti tanggal
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -286,16 +288,14 @@ export default function CheckupList({
                                         </span>
                                         <div className="flex gap-4">
                                             <button
-                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""
-                                                    }`}
+                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""}`}
                                                 onClick={() => table.previousPage()}
                                                 disabled={!table.getCanPreviousPage()}
                                             >
                                                 <ChevronLeftIcon className="h-4 w-4" />
                                             </button>
                                             <button
-                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""
-                                                    }`}
+                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""}`}
                                                 onClick={() => table.nextPage()}
                                                 disabled={!table.getCanNextPage()}
                                             >

@@ -39,6 +39,7 @@ specifiers:
   class-variance-authority: ^0.4.0
   clsx: ^1.2.1
   csstype: ^3.1.2
+  date-fns: ^2.29.3
   dayjs: ^1.11.7
   eslint: ^8.38.0
   eslint-config-next: ^13.3.0
@@ -54,12 +55,14 @@ specifiers:
   probe-image-size: ^7.2.3
   prop-types: ^15.8.1
   react: 18.2.0
+  react-day-picker: ^8.7.1
   react-dom: 18.2.0
   react-dropzone: ^14.2.3
   react-hook-form: ^7.43.9
   react-hot-toast: ^2.4.0
   react-icons: ^4.8.0
   react-select: ^5.7.2
+  react-to-print: ^2.14.12
   recharts: ^2.5.0
   sharp: ^0.32.0
   superjson: 1.12.2
@@ -99,6 +102,7 @@ dependencies:
   class-variance-authority: 0.4.0_typescript@5.0.4
   clsx: 1.2.1
   csstype: 3.1.2
+  date-fns: 2.29.3
   dayjs: 1.11.7
   framer-motion: 10.11.6_biqbaboplfbrettd7655fr4n2y
   lucide-react: 0.129.0_react@18.2.0
@@ -107,12 +111,14 @@ dependencies:
   next-axiom: 0.17.0_next@13.3.0
   prop-types: 15.8.1
   react: 18.2.0
+  react-day-picker: 8.7.1_r6j3756ioqf5pjc2u22wj25rla
   react-dom: 18.2.0_react@18.2.0
   react-dropzone: 14.2.3_react@18.2.0
   react-hook-form: 7.43.9_react@18.2.0
   react-hot-toast: 2.4.0_s7mghcr6idhb4d5ook54gl4n44
   react-icons: 4.8.0_react@18.2.0
   react-select: 5.7.2_7geocmx3442bocz6x6zwg5lxxi
+  react-to-print: 2.14.12_biqbaboplfbrettd7655fr4n2y
   recharts: 2.5.0_v2m5e27vhdewzwhryxwfaorcca
   sharp: 0.32.0
   superjson: 1.12.2
@@ -2974,6 +2980,11 @@ packages:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
     dev: true
 
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
+
   /dayjs/1.11.7:
     resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
@@ -4827,6 +4838,16 @@ packages:
       strip-json-comments: 2.0.1
     dev: false
 
+  /react-day-picker/8.7.1_r6j3756ioqf5pjc2u22wj25rla:
+    resolution: {integrity: sha512-Gv426AW8b151CZfh3aP5RUGztLwHB/EyJgWZ5iMgtzbFBkjHfG6Y66CIQFMWGLnYjsQ9DYSJRmJ5S0Pg5HWKjA==}
+    peerDependencies:
+      date-fns: ^2.28.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      date-fns: 2.29.3
+      react: 18.2.0
+    dev: false
+
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -4991,6 +5012,17 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       tslib: 2.5.0
+    dev: false
+
+  /react-to-print/2.14.12_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-qFJAwvDFd95Z+FWNqitt+HaB1/z+Zdd0MMrNOPUSus3fG32vqv512yB+HXhQ94J3HKoyqaIg44v0Zfc6xUBqlg==}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react-transition-group/2.9.0_biqbaboplfbrettd7655fr4n2y:

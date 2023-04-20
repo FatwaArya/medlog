@@ -1,7 +1,6 @@
-import { LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 
 import { cn } from "@/utils/cn";
-import { rupiah, persen } from "@/utils/intlformat";
 
 export interface StatsProps {
   header: {

@@ -1,5 +1,5 @@
-import * as trpc from "@trpc/server";
-import * as trpcNext from "@trpc/server/adapters/next";
+import type * as trpc from "@trpc/server";
+import type * as trpcNext from "@trpc/server/adapters/next";
 import { prisma } from "./db";
 
 // create context based of incoming request

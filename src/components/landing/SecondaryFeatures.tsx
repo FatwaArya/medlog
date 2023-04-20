@@ -1,5 +1,5 @@
 import { useId } from "react";
-import Image, { StaticImageData } from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Tab } from "@headlessui/react";
 import clsx from "clsx";
 

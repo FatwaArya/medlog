@@ -126,8 +126,8 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                                             <DialogHeader>
                                                                 <DialogTitle>Attachment Detail</DialogTitle>
                                                             </DialogHeader>
-                                                                <div className="sm:h-[600px] h-[240px] overflow-y-scroll">
-                                                                    {isLoading ? <div className="flex h-full justify-center items-center"><Spinner /></div> 
+                                                            <div className="sm:h-[600px] h-[240px] overflow-y-scroll">
+                                                                {isLoading ? <div className="flex h-full justify-center items-center"><Spinner /></div>
                                                                     : (
                                                                         <Image
                                                                             src={item?.File?.url as string}
@@ -138,7 +138,7 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                                                             className="object-cover w-full h-auto"
                                                                         />
                                                                     )}
-                                                                
+
                                                             </div>
                                                         </DialogContent>
                                                     </Dialog>

@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 export function Spinner(props: { className?: string }) {
   return (
