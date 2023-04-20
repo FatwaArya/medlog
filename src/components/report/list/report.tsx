@@ -31,73 +31,83 @@ import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDate
 
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
-const columnHelper = createColumnHelper<ReportColumn>();
 
-export default function ReportList({ pageSize = 10, isPaginated = true }: ListProps) {
+const columnHelper = createColumnHelper<ReportColumn>();
+const ReportColumns = [
+    columnHelper.accessor("createdAt", {
+        header: "Tanggal Pemeriksaan",
+        cell: (info) => {
+            return dayjs(info.getValue()).format("DD MMMM YYYY");
+        },
+
+    }),
+    columnHelper.accessor("patient.name", {
+        header: "Nama Pasien",
+        cell: (info) => {
+            return info.getValue();
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.address', {
+        header: "Alamat Pasien",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.phone', {
+        header: "Nomor Telepon",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor('patient.user.name', {
+        header: "Nama Perawat",
+        cell: (info) => {
+            return <span className="capitalize">{info.getValue()}</span>;
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+    columnHelper.accessor("pay", {
+        header: "Biaya",
+        cell: (info) => {
+            return (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    {rupiah.format(info.getValue())}
+                </span>
+            );
+        },
+        filterFn: fuzzyFilter,
+        sortingFn: fuzzySort,
+    }),
+]
+
+
+export default function ReportList(props: ListProps) {
+    const { pageSize = 10, isPaginated = true } = props
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: addDays(new Date(), 20),
     })
-    const { data: ReportsData, isLoading } = api.record.getRecordReports.useQuery({
+    const { data, isLoading } = api.record.getRecordReports.useQuery({
         from: date?.from as Date,
         to: date?.to as Date,
     })
-    const ReportColumns = [
-        columnHelper.accessor("createdAt", {
-            header: "Tanggal Pemeriksaan",
-            cell: (info) => {
-                return dayjs(info.getValue()).format("DD MMMM YYYY");
-            },
 
-        }),
-        columnHelper.accessor("patient.name", {
-            header: "Nama Pasien",
-            cell: (info) => {
-                return info.getValue();
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor('patient.address', {
-            header: "Alamat Pasien",
-            cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>;
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor('patient.phone', {
-            header: "Nomor Telepon",
-            cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>;
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor('patient.user.name', {
-            header: "Nama Perawat",
-            cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>;
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("pay", {
-            header: "Biaya",
-            cell: (info) => {
-                return (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                        {rupiah.format(info.getValue())}
-                    </span>
-                );
-            },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
-        }),
-    ]
+    const [reportsData, setReportsData] = useState<ReportColumn[]>(data || [])
+
+    useEffect(() => {
+        setReportsData(data || [])
+    }, [data])
+
 
     const table = useReactTable({
-        data: ReportsData || [],
+        data: reportsData || [],
         columns: ReportColumns,
         initialState: {
             pagination: {
@@ -126,14 +136,16 @@ export default function ReportList({ pageSize = 10, isPaginated = true }: ListPr
                                 Laporan Pasien
                             </h1>
                         </div>
-                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center">
-                            <Button disabled={ReportsData?.length === 0}>
-                                <DownloadIcon className="mr-2 h-4 w-4" />
-                                Unduh Laporan
+                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center gap-2">
+                            <Button disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                <DownloadIcon className=" h-4 w-4" />
+
                             </Button>
-                            <CalendarDateRangePicker date={date} setDate={setDate} />
+                            <CalendarDateRangePicker setDate={setDate} date={date} />
                         </div>
                     </div>
+                    <pre>
+                    </pre>
                     <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full divide-gray-300 align-middle">
@@ -226,13 +238,15 @@ export default function ReportList({ pageSize = 10, isPaginated = true }: ListPr
                                                 <tr>
                                                     <td colSpan={6}>
                                                         <div className="flex items-center justify-center py-8">
-                                                            <Button
+                                                            {/* <Button
                                                                 variant="solidBlue"
                                                                 className=" px-6 text-sm font-normal"
                                                                 href="/dashboard/checkup/new"
                                                             >
                                                                 Daftar Pasien
-                                                            </Button>
+                                                            </Button> */}
+                                                            {/*  */}
+                                                            Pasien tidak ditemukan atau coba ganti tanggal
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -275,16 +289,14 @@ export default function ReportList({ pageSize = 10, isPaginated = true }: ListPr
                                         </span>
                                         <div className="flex gap-4">
                                             <button
-                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""
-                                                    }`}
+                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""}`}
                                                 onClick={() => table.previousPage()}
                                                 disabled={!table.getCanPreviousPage()}
                                             >
                                                 <ChevronLeftIcon className="h-4 w-4" />
                                             </button>
                                             <button
-                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""
-                                                    }`}
+                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""}`}
                                                 onClick={() => table.nextPage()}
                                                 disabled={!table.getCanNextPage()}
                                             >

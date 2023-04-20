@@ -11,6 +11,16 @@ import ReportList from "@/components/report/list/report";
 
 
 const Report: PasienPlusPage = () => {
+    // const [date, setDate] = useState<DateRange | undefined>({
+    //     from: new Date(),
+    //     to: addDays(new Date(), 20),
+    // })
+    // const { data: ReportsData, isLoading } = api.record.getRecordReports.useQuery({
+    //     from: date?.from as Date,
+    //     to: date?.to as Date,
+    // })
+    // console.log(date)
+
     return (
         <>
             <Head>
@@ -18,8 +28,9 @@ const Report: PasienPlusPage = () => {
                     Pasien Plus | Laporan
                 </title>
             </Head>
+            {/* <CalendarDateRangePicker setDate={setDate} date={date} /> */}
 
-            <ReportList isDetailed={true} isPaginated />
+            <ReportList isDetailed={true} isPaginated pageSize={50} />
 
         </>
     )
