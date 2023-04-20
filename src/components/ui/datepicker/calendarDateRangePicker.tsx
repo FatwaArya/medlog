@@ -1,5 +1,5 @@
 import * as React from "react"
-import { format } from "date-fns"
+import { addDays, format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { type DateRange } from "react-day-picker"
 
@@ -11,6 +11,13 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface DateRangeProps {
     className?: string
@@ -53,15 +60,43 @@ export function CalendarDateRangePicker({
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={setDate}
-                        numberOfMonths={2}
-                    />
+
+                <PopoverContent className="flex w-auto flex-col space-y-2 p-2" align="start">
+                    <Select
+                        onValueChange={(value) =>
+                            setDate(
+                                { from: addDays(new Date(), parseInt(value)), to: new Date() }
+                            )
+                        }
+                    >
+                        <SelectTrigger>
+                            <SelectValue
+                                placeholder="Pilih Rentang Waktu"
+                            />
+                        </SelectTrigger>
+                        <SelectContent position='item-aligned' className="mt-12">
+                            <SelectItem value="-3">
+                                3 Hari Terakhir
+                            </SelectItem>
+                            <SelectItem value="-7">
+                                7 Hari Terakhir
+                            </SelectItem>
+                            <SelectItem value="-30">
+                                30 Hari Terakhir
+                            </SelectItem>
+
+                        </SelectContent>
+                    </Select>
+                    <div className="rounded-md border">
+                        <Calendar
+                            initialFocus
+                            mode="range"
+                            defaultMonth={date?.from}
+                            selected={date}
+                            onSelect={setDate}
+                            numberOfMonths={2}
+                        />
+                    </div>
                 </PopoverContent>
             </Popover>
         </div>

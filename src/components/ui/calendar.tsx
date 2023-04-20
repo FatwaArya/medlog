@@ -43,7 +43,7 @@ function Calendar({
                     buttonVariants({ variant: "ghost" }),
                     "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
                 ),
-                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                day_selected: "bg-blue-600 text-primary-foreground hover:bg-blue-600 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                 day_today: "bg-secondary text-accent-foreground",
                 day_outside: "text-muted-foreground opacity-50",
                 day_disabled: "text-muted-foreground opacity-50",
@@ -51,9 +51,9 @@ function Calendar({
                     "aria-selected:bg-accent aria-selected:text-accent-foreground",
                 day_hidden: "invisible",
                 day_range_start:
-                    "aria-selected:bg-primary aria-selected:text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                    "aria-selected:bg-blue-600 aria-selected:text-primary-foreground hover:bg-blue-600 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                 day_range_end:
-                    "aria-selected:bg-primary aria-selected:text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                    "aria-selected:bg-blue-600 aria-selected:text-primary-foreground hover:bg-blue-600 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
 
                 ...classNames,
             }}
