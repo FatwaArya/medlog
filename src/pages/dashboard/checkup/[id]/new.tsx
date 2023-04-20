@@ -12,11 +12,8 @@ import { LabForm } from "@/components/checkup/form/lab";
 import { type PasienPlusPage } from "@/pages/_app";
 import { type FileAndAttachment } from "../new";
 
-import { type GetStaticPropsContext, type GetStaticPaths } from 'next';
-import { prisma } from "@/server/db";
 import { Spinner } from "@/components/ui/loading-overlay";
 import dayjs from "dayjs";
-import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import { useRouter } from "next/router";
 
 

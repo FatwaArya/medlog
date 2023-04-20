@@ -1,5 +1,5 @@
-import { AttachmentType } from "@/components/checkup/Attachment";
-import { FileAndAttachment } from "@/pages/dashboard/checkup/new";
+import { type AttachmentType } from "@/components/checkup/Attachment";
+import { type FileAndAttachment } from "@/pages/dashboard/checkup/new";
 import { create } from "zustand";
 
 interface AttachmentStore {
@@ -24,7 +24,7 @@ export const useCheckUpAttachmentStore = create<AttachmentStore>((set) => ({
     }));
   },
   clearFileAndAttachment: () => {
-    set((state) => ({
+    set(() => ({
       fileAndAttachment: [],
     }));
   },
@@ -45,7 +45,7 @@ export const useLabsAttachmentStore = create<AttachmentStore>((set) => ({
     }));
   },
   clearFileAndAttachment: () => {
-    set((state) => ({
+    set(() => ({
       fileAndAttachment: [],
     }));
   },

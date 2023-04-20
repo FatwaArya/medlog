@@ -16,7 +16,7 @@ import {
     YAxis,
 } from "recharts";
 import type { TooltipProps } from "recharts";
-import {
+import type {
     NameType,
     ValueType,
 } from "recharts/types/component/DefaultTooltipContent";

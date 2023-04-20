@@ -1,30 +1,24 @@
-import { Input } from "@/components/ui/input";
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DownloadIcon, SearchIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DownloadIcon } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
-import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
     useReactTable,
-    type ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
     getPaginationRowModel,
-    sortingFns,
     getSortedRowModel,
-    type FilterFn,
-    type SortingFn,
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { DebouncedInput, ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
+import { type ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
 import { addDays } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";

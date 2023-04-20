@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
 
-const DialogContentMotion = motion(Dialog.Content);
-
 
 interface SidebarEntry {
   name: string;

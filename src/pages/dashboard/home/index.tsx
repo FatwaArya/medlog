@@ -1,17 +1,12 @@
 import { LineCharts } from "@/components/home/charts/charts";
 import PatientList from "@/components/home/lists/patient";
-import { api } from "@/utils/api";
-import { ReactElement, useEffect, useState } from "react";
+import { type ReactElement } from "react";
 
 import Layout from "@/components/dashboard/Layout";
-import { PasienPlusPage } from "@/pages/_app";
+import { type PasienPlusPage } from "@/pages/_app";
 import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
-import CheckupList from "@/components/checkup/lists/checkup";
-// import { CalendarDatePicker } from "@/components/ui/datepicker/calendarDatepicker";
-// import { CalendarDateRangePicker } from "@/components/ui/datepicker/CalendarDateRangePicker";
-import { CalendarDatePickerWithPresets } from "@/components/ui/datepicker/calendarDatePickerWithPresets";
 
 const Home: PasienPlusPage = () => {
     return (

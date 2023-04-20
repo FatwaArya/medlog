@@ -8,7 +8,6 @@ import { Container } from "@/components/landing/Container";
 import { Logo } from "@/components/landing/Logo";
 import { NavLink } from "@/components/landing/NavLink";
 import { useSession } from "next-auth/react";
-import { Loader2 } from "lucide-react";
 
 function MobileNavLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (

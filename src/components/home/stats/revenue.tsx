@@ -4,7 +4,7 @@ import { DollarSignIcon } from "lucide-react";
 import { api } from "@/utils/api";
 import { readableDate, rupiah } from "@/utils/intlformat";
 
-import { Stats, StatsProps } from "./stats";
+import { Stats, type StatsProps } from "./stats";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 
 export const RevenueStats = () => {
