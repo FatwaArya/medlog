@@ -15,13 +15,14 @@ import {
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type ListProps, fuzzyFilter, fuzzySort } from "@/components/home/lists/patient";
 import { addDays } from "date-fns";
 import { type DateRange } from "react-day-picker";
 import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
+import ReactToPrint from "react-to-print";
 
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
@@ -98,6 +99,7 @@ export default function ReportList(props: ListProps) {
     useEffect(() => {
         setReportsData(data || [])
     }, [data])
+    const componentRef = useRef(null);
 
 
     const table = useReactTable({
@@ -119,9 +121,9 @@ export default function ReportList(props: ListProps) {
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
-
+    //https://www.npmjs.com/package/react-to-print
     return (
-        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
+        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg" ref={componentRef}>
             <div className="px-4 py-5 sm:p-6">
                 <div className="">
                     <div className="sm:flex sm:items-center">
@@ -131,15 +133,18 @@ export default function ReportList(props: ListProps) {
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center gap-2">
-                            <Button disabled={reportsData?.length === 0} variant={"solidBlue"}>
-                                <DownloadIcon className=" h-4 w-4" />
+                            <ReactToPrint
+                                trigger={() => {
+                                    return <Button disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                        <DownloadIcon className=" h-4 w-4" />
+                                    </Button>
+                                }}
+                                content={() => componentRef.current}
+                            />
 
-                            </Button>
                             <CalendarDateRangePicker setDate={setDate} date={date} />
                         </div>
                     </div>
-                    <pre>
-                    </pre>
                     <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full divide-gray-300 align-middle">
