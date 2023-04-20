@@ -32,6 +32,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    UserPlusIcon,
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
@@ -138,6 +139,7 @@ export default function CheckupList({
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+
                             <DebouncedInput
                                 value={globalFilter ?? ""}
                                 onChange={(value) => setGlobalFilter(String(value))}

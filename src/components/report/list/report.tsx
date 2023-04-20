@@ -38,10 +38,10 @@ export default function ReportList({ pageSize = 10, isPaginated = true }: ListPr
         from: new Date(),
         to: addDays(new Date(), 20),
     })
-    // const { data: ReportsData, isLoading } = api.record.getRecordReports.useQuery({
-    //     from: date?.from as Date,
-    //     to: date?.to as Date,
-    // })
+    const { data: ReportsData, isLoading } = api.record.getRecordReports.useQuery({
+        from: date?.from as Date,
+        to: date?.to as Date,
+    })
     const ReportColumns = [
         columnHelper.accessor("createdAt", {
             header: "Tanggal Pemeriksaan",

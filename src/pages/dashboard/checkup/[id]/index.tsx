@@ -8,7 +8,6 @@ import type { GetStaticPaths, GetStaticPropsContext } from "next/types";
 import type { RouterOutputs } from "@/utils/api";
 import { PatientDescription } from "./new";
 import { Spinner } from "@/components/ui/loading-overlay";
-import Image from "next/image";
 
 type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patient']
 
