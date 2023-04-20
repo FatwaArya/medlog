@@ -31,7 +31,7 @@ export const PatientDescription = (
         <>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
                 <div className="px-4 py-5 sm:px-6">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Informasi Pasien</h3>
+                    <h3 className="text-lg leading-6 font-medium text-blue-600">Informasi Pasien</h3>
                     <p className="mt-1 max-w-2xl text-sm text-gray-500">
                         Informasi dasar pasien pada pemeriksaan.
                     </p>

@@ -60,7 +60,7 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                 <PatientDescription {...report?.patient as PatientInfo} />
                 <div className="bg-white overflow-hidden shadow sm:rounded-lg outline outline-1 outline-slate-200">
                     <div className="px-4 py-5 sm:p-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">Detail Pemeriksaan</h3>
+                        <h3 className="text-lg leading-6 font-medium text-blue-600">Data Pemeriksaan</h3>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500">
                             Informasi detail pasien pada pemeriksaan.
                         </p>
