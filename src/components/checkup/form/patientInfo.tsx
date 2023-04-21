@@ -10,7 +10,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { redAsterisk } from "@/pages/dashboard/checkup/new";
-import { ConstructionIcon } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 
@@ -60,35 +59,29 @@ export function PatientInfoForm() {
                                                 <span className="text-gray-500 sm:text-sm">+62</span>
                                             </div>
                                             <Controller
-                                                name='number'
+                                                name='phone'
                                                 control={control}
-                                                render={(props) => (
+                                                render={({ field }) => (
                                                     <PatternFormat
                                                         format="####-####-####"
                                                         customInput={Input}
                                                         onValueChange={(values) => {
-                                                            props.field.onChange(values.floatValue)
+                                                            field.onChange(values.value)
                                                         }}
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-11 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                        {...props}
+                                                        name={field.name}
+                                                        value={field.value}
+                                                        onBlur={field.onBlur}
+                                                        getInputRef={field.ref}
+                                                        autoComplete="phone"
+                                                        id="phone-number"
+
                                                     />
                                                 )}
                                                 rules={{
                                                     maxLength: 12,
                                                 }}
                                             />
-
-                                            {/* 
-                                            <Input
-                                                type="number"
-                                                id="phone-number"
-                                                autoComplete="phone-number"
-                                                className="block w-full rounded-md border-gray-300 bg-white pl-11 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                {...register("phone", {
-                                                    maxLength: 13,
-                                                    valueAsNumber: true,
-                                                })}
-                                            /> */}
                                         </div>
                                     </div>
 

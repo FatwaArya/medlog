@@ -38,7 +38,6 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
             <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight">Data pemeriksaan tidak ada</h1>
         </div>
     }
-    console.log(report);
 
     const attachment = report?.Attachment;
 

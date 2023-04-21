@@ -132,7 +132,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 }
             }
         }
-
         mutate(
             {
                 patientId: id as string,

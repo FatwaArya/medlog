@@ -96,7 +96,7 @@ const NewCheckup = () => {
         mutate(
             {
                 name: data.name,
-                phone: data.phone.toString(),
+                phone: data.phone,
                 address: data.address,
                 gender: data.gender,
                 birthDate: data.birthDate,

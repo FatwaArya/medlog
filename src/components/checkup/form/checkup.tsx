@@ -139,16 +139,19 @@ export function CheckupForm() {
                                             <Controller
                                                 name='pay'
                                                 control={control}
-                                                render={(props) => (
+                                                render={({ field }) => (
                                                     <NumericFormat
                                                         customInput={Input}
                                                         thousandSeparator={true}
                                                         onValueChange={(values) => {
-                                                            props.field.onChange(values.floatValue)
+                                                            field.onChange(values.floatValue)
                                                         }}
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                                         defaultValue="20000"
-                                                        {...props}
+                                                        name={field.name}
+                                                        value={field.value}
+                                                        onBlur={field.onBlur}
+                                                        getInputRef={field.ref}
                                                     />
                                                 )}
                                             />
