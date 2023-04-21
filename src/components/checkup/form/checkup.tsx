@@ -91,7 +91,7 @@ export function CheckupForm() {
                                             htmlFor="treatment"
                                             className="block text-sm font-medium text-gray-700"
                                         >
-                                            Terapi {redAsterisk}
+                                            Terapi
                                         </label>
                                         <div className="mt-1">
                                             <Controller
