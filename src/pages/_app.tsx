@@ -13,7 +13,7 @@ import { api } from "@/utils/api";
 import "@/styles/globals.css"
 import AuthGuard from "@/components/auth/AuthGuard";
 import { Toaster } from "react-hot-toast";
-
+import { Analytics } from '@vercel/analytics/react';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -43,7 +43,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
     `}</style>
     <SessionProvider session={session}>
       <Toaster />
-
       {
         authRequired ? (
           <AuthGuard>
@@ -54,6 +53,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         )
       }
     </SessionProvider>
+
+    <Analytics />
   </>
   );
 };

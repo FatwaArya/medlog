@@ -3,25 +3,20 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
-    SelectSeparator,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { RouterOutputs, api } from "@/utils/api";
-import { useMemo, useState } from "react";
+import { api } from "@/utils/api";
 import {
     CartesianGrid,
-    Legend,
     Line,
     LineChart,
-    ResponsiveContainer,
     Tooltip,
     XAxis,
     YAxis,
 } from "recharts";
 import type { TooltipProps } from "recharts";
-import {
+import type {
     NameType,
     ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
@@ -29,12 +24,12 @@ import dayjs from "dayjs";
 import { useForm, Controller, useController } from "react-hook-form";
 
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Loader2 } from "lucide-react";
 import { Spinner } from "@/components/ui/loading-overlay";
 // import localeData from "dayjs/plugin/localeData";
 dayjs.extend(relativeTime);
 
 enum Time {
+    week = "week",
     year = "year",
     month = "month",
     all = "all",
@@ -46,10 +41,33 @@ interface IForm {
 
 function CustomTooltip({
     payload,
-    label,
     active,
 }: TooltipProps<ValueType, NameType>) {
     if (active) {
+        //if one of the value is 0 then it will not show
+        if (payload?.[0]?.value && !payload?.[1]?.value) {
+            return (
+                <div className="flex flex-col gap-3">
+                    <div className=" rounded-lg bg-[#3A6FF8] p-2 shadow-md">
+                        <p className="text-md font-semibold text-white">
+                            {payload?.[0]?.value} Patients
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+        if (payload?.[1]?.value && !payload?.[0]?.value) {
+            return (
+                <div className="flex flex-col gap-3">
+
+                    <div className=" rounded-lg bg-[#FF3366] p-2 shadow-md">
+                        <p className="text-md font-semibold text-white">
+                            {payload?.[1]?.value} Patients
+                        </p>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className="flex flex-col gap-3">
                 <div className=" rounded-lg bg-[#3A6FF8] p-2 shadow-md">
@@ -73,12 +91,13 @@ export const LineCharts = () => {
     const { field } = useController({
         name: "time",
         control,
-        defaultValue: Time.month,
+        defaultValue: Time.week,
     });
 
     const { data, isLoading } = api.patient.getStatLine.useQuery({
         sortBy: field.value,
     });
+
 
     return (
         <div className="col-span-2 divide-gray-200 overflow-hidden rounded-lg bg-white shadow outline outline-1 outline-slate-200">
@@ -103,10 +122,11 @@ export const LineCharts = () => {
                         render={({ field }) => (
                             <Select onValueChange={field.onChange}>
                                 <SelectTrigger className="w-[112px]" ref={field.ref}>
-                                    <SelectValue placeholder="Bulan Ini" />
+                                    <SelectValue placeholder="Minggu Ini" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
+                                        <SelectItem value="week">Minggu Ini</SelectItem>
                                         <SelectItem value="month">Bulan Ini</SelectItem>
                                         <SelectItem value="year">Tahun Ini</SelectItem>
                                         <SelectItem value="all" className="font-sans">

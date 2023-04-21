@@ -12,11 +12,9 @@ import { LabForm } from "@/components/checkup/form/lab";
 import { type PasienPlusPage } from "@/pages/_app";
 import { type FileAndAttachment } from "../new";
 
-import { type GetStaticPropsContext, type GetStaticPaths } from 'next';
-import { prisma } from "@/server/db";
 import { Spinner } from "@/components/ui/loading-overlay";
 import dayjs from "dayjs";
-import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
+import { useRouter } from "next/router";
 
 
 export type CheckupExistingPatient = RouterInputs["patient"]['createMedicalRecord'];
@@ -31,7 +29,7 @@ export const PatientDescription = (
         <>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
                 <div className="px-4 py-5 sm:px-6">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Informasi Pasien</h3>
+                    <h3 className="text-lg leading-6 font-medium text-blue-600">Informasi Pasien</h3>
                     <p className="mt-1 max-w-2xl text-sm text-gray-500">
                         Informasi dasar pasien pada pemeriksaan.
                     </p>
@@ -79,8 +77,9 @@ export const PatientDescription = (
 }
 
 
-const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
-    const { data: patient, isLoading: isLoadingPatient } = api.patient.getPatientById.useQuery({ patientId: id });
+const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
+    const { id } = useRouter().query;
+    const { data: patient, isLoading: isLoadingPatient } = api.patient.getPatientById.useQuery({ patientId: id as string });
 
 
     const methods = useForm<CheckupExistingPatient>();
@@ -109,7 +108,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
         }
     );
 
-    console.log(allPreviewAttachments)
 
     const onSubmit: SubmitHandler<CheckupExistingPatient> = async (data) => {
         const uploads: { key: string; ext: string }[] = [];
@@ -137,7 +135,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
 
         mutate(
             {
-                patientId: id,
+                patientId: id as string,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
                 note: data.note,
@@ -218,42 +216,42 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = ({ id }) => {
 export default ContinueCheckup
 
 
-export async function getStaticProps(
-    context: GetStaticPropsContext<{ id: string }>,
-) {
+// export async function getStaticProps(
+//     context: GetStaticPropsContext<{ id: string }>,
+// ) {
 
-    const ssg = generateSSGHelper();
-    const id = context.params?.id as string;
+//     const ssg = generateSSGHelper();
+//     const id = context.params?.id as string;
 
 
-    await ssg.patient.getPatientById.prefetch({ patientId: id })
+//     await ssg.patient.getPatientById.prefetch({ patientId: id })
 
-    return {
-        props: {
-            trpcState: ssg.dehydrate(),
-            id,
-        },
-        revalidate: 1,
-    };
-}
+//     return {
+//         props: {
+//             trpcState: ssg.dehydrate(),
+//             id,
+//         },
+//         revalidate: 1,
+//     };
+// }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await prisma.patient.findMany({
-        select: {
-            id: true,
-        },
-    });
+// export const getStaticPaths: GetStaticPaths = async () => {
+//     const paths = await prisma.patient.findMany({
+//         select: {
+//             id: true,
+//         },
+//     });
 
-    return {
-        paths: paths.map((path) => ({
-            params: {
-                id: path.id,
-            },
-        })),
+//     return {
+//         paths: paths.map((path) => ({
+//             params: {
+//                 id: path.id,
+//             },
+//         })),
 
-        fallback: 'blocking',
-    };
-};
+//         fallback: 'blocking',
+//     };
+// };
 
 
 
