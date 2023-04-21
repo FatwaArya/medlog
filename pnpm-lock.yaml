@@ -62,6 +62,7 @@ specifiers:
   react-hook-form: ^7.43.9
   react-hot-toast: ^2.4.0
   react-icons: ^4.8.0
+  react-number-format: ^5.1.4
   react-select: ^5.7.2
   react-to-print: ^2.14.12
   recharts: ^2.5.0
@@ -119,6 +120,7 @@ dependencies:
   react-hook-form: 7.43.9_react@18.2.0
   react-hot-toast: 2.4.0_s7mghcr6idhb4d5ook54gl4n44
   react-icons: 4.8.0_react@18.2.0
+  react-number-format: 5.1.4_biqbaboplfbrettd7655fr4n2y
   react-select: 5.7.2_7geocmx3442bocz6x6zwg5lxxi
   react-to-print: 2.14.12_biqbaboplfbrettd7655fr4n2y
   recharts: 2.5.0_v2m5e27vhdewzwhryxwfaorcca
@@ -4916,6 +4918,17 @@ packages:
 
   /react-lifecycles-compat/3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
+    dev: false
+
+  /react-number-format/5.1.4_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-QV7QHzHrk9ZS9V0bWkIwu6ywiXJt0www4/cXWEVEgwaNqthmOZl/Cf5O0ukEPlGZJJr06Jh3+CM4rZsvXn8cOg==}
+    peerDependencies:
+      react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react-remove-scroll-bar/2.3.4_yuz6bkerhkjfjuf6zeb7j6ybc4:

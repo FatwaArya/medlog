@@ -55,6 +55,7 @@
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.8.0",
+    "react-number-format": "^5.1.4",
     "react-select": "^5.7.2",
     "react-to-print": "^2.14.12",
     "recharts": "^2.5.0",
