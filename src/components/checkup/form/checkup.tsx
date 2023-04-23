@@ -121,6 +121,7 @@ export function CheckupForm() {
                                                         formatCreateLabel={(inputValue) => `Tambahkan obat "${inputValue}"`}
                                                     />
                                                 )}
+                                                rules={{ required: false }}
                                             />
                                         </div>
                                     </div>

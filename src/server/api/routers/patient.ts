@@ -230,12 +230,14 @@ export const patientRouter = createTRPCRouter({
         patientId: z.string(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.array(
-          z.object({
-            value: z.string(),
-            label: z.string(),
-          })
-        ),
+        treatment: z
+          .array(
+            z.object({
+              value: z.string(),
+              label: z.string(),
+            })
+          )
+          .nullish(),
         labNote: z.string(),
         note: z.string(),
         checkup: z.string(),
@@ -278,10 +280,11 @@ export const patientRouter = createTRPCRouter({
         });
 
         await tx.medicineDetail.createMany({
-          data: treatment.map((medicine) => ({
-            medicalRecordId: record.id,
-            medicineId: medicine.value,
-          })),
+          data:
+            treatment?.map((medicine) => ({
+              medicalRecordId: record.id,
+              medicineId: medicine.value,
+            })) || [],
         });
 
         if (files) {
