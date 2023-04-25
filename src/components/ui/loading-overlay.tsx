@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import type { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 
 export function Spinner(props: { className?: string }) {
   return (
@@ -30,7 +30,7 @@ export function Spinner(props: { className?: string }) {
 export function LoadingOverlay(props: PropsWithChildren) {
   return (
     <div className="relative w-full h-full rounded-lg overflow-auto">
-      <div className="absolute w-full h-full flex justify-center items-center bg-white/30">
+      <div className="absolute w-full h-full flex justify-center items-center backdrop-blur-md bg-white/30">
         <Spinner />
       </div>
       {props.children}
