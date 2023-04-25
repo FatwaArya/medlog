@@ -8,8 +8,22 @@ import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 import { GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+
+interface ISignIn {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
+  const [signInData, setSignInData] = useState<ISignIn>({
+    email: "",
+    password: "",
+  });
+
   return (
     <>
       <Head>
@@ -37,11 +51,45 @@ export default function Login() {
           </div>
         </div>
         <div className="mt-10 grid grid-cols-1 gap-y-8">
-          <Button variant='outline' onClick={() => {
-            void signIn("google", { callbackUrl: "/dashboard/home" })
-          }}>
-            <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
-          </Button>
+          <form onSubmit={
+            async (e) => {
+              e.preventDefault();
+              void signIn("credentials", {
+                email: signInData.email,
+                password: signInData.password,
+              }, { callbackUrl: "/dashboard/home" })
+            }} className="flex flex-col gap-2">
+
+            <label>Email</label>
+            <Input
+              type="text"
+              onChange={(e) => {
+                setSignInData({ ...signInData, email: e.target.value });
+              }
+              }
+            />
+            <label>Password</label>
+            <Input
+              type="password"
+              onChange={(e) => {
+                setSignInData({ ...signInData, password: e.target.value });
+              }
+              }
+            />
+
+
+            <Button type="submit" className="mt-4 " variant={"solidBlue"}>
+              Sign In
+            </Button>
+            <Separator className="my-6" />
+            <Button variant='outline' onClick={() => {
+              void signIn("google", { callbackUrl: "/dashboard/home" })
+            }}>
+              <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
+            </Button>
+          </form>
+
+
         </div>
 
       </AuthLayout>

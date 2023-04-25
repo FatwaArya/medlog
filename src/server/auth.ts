@@ -5,9 +5,12 @@ import {
   type DefaultSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
+import bcrypt from "bcrypt";
+
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -37,16 +40,57 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+
+      return token;
+    },
+    session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
     },
   },
+  session:{
+    strategy:"jwt"
+  },
+  secret: env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const user = await prisma.user.findUnique({
+          where: { email: credentials?.email },
+        });
+
+        if (!user) {
+          null
+        }
+
+        const isValidPassword = bcrypt.compareSync(
+          credentials?.password as string,
+          user?.password as string
+        )
+
+        if (!isValidPassword) {
+          null
+        }
+
+        return user;
+      },
+    }),
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,

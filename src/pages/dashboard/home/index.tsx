@@ -7,8 +7,10 @@ import { type PasienPlusPage } from "@/pages/_app";
 import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
+import { api } from "@/utils/api";
 
 const Home: PasienPlusPage = () => {
+
     return (
         <>
             <Head>
@@ -23,6 +25,7 @@ const Home: PasienPlusPage = () => {
                     </div>
                 </div>
             </div>
+
             <PatientList pageSize={10} isPaginated={false} isDetailed={false} />
         </>
     );

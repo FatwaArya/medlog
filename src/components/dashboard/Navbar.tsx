@@ -2,7 +2,7 @@ import { MenuIcon, BellIcon } from "lucide-react";
 
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar as ShadAvatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { signOut, useSession } from "next-auth/react";
 import {
   LogOut,
@@ -22,6 +22,8 @@ import {
 import { Loader } from "../auth/AuthGuard";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import Avatar from "react-avatar";
+
 
 const userNavigation = [
   { name: "Profile", href: "/profile", icon: User },
@@ -85,12 +87,18 @@ export function Navbar({
                 >
                   <div>
                     <span className="sr-only">Open user menu</span>
-                    <Avatar>
-                      <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
-                      <AvatarFallback>{
-                        session?.user.name?.split(" ").map((name) => name[0]).join("")
-                      }</AvatarFallback>
-                    </Avatar>
+                    <ShadAvatar>
+                      {session?.user.image ? (
+                        <AvatarImage src={session.user.image as string} className="h-8 w-8 rounded-full" />
+                      ) : (
+                        <Avatar
+                          name={session?.user.name ??
+                            session?.user.email ?? ''}
+                          size={"32"}
+                          round
+                        />
+                      )}
+                    </ShadAvatar>
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">

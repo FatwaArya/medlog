@@ -44,10 +44,12 @@ function CustomTooltip({
     active,
 }: TooltipProps<ValueType, NameType>) {
     if (active) {
+
         //if one of the value is 0 then it will not show
         if (payload?.[0]?.value && !payload?.[1]?.value) {
             return (
                 <div className="flex flex-col gap-3">
+
                     <div className=" rounded-lg bg-[#3A6FF8] p-2 shadow-md">
                         <p className="text-md font-semibold text-white">
                             {payload?.[0]?.value} Patients
@@ -150,10 +152,6 @@ export const LineCharts = () => {
                         <Spinner />
                     </div>
                 ) : (
-                    // <ResponsiveContainer
-                    //     width="100%"
-                    //     height={297}
-                    // >
                     <LineChart data={data}
                         width={700}
                         height={300}
