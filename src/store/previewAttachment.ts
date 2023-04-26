@@ -1,5 +1,5 @@
 import { type AttachmentType } from "@/components/checkup/Attachment";
-import { type FileAndAttachment } from "@/pages/dashboard/checkup/new";
+import { type FileAndAttachment } from "@/pages/dashboard/patients/checkup/new";
 import { create } from "zustand";
 
 interface AttachmentStore {
