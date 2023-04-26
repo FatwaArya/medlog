@@ -10,7 +10,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
 import bcrypt from "bcrypt";
-
+import type { User as PrismaUser, Role } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,19 +18,29 @@ import bcrypt from "bcrypt";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role?: PrismaUser["role"];
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    id: string;
+    // ...other properties
+    role?: PrismaUser["role"];
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    // ...other properties
+    role?: PrismaUser["role"];
+  }
 }
 
 /**
@@ -40,26 +50,25 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-      }
-
-      return token;
-    },
     session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        // session.user.role = user.role; <-- put other properties on the session here
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+        session.user.role = token.role;
       }
       return session;
     },
+    jwt({ token, user }) {
+      if (user) {
+        token = {
+          ...token,
+          role: user.role,
+        };
+      }
+      return token;
+    },
   },
-  session:{
-    strategy:"jwt"
+  session: {
+    strategy: "jwt",
   },
   secret: env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
@@ -76,16 +85,16 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          null
+          null;
         }
 
         const isValidPassword = bcrypt.compareSync(
           credentials?.password as string,
           user?.password as string
-        )
+        );
 
         if (!isValidPassword) {
-          null
+          null;
         }
 
         return user;

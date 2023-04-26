@@ -8,9 +8,11 @@ import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
 import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 
 const Home: PasienPlusPage = () => {
-
+    const { data: user } = useSession()
+    console.log(user)
     return (
         <>
             <Head>
