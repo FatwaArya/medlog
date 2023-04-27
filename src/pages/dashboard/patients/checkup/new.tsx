@@ -102,7 +102,7 @@ const NewCheckup = () => {
                 birthDate: data.birthDate,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
-                treatment: data.treatment,
+                drugs: data.drugs,
                 note: data.note,
                 pay: data.pay,
                 //merge attachments

@@ -68,7 +68,7 @@ export const patientRouter = createTRPCRouter({
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z
+        drugs: z
           .array(
             z.object({
               value: z.string(),
@@ -99,7 +99,7 @@ export const patientRouter = createTRPCRouter({
         birthDate,
         complaint,
         diagnosis,
-        treatment,
+        drugs,
         note,
         pay,
         files,
@@ -148,7 +148,7 @@ export const patientRouter = createTRPCRouter({
         await tx.medicineDetail.createMany({
           //create with nullish value
           data:
-            treatment?.map((medicine) => ({
+            drugs?.map((medicine) => ({
               medicalRecordId: record.id,
               medicineId: medicine.value,
             })) || [],
@@ -230,7 +230,8 @@ export const patientRouter = createTRPCRouter({
         patientId: z.string(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z
+        treatment: z.string(),
+        drugs: z
           .array(
             z.object({
               value: z.string(),
@@ -260,10 +261,11 @@ export const patientRouter = createTRPCRouter({
         diagnosis,
         note,
         checkup,
+        treatment,
         pay,
         labNote,
         files,
-        treatment,
+        drugs,
       } = input;
 
       await ctx.prisma.$transaction(async (tx) => {
@@ -273,6 +275,7 @@ export const patientRouter = createTRPCRouter({
             patientId,
             complaint,
             diagnosis,
+            treatment,
             checkup,
             note,
             labNote,
@@ -281,7 +284,7 @@ export const patientRouter = createTRPCRouter({
 
         await tx.medicineDetail.createMany({
           data:
-            treatment?.map((medicine) => ({
+            drugs?.map((medicine) => ({
               medicalRecordId: record.id,
               medicineId: medicine.value,
             })) || [],

@@ -138,8 +138,9 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
                 note: data.note,
-                checkup: data.checkup,
                 treatment: data.treatment,
+                checkup: data.checkup,
+                drugs: data.drugs,
                 pay: data.pay,
                 files: uploads,
                 labNote: data.labNote,
@@ -148,7 +149,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 onSuccess: () => {
                     //reset all fields
                     methods.reset();
-                    methods.resetField('treatment')
+                    methods.resetField('drugs')
                     clearPreviewCheckUpAttachments()
                     clearPreviewLabAttachments()
                     toast.success("Patient successfully created", {

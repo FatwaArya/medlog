@@ -89,14 +89,14 @@ export function CheckupForm() {
 
                                     <div className="col-span-6 sm:col-span-3">
                                         <label
-                                            htmlFor="treatment"
+                                            htmlFor="drugs"
                                             className="block text-sm font-medium text-gray-700"
                                         >
                                             Terapi
                                         </label>
                                         <div className="mt-1">
                                             <Controller
-                                                name='treatment'
+                                                name='drugs'
                                                 control={control}
                                                 render={({ field }) => (
                                                     <CreatableSelect
@@ -154,7 +154,7 @@ export function CheckupForm() {
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                                         defaultValue="20000"
                                                         name={field.name}
-                                                        value={field.value}
+                                                        value={field.value as number}
                                                         onBlur={field.onBlur}
                                                         getInputRef={field.ref}
                                                     />
@@ -203,7 +203,7 @@ export function CheckupForm() {
                                     </div>
 
 
-                                    <div className="col-span-6">
+                                    <div className="col-span-6 sm:col-span-3">
                                         <label
                                             htmlFor="fee"
                                             className="block text-sm font-medium text-gray-700"
@@ -218,6 +218,24 @@ export function CheckupForm() {
                                                 required: true,
                                             })}
                                             placeholder="Masukkan diagnosis"
+                                            className="mt-1"
+                                        />
+                                    </div>
+                                    <div className="col-span-6 sm:col-span-3">
+                                        <label
+                                            htmlFor="fee"
+                                            className="block text-sm font-medium text-gray-700"
+                                        >
+                                            Tindakan {redAsterisk}
+                                        </label>
+
+                                        <Input
+                                            type="text"
+                                            id="diagnosis"
+                                            {...register('treatment', {
+                                                required: true,
+                                            })}
+                                            placeholder="Masukkan tindakan"
                                             className="mt-1"
                                         />
                                     </div>
