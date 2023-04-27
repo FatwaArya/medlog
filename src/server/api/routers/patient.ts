@@ -187,7 +187,7 @@ export const patientRouter = createTRPCRouter({
             if (
               !object.ContentLength ||
               !fileType ||
-              (upload.ext !== fileType.type && upload.ext !== "jpeg")
+              upload.ext !== fileType.type
             ) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
