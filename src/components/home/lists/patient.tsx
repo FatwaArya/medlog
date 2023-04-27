@@ -245,7 +245,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                                             <Button
                                                                 variant="solidBlue"
                                                                 className=" px-6 text-sm font-normal"
-                                                                href="/dashboard/checkup/new"
+                                                                href="/dashboard/patients/checkup/new"
                                                             >
                                                                 Daftar Pasien
                                                             </Button>
