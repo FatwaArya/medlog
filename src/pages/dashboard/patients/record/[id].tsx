@@ -2,49 +2,13 @@ import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import { prisma } from "@/server/db";
-import { type RouterOutputs, api } from "@/utils/api";
+import { api } from "@/utils/api";
 import { type GetStaticPaths, type GetStaticPropsContext } from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
-import { rupiah } from "@/utils/intlformat";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/ui/loading-overlay";
-
-type PatientWithRecord = NonNullable<RouterOutputs["patient"]['getPatientByIdWithRecord']>['MedicalRecord'][number]
-
-const RecordFeed = (props: PatientWithRecord) => {
-  return (
-    <>
-      {/* Create Feed */}
-      <div className="px-6 py-4">
-        <div className="flex justify-between">
-          <h4 className="scroll-m-20 text-md font-semibold tracking-tight">
-            Pemeriksaan {dayjs(props.createdAt).format('DD-MMM-YYYY')}
-          </h4>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            {rupiah.format(props.pay)}
-          </span>
-        </div>
-        <div className="flex justify-between mt-2">
-          <div className="pr-16">
-            <p className="text-sm text-slate-700 dark:text-slate-400 line-clamp-2">
-              <span className="font-semibold">Keluhan: </span>
-              {props.complaint}</p>
-          </div>
-          <Button variant="ghost" size='sm' href={`/dashboard/checkup/${props.id}`} >
-            Detail
-            <ChevronRight className="w-5 h-5" />
-          </Button>
-        </div>
-
-        <Separator className="mt-2" />
-      </div>
-
-    </>
-  )
-}
+import CheckupList from "@/components/checkup/lists/checkup";
+import { PatientDescription } from "../checkup/[id]/new";
 
 
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
@@ -65,14 +29,9 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>Pasien Plus | {patient?.name} Detail</title>
+        <title>Pasien Plus | Pemeriksaan {patient?.name}</title>
       </Head>
-
-      {/* <div className="max-w-3xl mx-auto"> */}
-      {/* <Button variant='link' size='default' className="ml-2" href="/dashboard/patients">
-        <ChevronLeftIcon className="w-5 h-5" />
-      </Button> */}
-      <div className="px-4 pb-5 pt-0 sm:px-6 ">
+      {/* <div className="px-4 pb-5 pt-0 sm:px-6 ">
         <div >
           <h3 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">Riyawat Pemeriksaan Pasien</h3>
           <p className="mt-1 max-w-2xl text-sm text-gray-500 line-clamp-2 pr-16">
@@ -80,8 +39,7 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
           </p>
         </div>
       </div>
-      <Separator className="w-full" />
-      <div className="px-4 py-5 sm:px-6">
+      <div className="px-4 py-5 sm:px-6 ">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2">
           <div className="sm:col-span-1">
             <dt className="text-sm text-slate-700 dark:text-slate-400 font-medium">Nama Lengkap</dt>
@@ -106,12 +64,9 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
             }</dd>
           </div>
         </dl>
-      </div>
-
-      {patient?.MedicalRecord.map((record) => (
-        <RecordFeed {...record} key={record.id} />
-      ))}
-      {/* </div> */}
+      </div> */}
+      <PatientDescription {...patient} />
+      <CheckupList patientId={id} />
     </>)
 };
 

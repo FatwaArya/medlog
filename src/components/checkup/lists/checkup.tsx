@@ -30,6 +30,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    UserPlus,
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
@@ -41,8 +42,9 @@ const columnHelper = createColumnHelper<CheckupColumn>();
 export default function CheckupList({
     pageSize = 10,
     isPaginated = true,
+    patientId,
 }: ListProps) {
-    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery();
+    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery({ patientId: patientId as string });
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
@@ -87,7 +89,7 @@ export default function CheckupList({
             cell: (info) => {
                 return (
                     <Button
-                        href={`/dashboard/checkup/${info.getValue()}`}
+                        href={`/dashboard/patients/checkup/${info.getValue()}`}
                         variant="solidBlue"
                         size="sm"
                         className=" px-6 text-sm font-normal"
@@ -131,12 +133,14 @@ export default function CheckupList({
                 <div className="">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
-                            <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
-                                Pemeriksaan Pasien
+                            <h1 className="scroll-m-20  text-lg font-medium leading-6 tracking-tight text-[#3366FF]">
+                                Riwayat Pemeriksaan
                             </h1>
                         </div>
-                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-
+                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
+                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
+                                <UserPlus className="h-5 w-5 text-gray-400" />
+                            </Button>
                             <DebouncedInput
                                 value={globalFilter ?? ""}
                                 onChange={(value) => setGlobalFilter(String(value))}
