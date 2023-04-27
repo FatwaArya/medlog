@@ -23,7 +23,6 @@ import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
 import ReactToPrint, { useReactToPrint } from "react-to-print";
-import { PDFDocument } from "../pdf/pdf"
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -170,9 +169,6 @@ export default function ReportList(props: ListProps) {
                             <Button onClick={generatePDF} disabled={reportsData?.length === 0} variant={"solidBlue"}>
                                 <DownloadIcon className=" h-4 w-4" />
                             </Button>
-                            <div className="hidden">
-                                <PDFDocument ref={componentRef} />
-                            </div>
 
                             <CalendarDateRangePicker setDate={setDate} date={date} />
                         </div>
