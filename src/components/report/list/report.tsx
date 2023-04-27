@@ -123,28 +123,14 @@ export default function ReportList(props: ListProps) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
     //https://www.npmjs.com/package/react-to-print
-
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        documentTitle: 'exampleDocs.pdf',
-        copyStyles: true,
-        print: async (printIfFrame: HTMLIFrameElement) => {
-            const document = printIfFrame.contentDocument;
-            if(document){
-                const html = document.getElementsByTagName('html')[0];
-                console.log(html);
-            }
-        }
-    })
-
     const generatePDF = () => {
+        const date = dayjs(new Date()).format("DD MMMM YYYY");
         const input = document.getElementById('pdf-document');
-        console.log(input);
         html2canvas(input).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF();
             pdf.addImage(imgData, 'PNG', 0, 0);
-            pdf.save('report.pdf');
+            pdf.save(`laporan pasien-${date}.pdf`);
         });
     }
     return (
