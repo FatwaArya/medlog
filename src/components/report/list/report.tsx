@@ -22,8 +22,10 @@ import { type DateRange } from "react-day-picker";
 import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
-import ReactToPrint from "react-to-print";
-
+import ReactToPrint, { useReactToPrint } from "react-to-print";
+import { PDFDocument } from "../pdf/pdf"
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
 
@@ -122,8 +124,32 @@ export default function ReportList(props: ListProps) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
     //https://www.npmjs.com/package/react-to-print
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: 'exampleDocs.pdf',
+        copyStyles: true,
+        print: async (printIfFrame: HTMLIFrameElement) => {
+            const document = printIfFrame.contentDocument;
+            if(document){
+                const html = document.getElementsByTagName('html')[0];
+                console.log(html);
+            }
+        }
+    })
+
+    const generatePDF = () => {
+        const input = document.getElementById('pdf-document');
+        console.log(input);
+        html2canvas(input).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, 'PNG', 0, 0);
+            pdf.save('report.pdf');
+        });
+    }
     return (
-        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg" ref={componentRef}>
+        <div id="pdf-document" className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg" ref={componentRef}>
             <div className="px-4 py-5 sm:p-6">
                 <div className="">
                     <div className="sm:flex sm:items-center">
@@ -133,14 +159,20 @@ export default function ReportList(props: ListProps) {
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center gap-2">
-                            <ReactToPrint
+                            {/* <ReactToPrint
                                 trigger={() => {
                                     return <Button disabled={reportsData?.length === 0} variant={"solidBlue"}>
                                         <DownloadIcon className=" h-4 w-4" />
                                     </Button>
                                 }}
                                 content={() => componentRef.current}
-                            />
+                            /> */}
+                            <Button onClick={generatePDF} disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                <DownloadIcon className=" h-4 w-4" />
+                            </Button>
+                            <div className="hidden">
+                                <PDFDocument ref={componentRef} />
+                            </div>
 
                             <CalendarDateRangePicker setDate={setDate} date={date} />
                         </div>
