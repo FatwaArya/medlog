@@ -114,8 +114,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
     >([]);
 
     const sumbitRef = useRef<HTMLButtonElement>(null);
-    const [open, setOpen] = useState(false);
-
 
     useEffect(() => {
         setAllPreviewAttachments([
@@ -234,7 +232,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                                             "ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
                                             isLoading && "bg-blue-400"
                                         )}
-                                        disabled={true} >
+                                        disabled={isLoading} >
                                         {isLoading ? (
                                             <div className="flex justify-center items-center">
                                                 <Loader2 className="h-4 w-4 animate-spin mr-2" /> Menyimpan...

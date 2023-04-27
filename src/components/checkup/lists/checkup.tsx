@@ -30,6 +30,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    FilePlusIcon,
     UserPlus,
 } from "lucide-react";
 
@@ -139,7 +140,7 @@ export default function CheckupList({
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
                             <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
-                                <UserPlus className="h-5 w-5 text-gray-400" />
+                                <FilePlusIcon className="h-5 w-5 text-gray-400" />
                             </Button>
                             <DebouncedInput
                                 value={globalFilter ?? ""}
