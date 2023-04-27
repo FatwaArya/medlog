@@ -15,7 +15,7 @@ import { PatternFormat } from "react-number-format";
 
 
 export function PatientInfoForm() {
-    const { register, control } = useFormContext()
+    const { register, control, formState: { errors } } = useFormContext()
     return (
         <div>
             <div className="bg-white overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
@@ -42,9 +42,11 @@ export function PatientInfoForm() {
                                             type="text"
                                             id="first-name"
                                             autoComplete="given-name"
+                                            placeholder="Jono Dormand"
                                             className="mt-1 bg-white"
                                             {...register("name", { required: true })}
                                         />
+                                        {errors.name && <span className="text-red-500 text-sm">Nama pasien harus diisi</span>}
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">
@@ -102,6 +104,7 @@ export function PatientInfoForm() {
                                                 valueAsDate: true,
                                             })}
                                         />
+                                        {errors.birthDate && <span className="text-red-500 text-sm">Tanggal lahir harus diisi</span>}
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">
@@ -130,38 +133,12 @@ export function PatientInfoForm() {
                                                     </SelectContent>
                                                 </Select>
                                             )}
-                                        />
-                                    </div>
-                                    <div className="col-span-6 sm:col-span-3">
-                                        <label
-                                            htmlFor="gender"
-                                            className="block text-sm font-medium text-gray-700"
-                                        >
-                                            Jenis kelamin {redAsterisk}
-                                        </label>
-                                        <Controller
-                                            name="gender"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Select onValueChange={field.onChange}>
-                                                    <SelectTrigger
-                                                        className="mt-1 w-full bg-white"
-                                                        ref={field.ref}
-                                                    >
-                                                        <SelectValue placeholder="Select gender" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            <SelectItem value="male">Male</SelectItem>
-                                                            <SelectItem value="female">Female</SelectItem>
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            )}
+                                            rules={{ required: true }}
                                         />
                                     </div>
 
-                                    <div className="col-span-6">
+
+                                    <div className="col-span-6 ">
                                         <label
                                             htmlFor="street-address"
                                             className="block text-sm font-medium text-gray-700"
@@ -173,29 +150,17 @@ export function PatientInfoForm() {
                                             id="street-address"
                                             autoComplete="street-address"
                                             className="mt-1 bg-white"
+                                            placeholder="Jl. Jendral Sudirman No. 1"
                                             {...register("address", { required: true })}
                                         />
+                                        {errors.address && <span className="text-red-500 text-sm">Alamat harus diisi</span>}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="col-span-6">
-                    <label
-                        htmlFor="street-address"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Alamat Rumah {redAsterisk}
-                    </label>
-                    <Input
-                        type="text"
-                        id="street-address"
-                        autoComplete="street-address"
-                        className="mt-1 bg-white"
-                        {...register("address", { required: true })}
-                    />
-                </div>
+
             </div>
         </div>
     )

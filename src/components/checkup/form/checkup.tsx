@@ -12,8 +12,9 @@ import { NumericFormat } from "react-number-format";
 import { Label } from "@/components/ui/label";
 
 
+
 export function CheckupForm() {
-    const { register, control } = useFormContext<CheckupExistingPatient>()
+    const { register, control, formState: { errors } } = useFormContext<CheckupExistingPatient>()
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
@@ -84,6 +85,11 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register('complaint', { required: true })}
                                             />
+                                            {errors.complaint && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Keluhan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -108,6 +114,7 @@ export function CheckupForm() {
                                                         onChange={(value) => field.onChange(value)}
                                                         onCreateOption={handleCreate}
                                                         value={field.value}
+                                                        isClearable
                                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                                         // @ts-ignore
                                                         options={medicineOptions}
@@ -160,7 +167,11 @@ export function CheckupForm() {
                                                     />
                                                 )}
                                             />
-
+                                            {errors.pay && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Biaya tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -180,6 +191,11 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register('checkup', { required: true })}
                                             />
+                                            {errors.checkup && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Pemeriksaan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -199,6 +215,12 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register("note", { required: true })}
                                             />
+                                            {errors.note && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Catatan tidak boleh kosong
+                                                </span>
+                                            )}
+
                                         </div>
                                     </div>
 
@@ -220,6 +242,11 @@ export function CheckupForm() {
                                             placeholder="Masukkan diagnosis"
                                             className="mt-1"
                                         />
+                                        {errors.diagnosis && (
+                                            <span className="text-red-500 text-xs">
+                                                * Diagnosis tidak boleh kosong
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="col-span-6 sm:col-span-3">
                                         <label
@@ -238,6 +265,12 @@ export function CheckupForm() {
                                             placeholder="Masukkan tindakan"
                                             className="mt-1"
                                         />
+                                        {errors.treatment && (
+                                            <span className="text-red-500 text-xs">
+                                                * Tindakan tidak boleh kosong
+                                            </span>
+                                        )}
+
                                     </div>
 
                                     <div className="col-span-6">
@@ -282,7 +315,8 @@ export function CheckupForm() {
                                                                 name="file-upload"
                                                                 type="file"
                                                                 className="sr-only"
-                                                                accept="image/png, image/gif, image/bmp, image/tiff, image/webp, image/jpg, "
+                                                                //only accept png and jpg
+                                                                accept="image/png, image/jpg"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />

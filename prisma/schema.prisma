@@ -39,7 +39,7 @@ model Patient {
     id            String          @id @default(cuid())
     userId        String
     name          String
-    phone         String?         @unique
+    phone         String?
     address       String?
     gender        Gender
     birthDate     DateTime
