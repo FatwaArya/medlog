@@ -12,7 +12,10 @@ import { PatientDescription } from "../checkup/[id]/new";
 
 
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
-  const { data: patient, isLoading } = api.patient.getPatientByIdWithRecord.useQuery({ patientId: id })
+  const { data: patient, isLoading } = api.patient.getPatientById.useQuery({ patientId: id }, {
+    //if patient is not found, don't retry
+    retry: false,
+  })
 
   if (isLoading) {
     return <div className="flex justify-center h-full items-center">
@@ -29,7 +32,10 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>Pasien Plus | Pemeriksaan {patient?.name}</title>
+        <title>Pasien Plus | {
+          //if patient not found, return "Patient not found"
+          patient?.name ?? "Patient not found"
+        }</title>
       </Head>
       {/* <div className="px-4 pb-5 pt-0 sm:px-6 ">
         <div >
@@ -77,7 +83,7 @@ export async function getStaticProps(
   const ssg = generateSSGHelper();
   const id = context.params?.id as string;
 
-  await ssg.patient.getPatientByIdWithRecord.prefetch({ patientId: id })
+  await ssg.patient.getPatientById.prefetch({ patientId: id })
 
   return {
     props: {

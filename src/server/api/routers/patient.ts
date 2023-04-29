@@ -438,7 +438,7 @@ export const patientRouter = createTRPCRouter({
 
       const weeklyVisits = Array.from({ length: 7 }, (_, i) => {
         const date = startOfWeek.add(i, "day");
-        const dateString = date.format("DD MMM");
+        const dateString = date.locale("id").format("ddd D");
         const dayVisits = visits
           .filter((visit) => {
             const createdAt = dayjs(visit.createdAt);
@@ -554,38 +554,19 @@ export const patientRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const patient = await ctx.prisma.patient.findUnique({
+      //check if patient is owned by user
+      const patient = await ctx.prisma.patient.findFirst({
         where: {
           id: input.patientId,
+          userId: ctx.session.user.id,
         },
       });
+      if (!patient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Patient not found",
+        });
+      }
       return patient;
-    }),
-  getPatientByIdWithRecord: protectedProcedure
-    .input(
-      z.object({
-        patientId: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const patientWithRecord = await ctx.prisma.patient.findUnique({
-        where: {
-          id: input.patientId,
-        },
-        include: {
-          MedicalRecord: {
-            orderBy: {
-              createdAt: "desc",
-            },
-            select: {
-              id: true,
-              complaint: true,
-              createdAt: true,
-              pay: true,
-            },
-          },
-        },
-      });
-      return patientWithRecord;
     }),
 });
