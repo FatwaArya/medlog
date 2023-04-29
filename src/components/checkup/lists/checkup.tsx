@@ -57,6 +57,13 @@ export default function CheckupList({
             },
 
         }),
+        columnHelper.accessor('diagnosis', {
+            header: "Diagnosis",
+            cell: (info) => {
+                return info.getValue();
+            },
+
+        }),
         columnHelper.accessor("patient.name", {
             header: "Nama Pasien",
             cell: (info) => {

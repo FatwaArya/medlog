@@ -33,7 +33,6 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
     <>
       <Head>
         <title>Pasien Plus | {
-          //if patient not found, return "Patient not found"
           patient?.name ?? "Patient not found"
         }</title>
       </Head>
