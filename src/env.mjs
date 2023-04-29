@@ -25,6 +25,7 @@ const server = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   SPACES_KEY: z.string(),
   SPACES_SECRET: z.string(),
+  MIDTRANS_SERVER_KEY: z.string(),
 });
 
 /**
@@ -33,6 +34,7 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: z.string(),
 });
 
 /**
@@ -52,6 +54,8 @@ const processEnv = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   SPACES_KEY: process.env.SPACES_KEY,
   SPACES_SECRET: process.env.SPACES_SECRET,
+  MIDTRANS_SERVER_KEY: process.env.MIDTRANS_SERVER_KEY,
+  NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
