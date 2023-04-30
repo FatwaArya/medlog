@@ -16,7 +16,7 @@ export function CallToAction() {
         alt=""
         width={2347}
         height={1244}
-        unoptimized
+        priority
       />
       <Container className="relative">
         <div className="mx-auto max-w-lg text-center">
