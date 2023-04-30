@@ -84,14 +84,18 @@ export default function CheckupList({
         columnHelper.accessor('MedicineDetail', {
             header: "Terapi",
             cell: (info) => {
-                return info.getValue().map((item, i) => (
-                    <span key={i} className="capitalize">
-                        {/* create delimtiter */}
-                        {i > 0 && ", "}
-                        {item.medicine.name}
-                    </span>
-                ))
 
+                if (!info.getValue() || info.getValue().length === 0) {
+                    return "Tidak ada terapi";
+                } else {
+                    return info.getValue().map((item, i) => (
+                        <span key={i} className="capitalize">
+                            {/* create delimiter */}
+                            {i > 0 && ", "}
+                            {item.medicine.name}
+                        </span>
+                    ));
+                }
             },
 
         }),
