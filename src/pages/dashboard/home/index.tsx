@@ -51,7 +51,24 @@ const Home: PasienPlusPage = () => {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-ignore
-                    window.snap.pay(subsData?.token);
+                    window.snap.pay(subsData?.token, {
+                        onSuccess: function (result) {
+                            /* You may add your own implementation here */
+                            alert("payment success!"); console.log(result);
+                        },
+                        onPending: function (result) {
+                            /* You may add your own implementation here */
+                            alert("wating your payment!"); console.log(result);
+                        },
+                        onError: function (result) {
+                            /* You may add your own implementation here */
+                            alert("payment failed!"); console.log(result);
+                        },
+                        onClose: function () {
+                            /* You may add your own implementation here */
+                            alert('you closed the popup without finishing the payment');
+                        }
+                    })
                 }}>Pay</button>
             </div>
 

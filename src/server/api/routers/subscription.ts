@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { v4 as uuidv4 } from "uuid";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import midtransClient from "midtrans-client";
@@ -11,32 +12,14 @@ const snap = new midtransClient.Snap({
   serverKey: env.MIDTRANS_SERVER_KEY,
 });
 
-const PaymentInputSchema = z.object({
-  transaction_details: z.object({
-    order_id: z.string(),
-    gross_amount: z.number(),
-  }),
-  credit_card: z.object({ secure: z.boolean() }),
-  customer_details: z.object({
-    first_name: z.string(),
-    last_name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-  }),
-});
-
-const PaymentOutputSchema = z.object({
-  token: z.string(),
-  redirect_url: z.string(),
-});
-
 export const subscriptionRouter = createTRPCRouter({
   create: protectedProcedure
     // .input(PaymentInputSchema)
     // .output(PaymentOutputSchema)
     .query(async ({ ctx }) => {
       const { user } = ctx.session;
-      const order_id = `order-${Date.now()}`;
+
+      const order_id = `order-${uuidv4().substring(0, 8)}`;
       const gross_amount = 10000;
       const parameter = {
         transaction_details: {
@@ -45,14 +28,21 @@ export const subscriptionRouter = createTRPCRouter({
         },
         credit_card: {
           secure: true,
+          save_card: true,
         },
         customer_details: {
           first_name: user.name,
           email: user.email,
         },
+        user_id: user.id,
       };
       const { token, redirect_url } = await snap.createTransaction(parameter);
-
+      await ctx.prisma.payment.create({
+        data: {
+          orderId: order_id,
+          userId: user.id,
+        },
+      });
       return {
         token,
         redirect_url,

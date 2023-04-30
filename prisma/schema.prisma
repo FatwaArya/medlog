@@ -12,6 +12,7 @@ datasource db {
 model Payment {
     id        String   @id @default(cuid())
     orderId   String
+    userId    String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
