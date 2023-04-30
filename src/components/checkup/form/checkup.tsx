@@ -24,6 +24,9 @@ export function CheckupForm() {
     const { mutate: deleteMedicine, isLoading: isDeletingMedicine } = api.medicine.delete.useMutation()
     const utils = api.useContext()
     const { data: medicineOptions } = api.medicine.gets.useQuery()
+    const medicineOptionsId = medicineOptions?.map((medicine) => medicine.value) ?? []
+
+    const { data: isMedicineRelated } = api.medicine.isMedicineRelatedToRecord.useQuery({ id: medicineOptionsId })
 
 
 
@@ -58,9 +61,8 @@ export function CheckupForm() {
 
     const Option = (props: OptionProps<{ value: string; label: string; }, true>) => {
         const { data } = props;
-        const { data: isMedicineRelated } = api.medicine.isMedicineRelatedToRecord.useQuery({ id: data.value })
-
-        const isRelated = !!isMedicineRelated;
+        //if data is match each isMedicineRelated, then disable the option
+        const isRelated = isMedicineRelated?.some((medicine) => medicine.id === data.value)
 
         return (
             <div className="relative mt-1 rounded-md shadow-sm">
@@ -75,9 +77,9 @@ export function CheckupForm() {
                                 }
                             })
                         }}
-                        disabled={isRelated}
+                        disabled={!isRelated}
                     >
-                        {isRelated ? null : <XIcon className="w-5 h-5 text-gray-500" />}
+                        {isRelated ? <XIcon className="w-5 h-5 text-gray-500" /> : null}
                     </button>
                 </div>
             </div>
