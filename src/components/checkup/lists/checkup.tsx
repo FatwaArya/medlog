@@ -72,6 +72,7 @@ export default function CheckupList({
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
+
         columnHelper.accessor("patient.gender", {
             header: "Jenis Kelamin",
             cell: (info) => {
@@ -79,6 +80,20 @@ export default function CheckupList({
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('MedicineDetail', {
+            header: "Terapi",
+            cell: (info) => {
+                return info.getValue().map((item, i) => (
+                    <span key={i} className="capitalize">
+                        {/* create delimtiter */}
+                        {i > 0 && ", "}
+                        {item.medicine.name}
+                    </span>
+                ))
+
+            },
+
         }),
         columnHelper.accessor("pay", {
             header: "Biaya",

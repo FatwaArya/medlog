@@ -68,4 +68,21 @@ export const medicineRouter = createTRPCRouter({
       });
       return medicine;
     }),
+  isMedicineRelatedToRecord: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const medicine = await ctx.prisma.medicine.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          MedicineDetail: true,
+        },
+      });
+      return !!medicine?.MedicineDetail.length;
+    }),
 });

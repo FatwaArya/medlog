@@ -10,6 +10,8 @@ import CreatableSelect from 'react-select/creatable';
 import { api } from "@/utils/api";
 import { NumericFormat } from "react-number-format";
 import { Label } from "@/components/ui/label";
+import { OptionProps, components } from "react-select";
+import { Cross, CrossIcon, X, XIcon } from "lucide-react";
 
 
 
@@ -19,6 +21,7 @@ export function CheckupForm() {
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
     const { mutate, isLoading } = api.medicine.create.useMutation()
+    const { mutate: deleteMedicine, isLoading: isDeletingMedicine } = api.medicine.delete.useMutation()
     const utils = api.useContext()
     const { data: medicineOptions } = api.medicine.gets.useQuery()
 
@@ -53,6 +56,33 @@ export function CheckupForm() {
         })
     }
 
+    const Option = (props: OptionProps<{ value: string; label: string; }, true>) => {
+        const { data } = props;
+        const { data: isMedicineRelated } = api.medicine.isMedicineRelatedToRecord.useQuery({ id: data.value })
+
+        const isRelated = !!isMedicineRelated;
+
+        return (
+            <div className="relative mt-1 rounded-md shadow-sm">
+                <components.Option {...props} />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            deleteMedicine({ id: data.value }, {
+                                onSuccess: () => {
+                                    utils.medicine.gets.invalidate()
+                                }
+                            })
+                        }}
+                        disabled={isRelated}
+                    >
+                        {isRelated ? null : <XIcon className="w-5 h-5 text-gray-500" />}
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <>
@@ -114,7 +144,9 @@ export function CheckupForm() {
                                                         onChange={(value) => field.onChange(value)}
                                                         onCreateOption={handleCreate}
                                                         value={field.value}
+                                                        components={{ Option }}
                                                         isClearable
+
                                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                                         // @ts-ignore
                                                         options={medicineOptions}
