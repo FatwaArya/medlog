@@ -66,6 +66,16 @@ export const recordRouter = createTRPCRouter({
         },
         include: {
           patient: true,
+          MedicineDetail: {
+            select: {
+              medicine: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",

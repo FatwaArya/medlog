@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -39,7 +38,6 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
             <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight">Data pemeriksaan tidak ada</h1>
         </div>
     }
-    console.log(report);
 
     const attachment = report?.Attachment;
 
@@ -80,7 +78,7 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                 <dd className="text-gray-900 text-sm mt-1">{report?.checkup ?? "Belum ada checkup"}</dd>
                             </div>
                             <div className="w-full flex flex-col items-start sm:col-span-1">
-                                <dt className="font-medium text-gray-500 text-sm">Perawatan </dt>
+                                <dt className="font-medium text-gray-500 text-sm">Terapi </dt>
                                 <dd className="text-gray-900 text-sm mt-1">{
                                     report.MedicineDetail.map((item, i) => (
                                         <span key={i} className="capitalize">
@@ -89,6 +87,10 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                     ))
 
                                 }</dd>
+                            </div>
+                            <div className="w-full flex flex-col items-start sm:col-span-1">
+                                <dt className="font-medium text-gray-500 text-sm">Tindakan </dt>
+                                <dd className="text-gray-900 text-sm mt-1">{report?.treatment ?? "Belum ada tindakan"}</dd>
                             </div>
                             <div className="w-full flex flex-col items-start sm:col-span-1">
                                 <dt className="font-medium text-gray-500 text-sm">Catatan Lab </dt>

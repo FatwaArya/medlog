@@ -1,5 +1,6 @@
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -38,7 +39,7 @@ model Patient {
     id            String          @id @default(cuid())
     userId        String
     name          String
-    phone         String?         @unique
+    phone         String?
     address       String?
     gender        Gender
     birthDate     DateTime
@@ -51,16 +52,16 @@ model Patient {
 }
 
 //todo
-// remove treatment
+// remove drugs
 // make checkup required
 model MedicalRecord {
     id             String           @id @default(cuid())
     patientId      String
     complaint      String           @db.VarChar(700)
     diagnosis      String           @db.VarChar(700)
-    treatment      String?
+    treatment      String?          @db.VarChar(400)
     note           String           @db.VarChar(700)
-    checkup        String?          @db.VarChar(200)
+    checkup        String?          @db.VarChar(400)
     pay            Int
     createdAt      DateTime         @default(now())
     updatedAt      DateTime         @updatedAt

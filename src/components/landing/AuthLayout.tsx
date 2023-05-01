@@ -17,7 +17,7 @@ export function AuthLayout({ children }: PropsWithChildren) {
             className="absolute inset-0 h-full w-full object-cover"
             src={backgroundImage}
             alt=""
-            unoptimized
+            priority
           />
         </div>
       </div>

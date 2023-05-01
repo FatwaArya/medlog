@@ -8,17 +8,25 @@ import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
 import type { CheckupExistingPatient } from "@/pages/dashboard/patients/checkup/[id]/new";
 import CreatableSelect from 'react-select/creatable';
 import { api } from "@/utils/api";
+import { NumericFormat } from "react-number-format";
 import { Label } from "@/components/ui/label";
+import { OptionProps, components } from "react-select";
+import { Cross, CrossIcon, X, XIcon } from "lucide-react";
+
 
 
 export function CheckupForm() {
-    const { register, control } = useFormContext<CheckupExistingPatient>()
+    const { register, control, formState: { errors } } = useFormContext<CheckupExistingPatient>()
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
     const { mutate, isLoading } = api.medicine.create.useMutation()
+    const { mutate: deleteMedicine, isLoading: isDeletingMedicine } = api.medicine.delete.useMutation()
     const utils = api.useContext()
     const { data: medicineOptions } = api.medicine.gets.useQuery()
+    const medicineOptionsId = medicineOptions?.map((medicine) => medicine.value) ?? []
+
+    const { data: isMedicineRelated } = api.medicine.isMedicineRelatedToRecord.useQuery({ id: medicineOptionsId })
 
 
 
@@ -51,9 +59,35 @@ export function CheckupForm() {
         })
     }
 
+    const Option = (props: OptionProps<{ value: string; label: string; }, true>) => {
+        const { data } = props;
+        //if data is match each isMedicineRelated, then disable the option
+        const isRelated = isMedicineRelated?.some((medicine) => medicine.id === data.value)
+
+        return (
+            <div className="relative mt-1 rounded-md shadow-sm">
+                <components.Option {...props} />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            deleteMedicine({ id: data.value }, {
+                                onSuccess: () => {
+                                    utils.medicine.gets.invalidate()
+                                }
+                            })
+                        }}
+                        disabled={!isRelated}
+                    >
+                        {isRelated ? <XIcon className="w-5 h-5 text-gray-500" /> : null}
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     return (
-        <div>
+        <>
             <div className="bg-white overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
                 <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg leading-6 font-medium text-blue-600">Data Checkup</h3>
@@ -79,33 +113,42 @@ export function CheckupForm() {
                                                 id="complaint"
                                                 rows={3}
                                                 className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                placeholder="Patient had slight headache, and felt dizzy"
+                                                placeholder='Masukkan keluhan pasien'
                                                 defaultValue={""}
                                                 {...register('complaint', { required: true })}
                                             />
+                                            {errors.complaint && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Keluhan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">
                                         <label
-                                            htmlFor="treatment"
+                                            htmlFor="drugs"
                                             className="block text-sm font-medium text-gray-700"
                                         >
-                                            Terapi {redAsterisk}
+                                            Terapi
                                         </label>
                                         <div className="mt-1">
                                             <Controller
-                                                name='treatment'
+                                                name='drugs'
                                                 control={control}
                                                 render={({ field }) => (
                                                     <CreatableSelect
                                                         {...field}
                                                         isMulti
+                                                        placeholder="Pilih obat"
                                                         isDisabled={isLoading}
                                                         isLoading={isLoading}
                                                         onChange={(value) => field.onChange(value)}
                                                         onCreateOption={handleCreate}
                                                         value={field.value}
+                                                        components={{ Option }}
+                                                        isClearable
+
                                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                                         // @ts-ignore
                                                         options={medicineOptions}
@@ -120,6 +163,7 @@ export function CheckupForm() {
                                                         formatCreateLabel={(inputValue) => `Tambahkan obat "${inputValue}"`}
                                                     />
                                                 )}
+                                                rules={{ required: false }}
                                             />
                                         </div>
                                         <Label className="text-gray-500 text-xs">
@@ -132,22 +176,36 @@ export function CheckupForm() {
                                             htmlFor="fee"
                                             className="block text-sm font-medium text-gray-700"
                                         >
-                                            Fee {redAsterisk}
+                                            Biaya {redAsterisk}
                                         </label>
                                         <div className="relative mt-1 rounded-md shadow-sm">
                                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                 <span className="text-gray-500 sm:text-sm">IDR</span>
                                             </div>
-                                            <Input
-                                                type="number"
-                                                id="fee"
-                                                min={0}
-                                                {...register("pay", {
-                                                    required: true,
-                                                    valueAsNumber: true,
-                                                })}
-                                                className="block w-full rounded-md border-gray-300 bg-white pl-11 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            <Controller
+                                                name='pay'
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <NumericFormat
+                                                        customInput={Input}
+                                                        thousandSeparator={true}
+                                                        onValueChange={(values) => {
+                                                            field.onChange(values.floatValue)
+                                                        }}
+                                                        className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                        defaultValue="20000"
+                                                        name={field.name}
+                                                        value={field.value as number}
+                                                        onBlur={field.onBlur}
+                                                        getInputRef={field.ref}
+                                                    />
+                                                )}
                                             />
+                                            {errors.pay && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Biaya tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -163,10 +221,15 @@ export function CheckupForm() {
                                                 id="checkup"
                                                 rows={3}
                                                 className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                placeholder="Patient maybe had a migraine, and need to take paracetamol"
+                                                placeholder='Masukkan pemeriksaan pasien'
                                                 defaultValue={""}
                                                 {...register('checkup', { required: true })}
                                             />
+                                            {errors.checkup && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Pemeriksaan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -182,14 +245,21 @@ export function CheckupForm() {
                                                 id="notes"
                                                 rows={3}
                                                 className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                placeholder="Patient need to take paracetamol 3 times a day, and need to rest for 2 days"
+                                                placeholder="Masukkan catatan"
                                                 defaultValue={""}
                                                 {...register("note", { required: true })}
                                             />
+                                            {errors.note && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Catatan tidak boleh kosong
+                                                </span>
+                                            )}
+
                                         </div>
                                     </div>
 
-                                    <div className="col-span-6">
+
+                                    <div className="col-span-6 sm:col-span-3">
                                         <label
                                             htmlFor="fee"
                                             className="block text-sm font-medium text-gray-700"
@@ -203,14 +273,43 @@ export function CheckupForm() {
                                             {...register('diagnosis', {
                                                 required: true,
                                             })}
-                                            placeholder="Open Wound"
+                                            placeholder="Masukkan diagnosis"
                                             className="mt-1"
                                         />
+                                        {errors.diagnosis && (
+                                            <span className="text-red-500 text-xs">
+                                                * Diagnosis tidak boleh kosong
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="col-span-6 sm:col-span-3">
+                                        <label
+                                            htmlFor="fee"
+                                            className="block text-sm font-medium text-gray-700"
+                                        >
+                                            Tindakan {redAsterisk}
+                                        </label>
+
+                                        <Input
+                                            type="text"
+                                            id="diagnosis"
+                                            {...register('treatment', {
+                                                required: true,
+                                            })}
+                                            placeholder="Masukkan tindakan"
+                                            className="mt-1"
+                                        />
+                                        {errors.treatment && (
+                                            <span className="text-red-500 text-xs">
+                                                * Tindakan tidak boleh kosong
+                                            </span>
+                                        )}
+
                                     </div>
 
                                     <div className="col-span-6">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            Foto luka (optional){" "}
+                                            Foto luka {" "}
                                         </label>
                                         <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5">
                                             {previewCheckUpAttachments.length > 0 ? (
@@ -250,8 +349,8 @@ export function CheckupForm() {
                                                                 name="file-upload"
                                                                 type="file"
                                                                 className="sr-only"
-                                                                //only accept image files
-                                                                accept="image/*"
+                                                                //only accept png and jpg
+                                                                accept="image/png, image/jpg"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />
@@ -265,224 +364,13 @@ export function CheckupForm() {
                                             )}
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {/* <div className="md:grid md:grid-cols-3 md:gap-6">
-                <div className="md:col-span-1">
-                    <h3 className="text-lg font-medium leading-6 text-gray-900">
-                        Check up
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Isi data pemeriksaan disini dengan benar, agar pencarian data
-                        pemeriksaan lebih mudah.
-                    </p>
-                </div>
-                <div className="mt-5 md:col-span-2 md:mt-0">
-                    <div className="space-y-6">
-                        <div>
-                            <label
-                                htmlFor="complaint"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Keluhan {redAsterisk}
-                            </label>
-                            <div className="mt-1">
-                                <textarea
-                                    id="complaint"
-                                    rows={3}
-                                    className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Patient had slight headache, and felt dizzy"
-                                    defaultValue={""}
-                                    {...register('complaint', { required: true })}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="checkup"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Pemeriksaan {redAsterisk}
-                            </label>
-                            <div className="mt-1">
-                                <textarea
-                                    id="checkup"
-                                    rows={3}
-                                    className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Patient maybe had a migraine, and need to take paracetamol"
-                                    defaultValue={""}
-                                    {...register('checkup', { required: true })}
-                                />
-                            </div>
-                        </div>
-
-
-                        <div>
-                            <label
-                                htmlFor="treatment"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Terapi {redAsterisk}
-                            </label>
-                            <div className="mt-1">
-                                <Controller
-                                    name='treatment'
-                                    control={control}
-                                    render={({ field }) => (
-                                        <CreatableSelect
-                                            {...field}
-                                            isMulti
-                                            isDisabled={isLoading}
-                                            isLoading={isLoading}
-                                            onChange={(value) => field.onChange(value)}
-                                            onCreateOption={handleCreate}
-                                            value={field.value}
-                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                            // @ts-ignore
-                                            options={medicineOptions}
-                                            styles={{
-                                                input: (base) => ({
-                                                    ...base,
-                                                    'input:focus': {
-                                                        boxShadow: 'none',
-                                                    },
-                                                }),
-                                            }}
-                                            formatCreateLabel={(inputValue) => `Tambahkan obat "${inputValue}"`}
-                                        />
-                                    )}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="notes"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Catatan {redAsterisk}
-                            </label>
-                            <div className="mt-1">
-                                <textarea
-                                    id="notes"
-                                    rows={3}
-                                    className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Patient need to take paracetamol 3 times a day, and need to rest for 2 days"
-                                    defaultValue={""}
-                                    {...register("note", { required: true })}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="fee"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Diagnosis {redAsterisk}
-                            </label>
-
-                            <Input
-                                type="text"
-                                id="diagnosis"
-                                {...register('diagnosis', {
-                                    required: true,
-                                })}
-                                placeholder="Open Wound"
-                                className="mt-1"
-                            />
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="fee"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Fee {redAsterisk}
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span className="text-gray-500 sm:text-sm">IDR</span>
-                                </div>
-                                <Input
-                                    type="number"
-                                    id="fee"
-                                    min={0}
-                                    {...register("pay", {
-                                        required: true,
-                                        valueAsNumber: true,
-                                    })}
-                                    className="block w-full rounded-md border-gray-300 bg-white pl-11 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Foto luka (optional){" "}
-                            </label>
-                            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5">
-                                {previewCheckUpAttachments.length > 0 ? (
-                                    <div className="mt-3.5 grid gap-2">
-                                        <Attachments
-                                            attachments={previewCheckUpAttachments.map(
-                                                (attachment) => attachment.attachment
-                                            )}
-                                            onRemoveAttachment={onRemoveAttachment}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="space-y-1 text-center">
-                                        <svg
-                                            className="mx-auto h-12 w-12 text-gray-400"
-                                            stroke="currentColor"
-                                            fill="none"
-                                            viewBox="0 0 48 48"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                        <div className="flex text-sm text-gray-600">
-                                            <label
-                                                htmlFor="file-upload"
-                                                className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
-                                            >
-                                                <span>Upload a file</span>
-
-                                                <input
-                                                    id="file-upload"
-                                                    name="file-upload"
-                                                    type="file"
-                                                    className="sr-only"
-                                                    //only accept image files
-                                                    accept="image/*"
-                                                    onChange={onFilesChange}
-                                                    multiple
-                                                />
-                                            </label>
-                                            <p className="pl-1">or drag and drop</p>
-                                        </div>
-                                        <p className="text-xs text-gray-500">
-                                            PNG, JPG, GIF up to 10MB
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-        </div>
-
+        </>
     )
 }

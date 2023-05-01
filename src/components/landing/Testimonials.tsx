@@ -129,6 +129,7 @@ export function Testimonials() {
                             alt=""
                             width={56}
                             height={56}
+                            priority
                           />
                         </div>
                       </figcaption>

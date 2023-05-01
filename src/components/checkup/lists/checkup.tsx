@@ -30,6 +30,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    FilePlusIcon,
     UserPlus,
 } from "lucide-react";
 
@@ -56,6 +57,13 @@ export default function CheckupList({
             },
 
         }),
+        columnHelper.accessor('diagnosis', {
+            header: "Diagnosis",
+            cell: (info) => {
+                return info.getValue();
+            },
+
+        }),
         columnHelper.accessor("patient.name", {
             header: "Nama Pasien",
             cell: (info) => {
@@ -64,6 +72,7 @@ export default function CheckupList({
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
+
         columnHelper.accessor("patient.gender", {
             header: "Jenis Kelamin",
             cell: (info) => {
@@ -71,6 +80,24 @@ export default function CheckupList({
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('MedicineDetail', {
+            header: "Terapi",
+            cell: (info) => {
+
+                if (!info.getValue() || info.getValue().length === 0) {
+                    return "Tidak ada terapi";
+                } else {
+                    return info.getValue().map((item, i) => (
+                        <span key={i} className="capitalize">
+                            {/* create delimiter */}
+                            {i > 0 && ", "}
+                            {item.medicine.name}
+                        </span>
+                    ));
+                }
+            },
+
         }),
         columnHelper.accessor("pay", {
             header: "Biaya",
@@ -139,7 +166,7 @@ export default function CheckupList({
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
                             <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
-                                <UserPlus className="h-5 w-5 text-gray-400" />
+                                <FilePlusIcon className="h-5 w-5 text-gray-400" />
                             </Button>
                             <DebouncedInput
                                 value={globalFilter ?? ""}

@@ -62,18 +62,20 @@ export const patientRouter = createTRPCRouter({
         name: z.string(),
         phone: z
           .string()
-          .length(11, { message: "Pastikan nomor telfon 12 digit" }),
+          .length(12, { message: "Pastikan nomor telfon 12 digit" }),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.array(
-          z.object({
-            value: z.string(),
-            label: z.string(),
-          })
-        ),
+        drugs: z
+          .array(
+            z.object({
+              value: z.string(),
+              label: z.string(),
+            })
+          )
+          .nullish(),
         labNote: z.string(),
         note: z.string(),
         pay: z.number().min(0, { message: "Fee tidak boleh kosong" }),
@@ -97,7 +99,7 @@ export const patientRouter = createTRPCRouter({
         birthDate,
         complaint,
         diagnosis,
-        treatment,
+        drugs,
         note,
         pay,
         files,
@@ -144,10 +146,12 @@ export const patientRouter = createTRPCRouter({
         });
 
         await tx.medicineDetail.createMany({
-          data: treatment.map((medicine) => ({
-            medicalRecordId: record.id,
-            medicineId: medicine.value,
-          })),
+          //create with nullish value
+          data:
+            drugs?.map((medicine) => ({
+              medicalRecordId: record.id,
+              medicineId: medicine.value,
+            })) || [],
         });
 
         if (files) {
@@ -183,7 +187,7 @@ export const patientRouter = createTRPCRouter({
             if (
               !object.ContentLength ||
               !fileType ||
-              (upload.ext !== fileType.type && upload.ext !== "jpeg")
+              upload.ext !== fileType.type
             ) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
@@ -226,12 +230,15 @@ export const patientRouter = createTRPCRouter({
         patientId: z.string(),
         complaint: z.string(),
         diagnosis: z.string(),
-        treatment: z.array(
-          z.object({
-            value: z.string(),
-            label: z.string(),
-          })
-        ),
+        treatment: z.string(),
+        drugs: z
+          .array(
+            z.object({
+              value: z.string(),
+              label: z.string(),
+            })
+          )
+          .nullish(),
         labNote: z.string(),
         note: z.string(),
         checkup: z.string(),
@@ -254,10 +261,11 @@ export const patientRouter = createTRPCRouter({
         diagnosis,
         note,
         checkup,
+        treatment,
         pay,
         labNote,
         files,
-        treatment,
+        drugs,
       } = input;
 
       await ctx.prisma.$transaction(async (tx) => {
@@ -267,6 +275,7 @@ export const patientRouter = createTRPCRouter({
             patientId,
             complaint,
             diagnosis,
+            treatment,
             checkup,
             note,
             labNote,
@@ -274,10 +283,11 @@ export const patientRouter = createTRPCRouter({
         });
 
         await tx.medicineDetail.createMany({
-          data: treatment.map((medicine) => ({
-            medicalRecordId: record.id,
-            medicineId: medicine.value,
-          })),
+          data:
+            drugs?.map((medicine) => ({
+              medicalRecordId: record.id,
+              medicineId: medicine.value,
+            })) || [],
         });
 
         if (files) {
@@ -428,7 +438,7 @@ export const patientRouter = createTRPCRouter({
 
       const weeklyVisits = Array.from({ length: 7 }, (_, i) => {
         const date = startOfWeek.add(i, "day");
-        const dateString = date.format("DD MMM");
+        const dateString = date.locale("id").format("ddd D");
         const dayVisits = visits
           .filter((visit) => {
             const createdAt = dayjs(visit.createdAt);
@@ -544,38 +554,19 @@ export const patientRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const patient = await ctx.prisma.patient.findUnique({
+      //check if patient is owned by user
+      const patient = await ctx.prisma.patient.findFirst({
         where: {
           id: input.patientId,
+          userId: ctx.session.user.id,
         },
       });
+      if (!patient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Patient not found",
+        });
+      }
       return patient;
-    }),
-  getPatientByIdWithRecord: protectedProcedure
-    .input(
-      z.object({
-        patientId: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const patientWithRecord = await ctx.prisma.patient.findUnique({
-        where: {
-          id: input.patientId,
-        },
-        include: {
-          MedicalRecord: {
-            orderBy: {
-              createdAt: "desc",
-            },
-            select: {
-              id: true,
-              complaint: true,
-              createdAt: true,
-              pay: true,
-            },
-          },
-        },
-      });
-      return patientWithRecord;
     }),
 });

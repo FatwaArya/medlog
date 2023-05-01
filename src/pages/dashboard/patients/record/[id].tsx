@@ -12,7 +12,10 @@ import { PatientDescription } from "../checkup/[id]/new";
 
 
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
-  const { data: patient, isLoading } = api.patient.getPatientByIdWithRecord.useQuery({ patientId: id })
+  const { data: patient, isLoading } = api.patient.getPatientById.useQuery({ patientId: id }, {
+    //if patient is not found, don't retry
+    retry: false,
+  })
 
   if (isLoading) {
     return <div className="flex justify-center h-full items-center">
@@ -29,42 +32,10 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>Pasien Plus | Pemeriksaan {patient?.name}</title>
+        <title>Pasien Plus | {
+          patient?.name ?? "Patient not found"
+        }</title>
       </Head>
-      {/* <div className="px-4 pb-5 pt-0 sm:px-6 ">
-        <div >
-          <h3 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">Riyawat Pemeriksaan Pasien</h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500 line-clamp-2 pr-16">
-            Riwayat pemeriksaan pasien yang telah dilakukan mulai dari tanggal <span className="font-semibold">{dayjs(patient?.MedicalRecord[patient?.MedicalRecord.length - 1]?.createdAt).format("DD MMMM YYYY")}</span> hingga <span className="font-semibold">{dayjs(patient?.MedicalRecord[0]?.createdAt).format("DD MMMM YYYY")}</span>
-          </p>
-        </div>
-      </div>
-      <div className="px-4 py-5 sm:px-6 ">
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2">
-          <div className="sm:col-span-1">
-            <dt className="text-sm text-slate-700 dark:text-slate-400 font-medium">Nama Lengkap</dt>
-            <dd className="mt-1 text-sm text-gray-900">{patient?.name}</dd>
-          </div>
-          <div className="sm:col-span-1">
-            <dt className="text-sm text-slate-700 dark:text-slate-400 font-medium">Nomor Telepon</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{
-              patient?.phone ?? "Tidak ada nomor telepon"
-            }</dd>
-          </div>
-          <div className="sm:col-span-1">
-            <dt className="text-sm text-slate-700 dark:text-slate-400 font-medium">Alamat Rumah</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{
-              patient?.address ?? "Tidak ada alamat"
-            }</dd>
-          </div>
-          <div className="sm:col-span-1">
-            <dt className="text-sm text-slate-700 dark:text-slate-400 font-medium">Tanggal Lahir</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{
-              dayjs(patient?.birthDate).format("DD MMMM YYYY") ?? "Tidak ada tanggal lahir"
-            }</dd>
-          </div>
-        </dl>
-      </div> */}
       <PatientDescription {...patient} />
       <CheckupList patientId={id} />
     </>)
@@ -77,7 +48,7 @@ export async function getStaticProps(
   const ssg = generateSSGHelper();
   const id = context.params?.id as string;
 
-  await ssg.patient.getPatientByIdWithRecord.prefetch({ patientId: id })
+  await ssg.patient.getPatientById.prefetch({ patientId: id })
 
   return {
     props: {
