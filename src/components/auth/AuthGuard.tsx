@@ -42,7 +42,7 @@ const AuthGuard: React.FC<IAuthGuardProps> = ({ children, isSubscription = true 
       void router.push("/auth/signin");
     }
     if (data?.user?.isSubscribed === false && isSubscription === false || sessionStatus === "authenticated") {
-      void router.push("/dashboard/subscription");
+      void router.push("/subscription");
     }
   }, [data?.user?.isSubscribed, isSubscription, sessionStatus]);
 

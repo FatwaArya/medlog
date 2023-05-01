@@ -14,7 +14,7 @@ import {
 import { Navbar } from "./Navbar";
 import ContentArea from "./ContentArea";
 
-export function AdminLayout(props: PropsWithChildren) {
+export function Layout(props: PropsWithChildren) {
   const { status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -71,4 +71,4 @@ export function AdminLayout(props: PropsWithChildren) {
   );
 }
 
-export default AdminLayout;
+export default Layout;

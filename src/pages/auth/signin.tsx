@@ -50,18 +50,18 @@ export default function Login() {
 }
 
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(ctx);
-  //if session exists, redirect to dashboard
-  if (session) {
-    return {
-      redirect: {
-        destination: "/dashboard/home",
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {},
-  };
-}
+// export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+//   const session = await getServerAuthSession(ctx);
+//   //if session exists, redirect to dashboard
+//   if (session) {
+//     return {
+//       redirect: {
+//         destination: "/dashboard/home",
+//         permanent: false,
+//       },
+//     };
+//   }
+//   return {
+//     props: {},
+//   };
+// }
