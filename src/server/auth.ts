@@ -21,13 +21,15 @@ declare module "next-auth" {
       id: string;
       // ...other properties
       // role: UserRole;
+      isSubscribed: boolean;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    // role: UserRole;
+    isSubscribed: boolean;
+  }
 }
 
 /**
@@ -41,6 +43,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
         // session.user.role = user.role; <-- put other properties on the session here
+        session.user.isSubscribed = user.isSubscribed;
       }
       return session;
     },

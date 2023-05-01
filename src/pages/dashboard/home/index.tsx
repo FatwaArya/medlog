@@ -9,10 +9,13 @@ import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
 import { env } from "@/env.mjs";
 import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 
 const Home: PasienPlusPage = () => {
+    const { data: session } = useSession();
+    console.log(session)
     const { data: subsData } = api.subscription.create.useQuery()
-    console.log(subsData)
+    // console.log(subsData)
     useEffect(() => {
         // You can also change below url value to any script url you wish to load, 
         // for example this is snap.js for Sandbox Env (Note: remove `.sandbox` from url if you want to use production version)
