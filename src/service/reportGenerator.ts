@@ -1,9 +1,16 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import dayjs from "dayjs";
+import { RouterOutputs } from "@/utils/api";
+import { rupiah } from "@/utils/intlformat";
 
-const generatePDF = (patients : any[]) => {
+ type ReportData = RouterOutputs['record']['getRecordReports']
+ type ReportColumn = ReportData[number];
+
+
+const generatePDF = (patients : ReportData) => {
     const doc = new jsPDF();
+
 
     const tblColumn = [
         'Tanggal Pemeriksaan',
@@ -13,28 +20,22 @@ const generatePDF = (patients : any[]) => {
         'Nama Perawat',
         'Biaya'
     ];
-    const tblRows: any[][] = [];
-
+    const tblRows: (ReportColumn[keyof ReportColumn])[][] = [];
+    
     patients.forEach(data => {
-        const rupiahFormat = data?.pay.toLocaleString('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-        })
         const patientsData = [  
             dayjs(data?.createdAt).format('DD MMMM YYYY'),
             data?.patient.name,
             data?.patient.address,
             data?.patient.phone,
             data?.patient.user.name,
-            rupiahFormat,
+            rupiah.format(data?.pay)
         ]
         tblRows.push(patientsData)
     })
 
     doc.autoTable(tblColumn, tblRows, { startY: 20 })
     const dateFormat = dayjs(new Date()).format('DD MMMM YYYY')
-    doc.text(`Laporan Pasien Tanggal : ${dateFormat}`, 14, 15);
     doc.save(`report_${dateFormat}.pdf`);
 }
 

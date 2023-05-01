@@ -22,7 +22,6 @@ import { type DateRange } from "react-day-picker";
 import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
-import html2pdf from 'html2pdf.js';
 import generatePDF from "@/service/reportGenerator";
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
@@ -122,22 +121,7 @@ export default function ReportList(props: ListProps) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
     //https://www.npmjs.com/package/react-to-print
-    const downloadPDF = () => {
-        const element = componentRef.current;
-        console.log(element);
-        const date = dayjs(new Date()).format("DD MMMM YYYY");
-        const opt = {
-            margin: 0,
-            filename: `laporan pasien-${date}.pdf`,
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf()
-        .set(opt)
-        .from(element)
-        .save();
-    }
+
     return (
         <>
             <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -158,7 +142,7 @@ export default function ReportList(props: ListProps) {
                                     }}
                                     content={() => componentRef.current}
                                 /> */}
-                                <Button onClick={() => generatePDF(data)} disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                <Button onClick={() => generatePDF(reportsData)} disabled={reportsData?.length === 0} variant={"solidBlue"}>
                                     <DownloadIcon className=" h-4 w-4" />
                                 </Button>
 
