@@ -31,8 +31,8 @@ const generatePDF = (patients: ReportData) => {
     ];
     tblRows.push(patientsData);
   });
-
-  //@ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   doc.autoTable(tblColumn, tblRows, { startY: 20 });
   const dateFormat = dayjs(new Date()).format("DD MMMM YYYY");
   doc.save(`report_${dateFormat}.pdf`);
