@@ -23,6 +23,7 @@ import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
 import html2pdf from 'html2pdf.js';
+import generatePDF from "@/service/reportGenerator";
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
 
@@ -157,7 +158,7 @@ export default function ReportList(props: ListProps) {
                                     }}
                                     content={() => componentRef.current}
                                 /> */}
-                                <Button onClick={downloadPDF} disabled={reportsData?.length === 0} variant={"solidBlue"}>
+                                <Button onClick={() => generatePDF(data)} disabled={reportsData?.length === 0} variant={"solidBlue"}>
                                     <DownloadIcon className=" h-4 w-4" />
                                 </Button>
 
