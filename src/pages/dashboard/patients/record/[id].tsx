@@ -83,4 +83,7 @@ PatientRecord.getLayout = function getLayout(page) {
 
 PatientRecord.authRequired = true;
 
+PatientRecord.isSubscriptionRequired = true;
+
 export default PatientRecord;
+

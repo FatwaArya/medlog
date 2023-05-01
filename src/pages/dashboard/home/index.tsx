@@ -88,3 +88,5 @@ Home.getLayout = function getLayout(page: ReactElement) {
 }
 
 Home.authRequired = true;
+
+Home.isSubscriptionRequired = true;

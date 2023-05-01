@@ -217,3 +217,5 @@ CheckupDetail.authRequired = true;
 CheckupDetail.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>;
 };
+
+CheckupDetail.isSubscriptionRequired = true;

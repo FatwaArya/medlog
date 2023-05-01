@@ -26,3 +26,4 @@ Report.authRequired = true
 Report.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>
 }
+Report.isSubscriptionRequired = true

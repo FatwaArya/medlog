@@ -212,3 +212,5 @@ NewCheckup.getLayout = function getLayout(page: ReactElement) {
 };
 
 NewCheckup.authRequired = true;
+
+NewCheckup.isSubscriptionRequired = true;

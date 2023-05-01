@@ -22,6 +22,7 @@ const inter = Inter({
 export type PasienPlusPage<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
   authRequired?: boolean
+  isSubscriptionRequired?: boolean
 }
 
 type PasienPlusProps = AppProps & {
@@ -34,6 +35,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }: PasienPlusProps) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const authRequired = Component.authRequired ?? false;
+  const isSubscriptionRequired = Component.isSubscriptionRequired ?? false;
 
   return (<>
     <style jsx global>{`
@@ -45,9 +47,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Toaster />
       {
         authRequired ? (
-          <AuthGuard>
-            {getLayout(<Component {...pageProps} />)}
-          </AuthGuard>
+          isSubscriptionRequired ? (
+            <AuthGuard isSubscription={true}>
+              {getLayout(<Component {...pageProps} />)}
+            </AuthGuard>
+          ) : (
+            <AuthGuard isSubscription={false}>
+              {getLayout(<Component {...pageProps} />)}
+            </AuthGuard>
+          )
         ) : (
           getLayout(<Component {...pageProps} />)
         )

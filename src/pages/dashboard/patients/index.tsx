@@ -22,3 +22,5 @@ Patients.getLayout = function getLayout(page: ReactElement) {
 }
 
 Patients.authRequired = true;
+
+Patients.isSubscriptionRequired = true;

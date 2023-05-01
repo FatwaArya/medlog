@@ -286,3 +286,5 @@ ContinueCheckup.getLayout = function getLayout(page: ReactElement) {
 };
 
 ContinueCheckup.authRequired = true;
+
+ContinueCheckup.isSubscriptionRequired = true;

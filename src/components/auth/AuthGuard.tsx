@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 interface IAuthGuardProps {
   children: React.ReactNode;
+  isSubscription?: boolean;
 }
 
 export function Loader() {
@@ -32,19 +33,24 @@ export function Loader() {
   );
 }
 
-const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
-  const { status: sessionStatus } = useSession();
+const AuthGuard: React.FC<IAuthGuardProps> = ({ children, isSubscription = true }) => {
+  const { data, status: sessionStatus } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
       void router.push("/auth/signin");
     }
-  }, [sessionStatus]);
+    if (data?.user?.isSubscribed === false && isSubscription === false || sessionStatus === "authenticated") {
+      void router.push("/dashboard/subscription");
+    }
+  }, [data?.user?.isSubscribed, isSubscription, sessionStatus]);
 
   if (["loading", "unauthenticated"].includes(sessionStatus)) {
     return <Loader />;
   }
+
+
 
   return <>{children}</>;
 };
