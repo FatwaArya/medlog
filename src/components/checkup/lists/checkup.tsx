@@ -57,6 +57,13 @@ export default function CheckupList({
             },
 
         }),
+        columnHelper.accessor('diagnosis', {
+            header: "Diagnosis",
+            cell: (info) => {
+                return info.getValue();
+            },
+
+        }),
         columnHelper.accessor("patient.name", {
             header: "Nama Pasien",
             cell: (info) => {
@@ -65,6 +72,7 @@ export default function CheckupList({
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
+
         columnHelper.accessor("patient.gender", {
             header: "Jenis Kelamin",
             cell: (info) => {
@@ -72,6 +80,24 @@ export default function CheckupList({
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('MedicineDetail', {
+            header: "Terapi",
+            cell: (info) => {
+
+                if (!info.getValue() || info.getValue().length === 0) {
+                    return "Tidak ada terapi";
+                } else {
+                    return info.getValue().map((item, i) => (
+                        <span key={i} className="capitalize">
+                            {/* create delimiter */}
+                            {i > 0 && ", "}
+                            {item.medicine.name}
+                        </span>
+                    ));
+                }
+            },
+
         }),
         columnHelper.accessor("pay", {
             header: "Biaya",

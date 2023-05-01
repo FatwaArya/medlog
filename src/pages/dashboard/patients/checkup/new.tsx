@@ -128,7 +128,7 @@ const NewCheckup = () => {
                     methods.resetField('pay');
                     clearPreviewCheckUpAttachments()
                     clearPreviewLabAttachments()
-                    toast.success("Patient successfully created", {
+                    toast.success("Pasien dan Pemeriksaan Berhasil ditambahkan!", {
                         position: "top-center",
                     });
                     utils.patient.getNewestPatients.invalidate();
@@ -171,7 +171,7 @@ const NewCheckup = () => {
                                 >
                                     {isLoading ? (
                                         <div className="flex justify-center items-center">
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2" /> Menyimpan...
+                                            <Loader2 className="h-4 w-4 animate-spin mr-2" /> Simpan
                                         </div>
                                     ) : (
                                         "Simpan"

@@ -92,6 +92,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
         api.patient.getPatientById.useQuery({ patientId: id as string });
 
     const methods = useForm<CheckupExistingPatient>();
+    const router = useRouter();
 
     const { mutate, isLoading } = api.patient.createMedicalRecord.useMutation();
     const utils = api.useContext();
@@ -175,10 +176,15 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                     methods.resetField("drugs");
                     clearPreviewCheckUpAttachments();
                     clearPreviewLabAttachments();
-                    toast.success("Patient successfully created", {
+                    toast.success("Pemeriksaan Pasien Berhasil!", {
                         position: "top-center",
                     });
                     utils.patient.getNewestPatients.invalidate();
+
+
+                    setTimeout(() => {
+                        router.push(`/dashboard/patients/record/${id}`);
+                    }, 500);
                 },
                 onError: (e) => {
                     const errorMessage = e.data?.zodError?.fieldErrors.phone;
@@ -235,7 +241,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                                         disabled={isLoading} >
                                         {isLoading ? (
                                             <div className="flex justify-center items-center">
-                                                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Menyimpan...
+                                                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Simpan
                                             </div>
                                         ) : (
                                             "Simpan"
