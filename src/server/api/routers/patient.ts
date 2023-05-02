@@ -60,9 +60,7 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        phone: z
-          .string()
-          .length(12, { message: "Pastikan nomor telfon 12 digit" }),
+        phone: z.string().nullish(),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),

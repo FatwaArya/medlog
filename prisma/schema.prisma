@@ -1,155 +1,159 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Medicine {
-    id             String           @id @default(cuid())
-    userId         String
-    name           String
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-    MedicineDetail MedicineDetail[]
+  id             String           @id @default(cuid())
+  userId         String
+  name           String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  MedicineDetail MedicineDetail[]
 
-    @@index([userId])
+  @@index([userId])
 }
 
 model MedicineDetail {
-    id              String @id @default(cuid())
-    medicineId      String
-    medicalRecordId String
+  id              String        @id @default(cuid())
+  medicineId      String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  medicalRecordId String
+  medicine        Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
 
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    medicine      Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
-    medicalRecord MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
-
-    @@index([medicineId])
-    @@index([medicalRecordId])
+  @@index([medicineId])
+  @@index([medicalRecordId])
 }
 
 model Patient {
-    id            String          @id @default(cuid())
-    userId        String
-    name          String
-    phone         String?
-    address       String?
-    gender        Gender
-    birthDate     DateTime
-    createdAt     DateTime        @default(now())
-    updatedAt     DateTime        @updatedAt
-    user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    MedicalRecord MedicalRecord[]
+  id            String          @id @default(cuid())
+  userId        String
+  name          String
+  phone         String?
+  address       String?
+  gender        Gender
+  birthDate     DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  MedicalRecord MedicalRecord[]
 
-    @@index([userId])
+  @@index([userId])
 }
 
-//todo
-// remove drugs
-// make checkup required
 model MedicalRecord {
-    id             String           @id @default(cuid())
-    patientId      String
-    complaint      String           @db.VarChar(700)
-    diagnosis      String           @db.VarChar(700)
-    treatment      String?          @db.VarChar(400)
-    note           String           @db.VarChar(700)
-    checkup        String?          @db.VarChar(400)
-    pay            Int
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    labNote        String?          @db.VarChar(700)
-    patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
-    Attachment     Attachment[]
-    MedicineDetail MedicineDetail[]
+  id             String           @id @default(cuid())
+  patientId      String
+  complaint      String           @db.VarChar(700)
+  diagnosis      String           @db.VarChar(700)
+  treatment      String?          @db.VarChar(400)
+  note           String           @db.VarChar(700)
+  pay            Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  labNote        String?          @db.VarChar(700)
+  checkup        String?          @db.VarChar(400)
+  patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  Attachment     Attachment[]
+  MedicineDetail MedicineDetail[]
 
-    @@index([patientId])
+  @@index([patientId])
 }
 
 model Attachment {
-    id              String        @id @default(cuid())
-    medicalRecordId String
-    createdAt       DateTime      @default(now())
-    updatedAt       DateTime      @updatedAt
-    fileId          String?
-    medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
-    File            File?         @relation(fields: [fileId], references: [id])
+  id              String        @id @default(cuid())
+  medicalRecordId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  fileId          String?
+  medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
+  File            File?         @relation(fields: [fileId], references: [id])
 
-    @@index([medicalRecordId])
-    @@index([fileId])
+  @@index([medicalRecordId])
+  @@index([fileId])
 }
 
 model File {
-    id          String       @id @default(cuid())
-    type        String
-    url         String
-    mime        String
-    name        String
-    extension   String
-    size        Int
-    height      Int?
-    width       Int?
-    createdAt   DateTime     @default(now())
-    attachments Attachment[]
+  id          String       @id @default(cuid())
+  type        String
+  url         String
+  mime        String
+  name        String
+  extension   String
+  size        Int
+  height      Int?
+  width       Int?
+  createdAt   DateTime     @default(now())
+  attachments Attachment[]
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
-    @@index([userId])
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
+  @@index([userId])
 }
 
 model User {
-    id            String     @id @default(cuid())
-    name          String?
-    email         String?    @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    Patient       Patient[]
-    Medicine      Medicine[]
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  Patient       Patient[]
+  Medicine      Medicine[]
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
+}
+
+model Payment {
+  id        String   @id
+  orderId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  userId    String
 }
 
 enum Gender {
-    male
-    female
+  male
+  female
 }
