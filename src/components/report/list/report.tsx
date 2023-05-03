@@ -121,7 +121,6 @@ export default function ReportList(props: ListProps) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
     //https://www.npmjs.com/package/react-to-print
-
     return (
         <>
             <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
