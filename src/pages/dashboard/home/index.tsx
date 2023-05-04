@@ -10,31 +10,27 @@ import Head from "next/head";
 import { env } from "@/env.mjs";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Home: PasienPlusPage = () => {
     const { data: session } = useSession();
+    const router = useRouter();
     console.log(session)
     const { data: subsData } = api.subscription.create.useQuery()
-    // console.log(subsData)
+    const { mutate, data } = api.subscription.createRecurring.useMutation()
+    console.log(data)
+    //if data.redirect_url is not null, redirect to that url
     useEffect(() => {
-        // You can also change below url value to any script url you wish to load, 
-        // for example this is snap.js for Sandbox Env (Note: remove `.sandbox` from url if you want to use production version)
-        const midtransScriptUrl = 'https://app.sandbox.midtrans.com/snap/snap.js';
-
-        const scriptTag = document.createElement('script');
-        scriptTag.src = midtransScriptUrl;
-
-        // Optional: set script attribute, for example snap.js have data-client-key attribute 
-        // (change the value according to your client-key)
-        const myMidtransClientKey = env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-        scriptTag.setAttribute('data-client-key', myMidtransClientKey);
-
-        document.body.appendChild(scriptTag);
-
-        return () => {
-            document.body.removeChild(scriptTag);
+        if (data?.redirect_url) {
+            router.push(data.redirect_url)
         }
-    }, []);
+    }, [data])
+
+
+
+
+
+
     return (
         <>
             <Head>
@@ -54,24 +50,25 @@ const Home: PasienPlusPage = () => {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-ignore
-                    window.snap.pay(subsData?.token, {
-                        onSuccess: function (result) {
-                            /* You may add your own implementation here */
-                            alert("payment success!"); console.log(result);
-                        },
-                        onPending: function (result) {
-                            /* You may add your own implementation here */
-                            alert("wating your payment!"); console.log(result);
-                        },
-                        onError: function (result) {
-                            /* You may add your own implementation here */
-                            alert("payment failed!"); console.log(result);
-                        },
-                        onClose: function () {
-                            /* You may add your own implementation here */
-                            alert('you closed the popup without finishing the payment');
-                        }
-                    })
+                    // window.snap.pay(subsData?.token, {
+                    //     onSuccess: function (result) {
+                    //         /* You may add your own implementation here */
+                    //         alert("payment success!"); console.log(result);
+                    //     },
+                    //     onPending: function (result) {
+                    //         /* You may add your own implementation here */
+                    //         alert("wating your payment!"); console.log(result);
+                    //     },
+                    //     onError: function (result) {
+                    //         /* You may add your own implementation here */
+                    //         alert("payment failed!"); console.log(result);
+                    //     },
+                    //     onClose: function () {
+                    //         /* You may add your own implementation here */
+                    //         alert('you closed the popup without finishing the payment');
+                    //     }
+                    // })
+                    mutate()
                 }}>Pay</button>
             </div>
 

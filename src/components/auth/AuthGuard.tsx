@@ -46,10 +46,9 @@ const AuthGuard: React.FC<IAuthGuardProps> = ({ children, isSubscription = true 
     }
   }, [data?.user?.isSubscribed, isSubscription, sessionStatus]);
 
-  if (["loading", "unauthenticated"].includes(sessionStatus)) {
+  if (["loading", "unauthenticated"].includes(sessionStatus) || (isSubscription && data?.user?.isSubscribed === false)) {
     return <Loader />;
   }
-
 
 
   return <>{children}</>;
