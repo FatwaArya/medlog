@@ -114,10 +114,11 @@ export const patientRouter = createTRPCRouter({
           },
         });
 
-        if (isNumberUnique) {
+        //check if phone number is unique dont check if phone is nullish
+        if (phone && isNumberUnique) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Nomor telfon sudah terdaftar",
+            message: "Nomor telepon sudah terdaftar",
           });
         }
 
