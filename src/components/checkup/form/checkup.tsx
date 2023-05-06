@@ -200,6 +200,11 @@ export function CheckupForm() {
                                                         getInputRef={field.ref}
                                                     />
                                                 )}
+                                                rules={
+                                                    {
+                                                        required: true,
+                                                    }
+                                                }
                                             />
                                             {errors.pay && (
                                                 <span className="text-red-500 text-xs">
