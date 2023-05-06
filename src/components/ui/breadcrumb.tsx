@@ -5,9 +5,10 @@ import React, { useMemo } from "react";
 interface BreadcrumbsProps {
   patientName?: string;
   patientId?: string;
+  isPatientLast?: boolean;
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ patientName, patientId }) => {
+const Breadcrumbs : React.FC<BreadcrumbsProps> = ({patientName, patientId, isPatientLast}) => {
   const router = useRouter();
 
   const breadcrumbs = useMemo((
@@ -22,11 +23,17 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ patientName, patientId }) => 
 
       // build crumb object
       const crumbList = asPathNestedRoutes?.map((subpath, i) => {
+        let text = subpath;
+        if (subpath === "new") {
+          text = "pemeriksaan baru";
+        } else if (subpath === "checkup") {
+          text = "detail pemeriksaan";
+        } else if (subpath === "record") {
+          text = "catatan medis";
+        }
         const href = "/dashboard/" + asPathNestedRoutes.slice(0, i + 1).join("/");
-        const text = subpath;
-        console.log(text);
-
-        return { href, text };
+        
+        return {href, text};
       })
 
       // create default path wich is "Home"
@@ -40,7 +47,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ patientName, patientId }) => 
         <li className="flex flex-col">
           <div className="flex items-center">
             {breadcrumbs.map((crumb, i) => (
-              <Crumb key={i} {...crumb} last={i === breadcrumbs.length - 1} patienName={patientName} patientId={patientId} />
+              <Crumb key={i} {...crumb} last={i === breadcrumbs.length - 1} patienName={patientName} patientId={patientId} isPatientLast={isPatientLast} />
             ))}
           </div>
         </li>
@@ -55,9 +62,10 @@ interface CrumbProps {
   last?: boolean;
   patienName?: string;
   patientId?: string;
+  isPatientLast?: boolean;
 }
 
-const Crumb: React.FC<CrumbProps> = ({ text, href, last = false, patienName, patientId }) => {
+const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, patientId, isPatientLast}) => {
 
   const isRecord = href.includes("record");
   const isCheckup = href.includes("checkup");
@@ -66,15 +74,15 @@ const Crumb: React.FC<CrumbProps> = ({ text, href, last = false, patienName, pat
   if (last) {
     return (
       <>
-        {isPatient ? (
-          <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
-            {text.includes("new") ? "Pemeriksaan Baru" : patienName ? patienName : text}
-          </span>
-        ) : (
-          <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
+      {isPatientLast ? (
+        <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
             {patienName}
-          </span>
-        )}
+        </span>
+      ) : (
+        <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
+            {text}
+        </span>
+      )}
       </>
     )
   }
@@ -87,7 +95,7 @@ const Crumb: React.FC<CrumbProps> = ({ text, href, last = false, patienName, pat
         {
           text === "Home" ? <HomeIcon className="flex-shrink-0 h-5 w-5" /> :
             <span className="capitalize">
-              {isRecord ? "Catatan Medis" : isPatient}
+              {isPatient}
             </span>
         }
       </Link>
