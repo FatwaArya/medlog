@@ -2,6 +2,7 @@ import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import Head from "next/head";
 import ReportList from "@/components/report/list/report";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const Report: PasienPlusPage = () => {
@@ -13,6 +14,7 @@ const Report: PasienPlusPage = () => {
                     Pasien Plus | Laporan
                 </title>
             </Head>
+            <Breadcrumbs />
             <ReportList isDetailed={true} isPaginated pageSize={50} />
 
         </>

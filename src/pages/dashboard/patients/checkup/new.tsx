@@ -11,6 +11,7 @@ import { PatientInfoForm } from "@/components/checkup/form/patientInfo";
 import { CheckupForm } from "@/components/checkup/form/checkup";
 import { useCheckUpAttachmentStore, useLabsAttachmentStore } from "@/store/previewAttachment";
 import { LabForm } from "@/components/checkup/form/lab";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -168,6 +169,7 @@ const NewCheckup = () => {
             <Head>
                 <title>Pasien Plus | Register New Patient</title>
             </Head>
+            <Breadcrumbs />
             <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
                     <div className="space-y-6">

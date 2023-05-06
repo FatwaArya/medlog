@@ -23,6 +23,7 @@ import { rupiah } from "@/utils/intlformat";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { CalendarDateRangePicker } from "@/components/ui/datepicker/calendarDateRangePicker";
 import generatePDF from "@/service/reportGenerator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ReportColumn = RouterOutputs['record']['getRecordReports'][number]
 
@@ -121,7 +122,6 @@ export default function ReportList(props: ListProps) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
     //https://www.npmjs.com/package/react-to-print
-
     return (
         <>
             <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -228,13 +228,15 @@ export default function ReportList(props: ListProps) {
                                             </thead>
                                             <tbody className="divide-y divide-gray-200 bg-white">
                                                 {isLoading && (
-                                                    <tr>
-                                                        <td colSpan={6}>
-                                                            <div className="flex items-center justify-center py-8">
-                                                                <Spinner />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                    Array(5).fill(0).map((_, i) => (
+                                                        <tr key={i}>
+                                                            <td colSpan={6}>
+                                                                <div className="flex items-center max-w-full justify-center py-2">
+                                                                    <Skeleton className="w-full whitespace-nowrap h-12" />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))
                                                 )}
 
                                                 {!isLoading && table.getRowModel().rows.length === 0 && (
