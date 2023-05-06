@@ -42,7 +42,7 @@ const Breadcrumbs : React.FC<BreadcrumbsProps> = ({patientName, patientId, isPat
   ), [router.asPath])
 
   return (
-    <nav className="flex flex-wrap pb-5" aria-label="breadcrumb">
+    <nav className="flex flex-wrap pb-5 lg:overflow-x-hidden overflow-x-scroll" aria-label="breadcrumb">
       <ol role="list" className="bg-white rounded-md shadow pr-6 pl-2 flex space-x-4">
         <li className="flex flex-col">
           <div className="flex items-center">
@@ -75,11 +75,11 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
     return (
       <>
       {isPatientLast ? (
-        <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
+        <span className="ml-4 sm:text-sm text-xs font-medium text-gray-500 capitalize cursor-default">
             {patienName}
         </span>
       ) : (
-        <span className="ml-4 text-sm font-medium text-gray-500 capitalize cursor-default">
+        <span className="ml-4 sm:text-sm text-xs font-medium text-gray-500 capitalize cursor-default">
             {text}
         </span>
       )}
@@ -89,7 +89,7 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
 
   return (
     <>
-      <a href={href} className={`ml-4 text-sm font-medium text-gray-400 hover:text-gray-700 
+      <a href={href} className={`ml-4 sm:text-sm text-xs font-medium text-gray-400 hover:text-gray-700 
           ${isRecord || isCheckup ? "cursor-default pointer-events-none text-gray-400" : ""}`}
       >
         {
