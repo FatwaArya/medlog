@@ -65,6 +65,8 @@ export const patientRouter = createTRPCRouter({
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
+        treatment: z.string(),
+        checkup: z.string(),
         diagnosis: z.string(),
         drugs: z
           .array(
@@ -98,6 +100,8 @@ export const patientRouter = createTRPCRouter({
         complaint,
         diagnosis,
         drugs,
+        treatment,
+        checkup,
         note,
         pay,
         files,
@@ -139,6 +143,7 @@ export const patientRouter = createTRPCRouter({
             patientId: patient.id,
             complaint,
             diagnosis,
+            treatment,
             labNote,
             note,
           },

@@ -84,7 +84,8 @@ export function PatientInfoForm() {
                                                 )}
                                                 rules={{
                                                     required: false,
-                                                    minLength: 12,
+                                                    minLength: 10,
+                                                    maxLength: 12,
 
                                                 }}
                                             />
