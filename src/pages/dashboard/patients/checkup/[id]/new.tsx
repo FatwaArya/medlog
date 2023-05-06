@@ -91,8 +91,19 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
     const { data: patient, isLoading: isLoadingPatient } =
         api.patient.getPatientById.useQuery({ patientId: id as string });
 
-    const methods = useForm<CheckupExistingPatient>();
-    const router = useRouter();
+    const methods = useForm<CheckupExistingPatient>({
+        defaultValues: {
+            complaint: "",
+            diagnosis: "",
+            note: "",
+            treatment: "",
+            checkup: "",
+            drugs: [],
+            pay: 0,
+            files: [],
+            labNote: "",
+        },
+    });
 
     const { mutate, isLoading } = api.patient.createMedicalRecord.useMutation();
     const utils = api.useContext();
@@ -171,20 +182,15 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
             },
             {
                 onSuccess: () => {
-                    //reset all fields
+                    //reset all
                     methods.reset();
-                    methods.resetField("drugs");
+
                     clearPreviewCheckUpAttachments();
                     clearPreviewLabAttachments();
                     toast.success("Pemeriksaan Pasien Berhasil!", {
                         position: "top-center",
                     });
                     utils.patient.getNewestPatients.invalidate();
-
-
-                    setTimeout(() => {
-                        router.push(`/dashboard/patients/record/${id}`);
-                    }, 500);
                 },
                 onError: (e) => {
                     const errorMessage = e.data?.zodError?.fieldErrors.phone;

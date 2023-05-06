@@ -193,11 +193,12 @@ export function CheckupForm() {
                                                             field.onChange(values.floatValue)
                                                         }}
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                        defaultValue="20000"
                                                         name={field.name}
                                                         value={field.value as number}
                                                         onBlur={field.onBlur}
                                                         getInputRef={field.ref}
+                                                        //if submit success, reset the value
+                                                        onReset={() => field.onChange(0)}
                                                     />
                                                 )}
                                                 rules={
