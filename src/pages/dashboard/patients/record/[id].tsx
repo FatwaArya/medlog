@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { Spinner } from "@/components/ui/loading-overlay";
 import CheckupList from "@/components/checkup/lists/checkup";
 import { PatientDescription } from "../checkup/[id]/new";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
@@ -36,6 +37,7 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
           patient?.name ?? "Patient not found"
         }</title>
       </Head>
+      <Breadcrumbs patientName={patient?.name} />
       <PatientDescription {...patient} />
       <CheckupList patientId={id} />
     </>)

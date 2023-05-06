@@ -22,6 +22,7 @@ import {
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
@@ -229,13 +230,15 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
                                             {isLoading && (
-                                                <tr>
-                                                    <td colSpan={6}>
-                                                        <div className="flex items-center justify-center py-8">
-                                                            <Spinner />
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                Array(3).fill(0).map((_, i) => (
+                                                    <tr key={i}>
+                                                        <td colSpan={6}>
+                                                            <div className="flex items-center max-w-full justify-center py-2">
+                                                                <Skeleton className="w-full whitespace-nowrap h-12" />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
                                             )}
 
                                             {!isLoading && table.getRowModel().rows.length === 0 && (

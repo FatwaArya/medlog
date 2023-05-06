@@ -1,6 +1,7 @@
 import { LineCharts } from "@/components/home/charts/charts";
 import PatientList from "@/components/home/lists/patient";
 import { type ReactElement } from "react";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 import Layout from "@/components/dashboard/Layout";
 import { type PasienPlusPage } from "@/pages/_app";
@@ -15,6 +16,7 @@ const Home: PasienPlusPage = () => {
                 <title>Pasien Plus | Dashboard</title>
             </Head>
             <div className="">
+                <Breadcrumbs />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <LineCharts />
                     <div className="grid grid-rows-1 md:grid-rows-2 gap-4 col-span-2 md:col-span-1">
