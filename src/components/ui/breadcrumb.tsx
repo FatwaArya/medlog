@@ -89,7 +89,7 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
 
   return (
     <>
-      <Link href={href} className={`ml-4 text-sm font-medium text-gray-400 hover:text-gray-700 
+      <a href={href} className={`ml-4 text-sm font-medium text-gray-400 hover:text-gray-700 
           ${isRecord || isCheckup ? "cursor-default pointer-events-none text-gray-400" : ""}`}
       >
         {
@@ -98,7 +98,7 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
               {isPatient}
             </span>
         }
-      </Link>
+      </a>
       <svg
         className="flex-shrink-0 w-6 h-full text-gray-200"
         viewBox="0 0 24 44"
