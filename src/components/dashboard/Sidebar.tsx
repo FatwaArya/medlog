@@ -74,6 +74,7 @@ export function Sidebar({ entries, open, setOpen }: SidebarProps) {
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                           "group relative flex items-center px-7 py-3 text-base font-medium"
                         )}
+
                       >
                         <item.icon
                           className={cn(

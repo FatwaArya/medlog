@@ -81,13 +81,14 @@ export default function Login() {
             <Button type="submit" className="mt-4 " variant={"solidBlue"}>
               Sign In
             </Button>
-            <Separator className="my-6" />
-            <Button variant='outline' onClick={() => {
-              void signIn("google", { callbackUrl: "/dashboard/home" })
-            }}>
-              <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
-            </Button>
+
           </form>
+          <Separator />
+          <Button variant='outline' onClick={() => {
+            void signIn('google', { callbackUrl: "/dashboard/home" })
+          }}>
+            <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
+          </Button>
 
 
         </div>

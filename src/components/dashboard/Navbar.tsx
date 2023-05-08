@@ -69,16 +69,7 @@ export function Navbar({
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <button
-              type="button"
-              className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <span className="sr-only">View notifications</span>
-              <BellIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
-
             {/* Profile dropdown */}
-
             <DropdownMenu>
               <div className="relative ml-3">
                 <DropdownMenuTrigger
@@ -89,11 +80,10 @@ export function Navbar({
                     <span className="sr-only">Open user menu</span>
                     <ShadAvatar>
                       {session?.user.image ? (
-                        <AvatarImage src={session.user.image as string} className="h-8 w-8 rounded-full" />
+                        <AvatarImage src={session.user.image} className="h-8 w-8 rounded-full" />
                       ) : (
                         <Avatar
-                          name={session?.user.name ??
-                            session?.user.email ?? ''}
+                          name={session?.user.name ?? session?.user.email ?? "User"}
                           size={"32"}
                           round
                         />

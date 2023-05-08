@@ -25,6 +25,7 @@ declare module "next-auth" {
       id: string;
       // ...other properties
       role?: PrismaUser["role"];
+      isSubscribed?: boolean;
     } & DefaultSession["user"];
   }
 
@@ -32,6 +33,7 @@ declare module "next-auth" {
     id: string;
     // ...other properties
     role?: PrismaUser["role"];
+    isSubscribed?: boolean;
   }
 }
 
@@ -40,6 +42,7 @@ declare module "next-auth/jwt" {
     id: string;
     // ...other properties
     role?: PrismaUser["role"];
+    isSubscribed?: boolean;
   }
 }
 

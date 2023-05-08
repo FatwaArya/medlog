@@ -135,6 +135,7 @@ model User {
     isSubscribed  Boolean    @default(false)
     customerId    String?
     phone         String?
+    role          Role       @default(user)
     Patient       Patient[]
     Medicine      Medicine[]
     Account       Account[]
@@ -152,4 +153,9 @@ model Payment {
 enum Gender {
     male
     female
+}
+
+enum Role {
+    user
+    admin
 }
