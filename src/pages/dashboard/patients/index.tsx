@@ -3,6 +3,7 @@ import PatientList from "@/components/home/lists/patient";
 import { type PasienPlusPage } from "@/pages/_app";
 import Head from "next/head";
 import { type ReactElement } from "react";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const Patients: PasienPlusPage = () => (
@@ -10,6 +11,7 @@ const Patients: PasienPlusPage = () => (
         <Head>
             <title>Pasien Plus | Data Pasien</title>
         </Head>
+        <Breadcrumbs />
         <PatientList pageSize={50} isPaginated />
     </>
 )

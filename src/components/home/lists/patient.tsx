@@ -22,6 +22,7 @@ import {
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]['getNewestPatients'][number];
@@ -74,6 +75,7 @@ export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
 const columnHelper = createColumnHelper<PatientColumn>();
 
 export interface ListProps {
+    patientId?: string;
     pageSize?: number;
     isPaginated?: boolean;
     isDetailed?: boolean;
@@ -120,7 +122,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                 variant="solidBlue"
                                 className=" px-6 text-sm font-normal"
                                 size="sm"
-                                href={`/dashboard/patients/timeline/${info.getValue()}`}
+                                href={`/dashboard/patients/record/${info.getValue()}`}
                             >
                                 Detail
                             </Button>
@@ -129,7 +131,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                 variant="solidBlue"
                                 className=" px-6 text-sm font-normal"
                                 size="sm"
-                                href={`/dashboard/checkup/${info.getValue()}/new`}
+                                href={`/dashboard/patients/checkup/${info.getValue()}/new`}
                             >
                                 Periksa
                             </Button>
@@ -184,7 +186,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                             </h1>
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
-                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href="/dashboard/checkup/new">
+                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href="/dashboard/patients/checkup/new">
                                 <UserPlus className="h-5 w-5 text-gray-400" />
                             </Button>
                             <DebouncedInput
@@ -228,13 +230,15 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
                                             {isLoading && (
-                                                <tr>
-                                                    <td colSpan={6}>
-                                                        <div className="flex items-center justify-center py-8">
-                                                            <Spinner />
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                Array(3).fill(0).map((_, i) => (
+                                                    <tr key={i}>
+                                                        <td colSpan={6}>
+                                                            <div className="flex items-center max-w-full justify-center py-2">
+                                                                <Skeleton className="w-full whitespace-nowrap h-12" />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
                                             )}
 
                                             {!isLoading && table.getRowModel().rows.length === 0 && (
@@ -244,7 +248,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                                             <Button
                                                                 variant="solidBlue"
                                                                 className=" px-6 text-sm font-normal"
-                                                                href="/dashboard/checkup/new"
+                                                                href="/dashboard/patients/checkup/new"
                                                             >
                                                                 Daftar Pasien
                                                             </Button>

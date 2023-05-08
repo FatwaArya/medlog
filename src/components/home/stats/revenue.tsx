@@ -4,8 +4,8 @@ import { DollarSignIcon } from "lucide-react";
 import { api } from "@/utils/api";
 import { readableDate, rupiah } from "@/utils/intlformat";
 
-import { Stats, type StatsProps } from "./stats";
-import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { Stats, StatsProps } from "./stats";
+import { LoadingStats } from "@/components/ui/loading-overlay";
 
 export const RevenueStats = () => {
     const { data: revenue, isLoading } = api.record.getStatRevenue.useQuery();
@@ -19,9 +19,9 @@ export const RevenueStats = () => {
         stats: {
             value: "Rp 0",
             metadata: {
-                "Transaksi Terakhir": readableDate.format(new Date("1-1-2000"))
-            }
-        }
+                "Transaksi Terakhir": readableDate.format(new Date("1-1-2000")),
+            },
+        },
     });
 
     useEffect(() => {
@@ -31,14 +31,25 @@ export const RevenueStats = () => {
                 stats: {
                     value: rupiah.format(revenue.total!),
                     metadata: {
-                        "Transaksi Terakhir": readableDate.format(revenue.lastRevenue.createdAt!)
-                    }
-                }
-            })
+                        "Transaksi Terakhir": readableDate.format(
+                            revenue.lastRevenue.createdAt!
+                        ),
+                    },
+                },
+            });
         }
     }, [isLoading, revenue]);
 
-    if (isLoading) return <LoadingOverlay><Stats {...stats} /></LoadingOverlay>;
+    if (isLoading)
+        return (
+            <LoadingStats />
+        );
+    //blur background
 
-    return <Stats {...stats} />
-}
+    return (
+        <Stats {...stats} />
+
+    );
+};
+
+// Stats component remains the same

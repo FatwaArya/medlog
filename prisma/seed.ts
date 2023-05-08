@@ -26,7 +26,7 @@ async function main() {
       patientId: patient.id,
       complaint: faker.lorem.sentence(),
       diagnosis: faker.lorem.sentence(),
-      treatment: faker.lorem.sentence(),
+      drugs: faker.lorem.sentence(),
       note: faker.lorem.sentence(),
       pay: faker.datatype.number({ min: 0, max: 1000000 }),
       //createdAt may 2023

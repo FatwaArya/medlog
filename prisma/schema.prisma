@@ -24,9 +24,9 @@ model Medicine {
 model MedicineDetail {
     id              String        @id @default(cuid())
     medicineId      String
-    medicalRecordId String
     createdAt       DateTime      @default(now())
     updatedAt       DateTime      @updatedAt
+    medicalRecordId String
     medicine        Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
     medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
 
@@ -55,13 +55,13 @@ model MedicalRecord {
     patientId      String
     complaint      String           @db.VarChar(700)
     diagnosis      String           @db.VarChar(700)
+    treatment      String?          @db.VarChar(400)
     note           String           @db.VarChar(700)
-    checkup        String?          @db.VarChar(400)
     pay            Int
     createdAt      DateTime         @default(now())
     updatedAt      DateTime         @updatedAt
     labNote        String?          @db.VarChar(700)
-    treatment      String?          @db.VarChar(400)
+    checkup        String?          @db.VarChar(400)
     patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
     Attachment     Attachment[]
     MedicineDetail MedicineDetail[]
@@ -96,6 +96,35 @@ model File {
     attachments Attachment[]
 }
 
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@index([userId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
 model User {
     id            String     @id @default(cuid())
     name          String?
@@ -108,6 +137,8 @@ model User {
     phone         String?
     Patient       Patient[]
     Medicine      Medicine[]
+    Account       Account[]
+    Session       Session[]
 }
 
 model Payment {

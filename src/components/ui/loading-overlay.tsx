@@ -1,5 +1,6 @@
 import { cn } from "@/utils/cn";
-import type { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
+import { Skeleton } from "./skeleton";
 
 export function Spinner(props: { className?: string }) {
   return (
@@ -30,10 +31,35 @@ export function Spinner(props: { className?: string }) {
 export function LoadingOverlay(props: PropsWithChildren) {
   return (
     <div className="relative w-full h-full rounded-lg overflow-auto">
-      <div className="absolute w-full h-full flex justify-center items-center bg-white/30">
+      <div className="absolute w-full h-full flex justify-center items-center backdrop-blur-md bg-white/30">
         <Spinner />
       </div>
       {props.children}
     </div>
   );
+}
+
+export function LoadingStats() {
+  return (
+    <div className="flex flex-col h-full rounded-lg bg-white shadow p-6 outline outline-1 outline-slate-200">
+      <div className="flex items-center text-slate-200">
+        <Skeleton className="p-2 mr-4 h-9 w-9 rounded-full bg-slate-200" />
+        <Skeleton className="h-6 w-1/2" />
+        <div className="ml-auto text-slate-200" >
+          <Skeleton className="h-7 w-7 rounded-full" />
+        </div>
+      </div>
+      <div className="flex justify-end items-center grow">
+          <Skeleton className="w-32 h-6 py-3" />
+      </div>
+      <div>
+        <ul className="text-sm text-slate-500">
+          <li>
+            <Skeleton className="inline-block w-36 h-5" />
+            <Skeleton className="inline-block w-28 h-5 float-right" />
+          </li>
+        </ul>
+      </div>
+    </div>
+  )
 }

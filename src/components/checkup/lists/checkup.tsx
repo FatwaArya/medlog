@@ -30,6 +30,8 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    FilePlusIcon,
+    UserPlus,
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
@@ -41,8 +43,9 @@ const columnHelper = createColumnHelper<CheckupColumn>();
 export default function CheckupList({
     pageSize = 10,
     isPaginated = true,
+    patientId,
 }: ListProps) {
-    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery();
+    const { data: CheckupData, isLoading } = api.record.getRecords.useQuery({ patientId: patientId as string });
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
@@ -54,6 +57,13 @@ export default function CheckupList({
             },
 
         }),
+        columnHelper.accessor('diagnosis', {
+            header: "Diagnosis",
+            cell: (info) => {
+                return info.getValue();
+            },
+
+        }),
         columnHelper.accessor("patient.name", {
             header: "Nama Pasien",
             cell: (info) => {
@@ -62,6 +72,7 @@ export default function CheckupList({
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
         }),
+
         columnHelper.accessor("patient.gender", {
             header: "Jenis Kelamin",
             cell: (info) => {
@@ -69,6 +80,24 @@ export default function CheckupList({
             },
             filterFn: fuzzyFilter,
             sortingFn: fuzzySort,
+        }),
+        columnHelper.accessor('MedicineDetail', {
+            header: "Terapi",
+            cell: (info) => {
+
+                if (!info.getValue() || info.getValue().length === 0) {
+                    return "Tidak ada terapi";
+                } else {
+                    return info.getValue().map((item, i) => (
+                        <span key={i} className="capitalize">
+                            {/* create delimiter */}
+                            {i > 0 && ", "}
+                            {item.medicine.name}
+                        </span>
+                    ));
+                }
+            },
+
         }),
         columnHelper.accessor("pay", {
             header: "Biaya",
@@ -87,7 +116,7 @@ export default function CheckupList({
             cell: (info) => {
                 return (
                     <Button
-                        href={`/dashboard/checkup/${info.getValue()}`}
+                        href={`/dashboard/patients/checkup/${info.getValue()}`}
                         variant="solidBlue"
                         size="sm"
                         className=" px-6 text-sm font-normal"
@@ -131,12 +160,14 @@ export default function CheckupList({
                 <div className="">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
-                            <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
-                                Pemeriksaan Pasien
+                            <h1 className="scroll-m-20  text-lg font-medium leading-6 tracking-tight text-[#3366FF]">
+                                Riwayat Pemeriksaan
                             </h1>
                         </div>
-                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-
+                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
+                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
+                                <FilePlusIcon className="h-5 w-5 text-gray-400" />
+                            </Button>
                             <DebouncedInput
                                 value={globalFilter ?? ""}
                                 onChange={(value) => setGlobalFilter(String(value))}

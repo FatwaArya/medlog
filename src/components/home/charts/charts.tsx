@@ -22,6 +22,7 @@ import type {
 } from "recharts/types/component/DefaultTooltipContent";
 import dayjs from "dayjs";
 import { useForm, Controller, useController } from "react-hook-form";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Spinner } from "@/components/ui/loading-overlay";
@@ -149,7 +150,7 @@ export const LineCharts = () => {
                     </div>
                 ) : isLoading ? (
                     <div className="flex h-[297px] items-center justify-center">
-                        <Spinner />
+                        <Skeleton className="h-full w-full ml-3" />
                     </div>
                 ) : (
                     <LineChart data={data}

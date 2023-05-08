@@ -5,7 +5,7 @@ import { api } from "@/utils/api";
 import { readableDate } from "@/utils/intlformat";
 
 import { Stats, type StatsProps } from "./stats";
-import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { LoadingStats } from "@/components/ui/loading-overlay";
 
 export const PatientStats = () => {
     const { data: patient, isLoading } = api.patient.getStatPatients.useQuery();
@@ -39,7 +39,7 @@ export const PatientStats = () => {
         }
     }, [isLoading, patient]);
 
-    if (isLoading) return <LoadingOverlay><Stats {...stats} /></LoadingOverlay>;
+    if (isLoading) return <LoadingStats />;
 
     return <Stats {...stats} />
 }

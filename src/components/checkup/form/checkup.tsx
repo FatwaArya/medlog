@@ -1,24 +1,32 @@
 
 import { Input } from "@/components/ui/input";
-import { createAttachment, redAsterisk, } from "@/pages/dashboard/checkup/new";
+import { createAttachment, redAsterisk, } from "@/pages/dashboard/patients/checkup/new";
 import { Controller, useFormContext } from "react-hook-form";
 import Attachments, { type AttachmentType } from "@/components/checkup/Attachment";
 import { v4 as uuidv4 } from "uuid";
 import { useCheckUpAttachmentStore } from "@/store/previewAttachment";
-import type { CheckupExistingPatient } from "@/pages/dashboard/checkup/[id]/new";
+import type { CheckupExistingPatient } from "@/pages/dashboard/patients/checkup/[id]/new";
 import CreatableSelect from 'react-select/creatable';
 import { api } from "@/utils/api";
 import { NumericFormat } from "react-number-format";
+import { Label } from "@/components/ui/label";
+import { OptionProps, components } from "react-select";
+import { Cross, CrossIcon, X, XIcon } from "lucide-react";
+
 
 
 export function CheckupForm() {
-    const { register, control } = useFormContext<CheckupExistingPatient>()
+    const { register, control, formState: { errors } } = useFormContext<CheckupExistingPatient>()
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
     const { mutate, isLoading } = api.medicine.create.useMutation()
+    const { mutate: deleteMedicine, isLoading: isDeletingMedicine } = api.medicine.delete.useMutation()
     const utils = api.useContext()
     const { data: medicineOptions } = api.medicine.gets.useQuery()
+    const medicineOptionsId = medicineOptions?.map((medicine) => medicine.value) ?? []
+
+    const { data: isMedicineRelated } = api.medicine.isMedicineRelatedToRecord.useQuery({ id: medicineOptionsId })
 
 
 
@@ -51,9 +59,35 @@ export function CheckupForm() {
         })
     }
 
+    const Option = (props: OptionProps<{ value: string; label: string; }, true>) => {
+        const { data } = props;
+        //if data is match each isMedicineRelated, then disable the option
+        const isRelated = isMedicineRelated?.some((medicine) => medicine.id === data.value)
+
+        return (
+            <div className="relative mt-1 rounded-md shadow-sm">
+                <components.Option {...props} />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            deleteMedicine({ id: data.value }, {
+                                onSuccess: () => {
+                                    utils.medicine.gets.invalidate()
+                                }
+                            })
+                        }}
+                        disabled={!isRelated}
+                    >
+                        {isRelated ? <XIcon className="w-5 h-5 text-gray-500" /> : null}
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     return (
-        <div>
+        <>
             <div className="bg-white overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
                 <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg leading-6 font-medium text-blue-600">Data Checkup</h3>
@@ -83,19 +117,24 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register('complaint', { required: true })}
                                             />
+                                            {errors.complaint && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Keluhan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">
                                         <label
-                                            htmlFor="treatment"
+                                            htmlFor="drugs"
                                             className="block text-sm font-medium text-gray-700"
                                         >
                                             Terapi
                                         </label>
                                         <div className="mt-1">
                                             <Controller
-                                                name='treatment'
+                                                name='drugs'
                                                 control={control}
                                                 render={({ field }) => (
                                                     <CreatableSelect
@@ -107,6 +146,9 @@ export function CheckupForm() {
                                                         onChange={(value) => field.onChange(value)}
                                                         onCreateOption={handleCreate}
                                                         value={field.value}
+                                                        components={{ Option }}
+                                                        isClearable
+
                                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                                         // @ts-ignore
                                                         options={medicineOptions}
@@ -124,6 +166,9 @@ export function CheckupForm() {
                                                 rules={{ required: false }}
                                             />
                                         </div>
+                                        <Label className="text-gray-500 text-xs">
+                                            * Jika obat tidak ada, silahkan tambahkan obat baru
+                                        </Label>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">
@@ -148,15 +193,25 @@ export function CheckupForm() {
                                                             field.onChange(values.floatValue)
                                                         }}
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                        defaultValue="20000"
                                                         name={field.name}
-                                                        value={field.value}
+                                                        value={field.value as number}
                                                         onBlur={field.onBlur}
                                                         getInputRef={field.ref}
+                                                        //if submit success, reset the value
+                                                        onReset={() => field.onChange(0)}
                                                     />
                                                 )}
+                                                rules={
+                                                    {
+                                                        required: true,
+                                                    }
+                                                }
                                             />
-
+                                            {errors.pay && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Biaya tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -176,6 +231,11 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register('checkup', { required: true })}
                                             />
+                                            {errors.checkup && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Pemeriksaan pasien tidak boleh kosong
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -195,10 +255,17 @@ export function CheckupForm() {
                                                 defaultValue={""}
                                                 {...register("note", { required: true })}
                                             />
+                                            {errors.note && (
+                                                <span className="text-red-500 text-xs">
+                                                    * Catatan tidak boleh kosong
+                                                </span>
+                                            )}
+
                                         </div>
                                     </div>
 
-                                    <div className="col-span-6">
+
+                                    <div className="col-span-6 sm:col-span-3">
                                         <label
                                             htmlFor="fee"
                                             className="block text-sm font-medium text-gray-700"
@@ -215,6 +282,35 @@ export function CheckupForm() {
                                             placeholder="Masukkan diagnosis"
                                             className="mt-1"
                                         />
+                                        {errors.diagnosis && (
+                                            <span className="text-red-500 text-xs">
+                                                * Diagnosis tidak boleh kosong
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="col-span-6 sm:col-span-3">
+                                        <label
+                                            htmlFor="fee"
+                                            className="block text-sm font-medium text-gray-700"
+                                        >
+                                            Tindakan {redAsterisk}
+                                        </label>
+
+                                        <Input
+                                            type="text"
+                                            id="diagnosis"
+                                            {...register('treatment', {
+                                                required: true,
+                                            })}
+                                            placeholder="Masukkan tindakan"
+                                            className="mt-1"
+                                        />
+                                        {errors.treatment && (
+                                            <span className="text-red-500 text-xs">
+                                                * Tindakan tidak boleh kosong
+                                            </span>
+                                        )}
+
                                     </div>
 
                                     <div className="col-span-6">
@@ -259,8 +355,8 @@ export function CheckupForm() {
                                                                 name="file-upload"
                                                                 type="file"
                                                                 className="sr-only"
-                                                                //only accept image files
-                                                                accept="image/*"
+                                                                //only accept png and jpg
+                                                                accept="image/png, image/jpg"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />
@@ -274,13 +370,13 @@ export function CheckupForm() {
                                             )}
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </>
     )
 }

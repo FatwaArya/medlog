@@ -1,5 +1,5 @@
 import Layout from "@/components/dashboard/Layout";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import Head from "next/head";
 import toast from "react-hot-toast";
@@ -11,6 +11,18 @@ import { PatientInfoForm } from "@/components/checkup/form/patientInfo";
 import { CheckupForm } from "@/components/checkup/form/checkup";
 import { useCheckUpAttachmentStore, useLabsAttachmentStore } from "@/store/previewAttachment";
 import { LabForm } from "@/components/checkup/form/lab";
+import Breadcrumbs from "@/components/ui/breadcrumb";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const redAsterisk = <span className="text-red-500">*</span>;
 
@@ -41,14 +53,30 @@ export const createAttachment = (file: File, medicalRecordId: string) => {
 };
 const NewCheckup = () => {
     // { register, handleSubmit, control, reset }
-    const methods = useForm<CheckupNewPatient>();
+    const methods = useForm<CheckupNewPatient>({
+        defaultValues: {
+            name: "",
+            phone: "",
+            address: "",
+            birthDate: new Date(),
+            complaint: "",
+            diagnosis: "",
+            note: "",
+            treatment: "",
+            checkup: "",
+            drugs: [],
+            pay: 0,
+            files: [],
+            labNote: "",
+        },
+    });
     const { mutate, isLoading } = api.patient.createNewPatient.useMutation();
     const utils = api.useContext();
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
     const clearPreviewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.clearFileAndAttachment);
     const previewLabAttachments = useLabsAttachmentStore((state) => state.fileAndAttachment);
     const clearPreviewLabAttachments = useLabsAttachmentStore((state) => state.clearFileAndAttachment);
-
+    const sumbitRef = useRef<HTMLButtonElement>(null);
 
     const [allPreviewAttachments, setAllPreviewAttachments] = useState<
         FileAndAttachment[]
@@ -102,9 +130,11 @@ const NewCheckup = () => {
                 birthDate: data.birthDate,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
-                treatment: data.treatment,
+                checkup: data.checkup,
+                drugs: data.drugs,
                 note: data.note,
                 pay: data.pay,
+                treatment: data.treatment,
                 //merge attachments
                 files: uploads,
                 labNote: data.labNote,
@@ -113,9 +143,11 @@ const NewCheckup = () => {
                 onSuccess: () => {
                     //reset all fields
                     methods.reset();
+                    methods.resetField('phone');
+                    methods.resetField('pay');
                     clearPreviewCheckUpAttachments()
                     clearPreviewLabAttachments()
-                    toast.success("Patient successfully created", {
+                    toast.success("Pasien dan Pemeriksaan Berhasil ditambahkan!", {
                         position: "top-center",
                     });
                     utils.patient.getNewestPatients.invalidate();
@@ -137,6 +169,7 @@ const NewCheckup = () => {
             <Head>
                 <title>Pasien Plus | Register New Patient</title>
             </Head>
+            <Breadcrumbs />
             <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
                     <div className="space-y-6">
@@ -145,17 +178,45 @@ const NewCheckup = () => {
                         <LabForm />
 
                         <div className="flex justify-end">
+
                             <button
+                                ref={sumbitRef}
                                 type="submit"
-                                disabled={isLoading}
-                                className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    "Save"
-                                )}
-                            </button>
+                            />
+
+                            <AlertDialog>
+                                <AlertDialogTrigger className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    disabled={isLoading}
+
+                                >
+                                    {isLoading ? (
+                                        <div className="flex justify-center items-center">
+                                            <Loader2 className="h-4 w-4 animate-spin mr-2" /> Simpan
+                                        </div>
+                                    ) : (
+                                        "Simpan"
+                                    )}
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Apakah anda yakin?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="line-clamp-4">
+                                            Tindakan ini permanen dan tidak dapat diubah. Mohon pastikan informasi yang dimasukkan akurat. Jika perlu bantuan, hubungi tim dukungan kami.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction className="bg-blue-600 hover:bg-blue-400" onClick={() => {
+                                            sumbitRef.current?.click();
+                                        }}>
+
+                                            Simpan
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 </form>

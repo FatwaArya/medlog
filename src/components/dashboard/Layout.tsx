@@ -9,8 +9,8 @@ import {
   HomeIcon,
   UsersIcon,
   DownloadIcon,
-  Activity,
 } from "lucide-react";
+
 import { Navbar } from "./Navbar";
 import ContentArea from "./ContentArea";
 
@@ -23,12 +23,6 @@ export function AdminLayout(props: PropsWithChildren) {
       name: "Beranda",
       href: "/dashboard/home",
       icon: HomeIcon,
-      current: false,
-    },
-    {
-      name: "Pemeriksaan",
-      href: "/dashboard/checkup",
-      icon: Activity,
       current: false,
     },
     {
