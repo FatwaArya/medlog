@@ -9,33 +9,49 @@ import { signIn } from "next-auth/react";
 import { GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
 import { Input } from "@/components/ui/input";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
+import { PatternFormat } from "react-number-format";
+import { forwardRef } from "react";
+import type { PatternFormatProps } from "react-number-format";
 
 
 interface ISignUp {
     name: string;
     email: string;
     password: string;
+    phone: string;
 }
+
+
 
 export default function Login() {
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors } } = useForm<ISignUp>();
+    const { register, handleSubmit, formState: { errors }, control } = useForm<ISignUp>();
     const { mutate } = api.user.register.useMutation({
-        onSuccess: () => router.push("/auth/signin"),
+        onSuccess(data, variables,) {
+            signIn("credentials", {
+                email: variables.email,
+                password: variables.password,
+                callbackUrl: "/dashboard/home",
+            });
+        },
         onError: (e) => toast.error(e.message),
     });
     const onSubmit: SubmitHandler<ISignUp> = async (data) => {
         mutate({
             name: data.name,
+            phone: data.phone,
             email: data.email,
             password: data.password,
         })
     }
+
+    //forward ref for numberic input
+
 
     return (
         <>
@@ -60,34 +76,77 @@ export default function Login() {
                 <div className="mt-10">
                     <div className="mt-6">
                         <form className="space-y-7" onSubmit={handleSubmit(onSubmit)}>
-                            {/* error warning */}
-                            <div>
-                                <Label className="mb-2 block text-sm font-medium text-gray-700" >
-                                    Nama Lengkap
-                                </Label>
-                                <Input
-                                    {...register("name", { required: true })}
-                                    id="name"
-                                    name="name"
-                                    type='text'
-                                    autoComplete="given-name"
-                                />
-                                {errors.name && <span className="text-red-400 text-sm text-muted-foreground">{errors?.name.message}</span>}
+                            <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <Label className="mb-2 block text-sm font-medium text-gray-700" >
+                                        Nama Lengkap
+                                    </Label>
+                                    <Input
+                                        {...register("name", { required: "Nama Lengkap tidak boleh kosong" })}
+                                        id="name"
+                                        name="name"
+                                        type='text'
+                                        autoComplete="given-name"
+                                    />
+                                    {errors.name && <span className="text-red-400 text-sm text-muted-foreground">{errors?.name.message}</span>}
 
+                                </div>
+                                <div>
+                                    <Label className="mb-2 block text-sm font-medium text-gray-700" >
+                                        No. Handphone
+                                    </Label>
+                                    <div className="relative mt-1 rounded-md shadow-sm">
+                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span className="text-gray-500 sm:text-sm">+62</span>
+                                        </div>
+                                        <Controller
+                                            name='phone'
+                                            control={control}
+                                            render={({ field }) => (
+                                                <PatternFormat
+                                                    format="####-####-####"
+
+                                                    customInput={Input}
+                                                    onValueChange={(values) => {
+                                                        field.onChange(values.value)
+                                                    }}
+                                                    className="block w-full rounded-md border-gray-300 bg-white pl-11 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+
+                                                    autoComplete="phone"
+                                                    id="phone-number"
+
+                                                />
+                                            )}
+                                            rules={{
+                                                required: 'Phone number is required',
+                                                minLength: {
+                                                    value: 10,
+                                                    message: 'Phone number must be at least 10 characters long',
+                                                },
+                                                maxLength: {
+                                                    value: 12,
+                                                    message: 'Phone number must be at most 12 characters long',
+                                                },
+                                            }}
+                                        />
+                                        {errors.phone && <span className="text-red-400 text-sm text-muted-foreground">{errors.phone.message}</span>}
+                                    </div>
+                                </div>
                             </div>
+
 
                             <div>
                                 <Label className="mb-2 block text-sm font-medium text-gray-700" >
                                     Email
                                 </Label>
                                 <Input
-                                    {...register("email", { required: true })}
+                                    {...register("email", { required: 'Email tidak boleh kosong' })}
                                     id="email"
                                     name="email"
                                     type="email"
                                     autoComplete="email"
                                 />
-                                {errors.email && <span className="text-red-400 text-sm text-muted-foreground">Email harus diisi</span>}
+                                {errors.email && <span className="text-red-400 text-sm text-muted-foreground">{errors.email.message}</span>}
 
                             </div>
 
