@@ -356,7 +356,7 @@ export function CheckupForm() {
                                                                 type="file"
                                                                 className="sr-only"
                                                                 //only accept png and jpg
-                                                                accept="image/png, image/jpg"
+                                                                accept="image/jpg, image/png"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />
@@ -364,7 +364,7 @@ export function CheckupForm() {
                                                         <p className="pl-1">or drag and drop</p>
                                                     </div>
                                                     <p className="text-xs text-gray-500">
-                                                        PNG, JPG, GIF up to 10MB
+                                                        PNG, JPG up to 10MB
                                                     </p>
                                                 </div>
                                             )}

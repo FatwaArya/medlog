@@ -188,6 +188,11 @@ export const patientRouter = createTRPCRouter({
 
             const fileType = await probe(object.Body as Readable);
 
+            //if file mime is jpeg change it to jpg so it dont return error
+            if (upload.ext === "jpeg") {
+              upload.ext = "jpg";
+            }
+
             if (
               !object.ContentLength ||
               !fileType ||
@@ -322,6 +327,11 @@ export const patientRouter = createTRPCRouter({
               })
             );
             const fileType = await probe(object.Body as Readable);
+
+            //if file mime is jpeg change it to jpg so it dont return error
+            if (upload.ext === "jpeg") {
+              upload.ext = "jpg";
+            }
 
             if (
               !object.ContentLength ||
