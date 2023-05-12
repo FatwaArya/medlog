@@ -11,6 +11,7 @@ import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
 import bcrypt from "bcrypt";
 import type { User as PrismaUser, Role } from "@prisma/client";
+// import { verify } from "jsonwebtoken";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -53,22 +54,25 @@ declare module "next-auth/jwt" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, token }) {
+    async session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
       }
       return session;
     },
-    jwt({ token, user }) {
-      if (user) {
-        token = {
-          ...token,
-          role: user.role,
-        };
-      }
-      return token;
-    },
+    // async jwt({ token, user, account }) {
+    //   if (user) {
+    //     token = {
+    //       ...token,
+    //       role: user.role,
+    //     };
+    //   }
+    //   //refresh token when role changed
+    //   // console.log(user);
+
+    //   return token;
+    // },
   },
   session: {
     strategy: "jwt",

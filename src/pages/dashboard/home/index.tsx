@@ -10,6 +10,8 @@ import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next/types";
+import { getServerAuthSession } from "@/server/auth";
 
 const Home: PasienPlusPage = () => {
     const { data: user } = useSession()
@@ -42,3 +44,24 @@ Home.getLayout = function getLayout(page: ReactElement) {
 }
 
 Home.authRequired = true;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(context);
+
+    //not need to check session, because it will be redirect to login page if session is null
+    //check role
+    if (session?.user.role !== "admin") {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {
+            session,
+        },
+    };
+}

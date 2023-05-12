@@ -5,12 +5,7 @@ import { type PropsWithChildren, useEffect, useState } from "react";
 
 import { Sidebar } from "@/components/dashboard/Sidebar";
 
-import {
-  HomeIcon,
-  UsersIcon,
-  DownloadIcon,
-  ShieldIcon,
-} from "lucide-react";
+import { HomeIcon, UsersIcon, DownloadIcon, ShieldIcon } from "lucide-react";
 
 import { Navbar } from "./Navbar";
 import ContentArea from "./ContentArea";
@@ -19,38 +14,36 @@ export function AdminLayout(props: PropsWithChildren) {
   const { data, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+
   const [navigation, setNavigation] = useState([
     {
       name: "Beranda",
       href: "/dashboard/home",
       icon: HomeIcon,
       current: false,
-      isAdmin: false
-
+      isAdmin: false,
     },
     {
       name: "Data Pasien",
       href: "/dashboard/patients",
       icon: UsersIcon,
       current: false,
-      isAdmin: false
-
+      isAdmin: false,
     },
     {
       name: "Laporan",
       href: "/dashboard/report",
       icon: DownloadIcon,
       current: false,
-      isAdmin: false
-
+      isAdmin: false,
     },
     {
       name: "Atur Pengguna",
       href: "/dashboard/admin/home",
       icon: ShieldIcon,
       current: false,
-      isAdmin: data?.user.role === "admin" ? false : true
-    }
+      isAdmin: data?.user.role === "admin" ? false : true,
+    },
   ]);
 
   const { pathname } = useRouter();
@@ -65,13 +58,11 @@ export function AdminLayout(props: PropsWithChildren) {
       });
       setNavigation(newNavigation);
     }
-
   }, [pathname, data?.user.role]);
 
   if (status === "loading") {
     return <div>Loading user info...</div>;
   }
-  console.log(navigation)
   return (
     <>
       <Sidebar
@@ -86,3 +77,4 @@ export function AdminLayout(props: PropsWithChildren) {
 }
 
 export default AdminLayout;
+

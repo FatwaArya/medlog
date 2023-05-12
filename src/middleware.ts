@@ -6,6 +6,11 @@ export default withAuth({
       if (req.nextUrl.pathname.includes("/dashboard/admin")) {
         return token?.role === "admin";
       }
+      //other path must be accessible by all user if user is subscribed
+      if (req.nextUrl.pathname.includes("/dashboard")) {
+        return token?.isSubscribed === true;
+      }
+
       return !!token;
     },
   },

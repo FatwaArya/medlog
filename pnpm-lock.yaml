@@ -31,6 +31,7 @@ specifiers:
   '@types/bcrypt': ^5.0.0
   '@types/eslint': ^8.37.0
   '@types/node': ^18.16.5
+  '@types/nprogress': ^0.2.0
   '@types/prettier': ^2.7.2
   '@types/probe-image-size': ^7.2.0
   '@types/react': ^18.2.5
@@ -52,12 +53,14 @@ specifiers:
   eslint: ^8.40.0
   eslint-config-next: ^13.4.1
   framer-motion: ^10.12.8
+  jsonwebtoken: ^9.0.0
   jspdf: ^2.5.1
   jspdf-autotable: ^3.5.28
   lucide-react: ^0.129.0
   next: ^13.4.1
   next-auth: ^4.22.1
   next-axiom: ^0.17.0
+  nprogress: ^0.2.0
   postcss: ^8.4.23
   prettier: ^2.8.8
   prettier-plugin-tailwindcss: ^0.2.8
@@ -124,12 +127,14 @@ dependencies:
   date-fns: 2.30.0
   dayjs: 1.11.7
   framer-motion: 10.12.8_biqbaboplfbrettd7655fr4n2y
+  jsonwebtoken: 9.0.0
   jspdf: 2.5.1
   jspdf-autotable: 3.5.28_jspdf@2.5.1
   lucide-react: 0.129.0_react@18.2.0
   next: 13.4.1_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.22.1_2xek2u27flvv5bywadnu4xxgx4
   next-axiom: 0.17.0_next@13.4.1
+  nprogress: 0.2.0
   prop-types: 15.8.1
   react: 18.2.0
   react-avatar: 5.0.3_o7v67jdwpnv3iu2zh5dixtzyme
@@ -157,6 +162,7 @@ devDependencies:
   '@types/bcrypt': 5.0.0
   '@types/eslint': 8.37.0
   '@types/node': 18.16.5
+  '@types/nprogress': 0.2.0
   '@types/prettier': 2.7.2
   '@types/probe-image-size': 7.2.0
   '@types/react': 18.2.5
@@ -2526,6 +2532,10 @@ packages:
   /@types/node/18.16.5:
     resolution: {integrity: sha512-seOA34WMo9KB+UA78qaJoCO20RJzZGVXQ5Sh6FWu0g/hfT44nKXnej3/tCQl7FL97idFpBhisLYCTB50S0EirA==}
 
+  /@types/nprogress/0.2.0:
+    resolution: {integrity: sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==}
+    dev: true
+
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
@@ -3034,6 +3044,10 @@ packages:
     resolution: {integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==}
     engines: {node: '>= 0.4.0'}
     hasBin: true
+    dev: false
+
+  /buffer-equal-constant-time/1.0.1:
+    resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
     dev: false
 
   /buffer/5.7.1:
@@ -3574,6 +3588,12 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /ecdsa-sig-formatter/1.0.11:
+    resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
+    dependencies:
+      safe-buffer: 5.2.1
+    dev: false
 
   /electron-to-chromium/1.4.385:
     resolution: {integrity: sha512-L9zlje9bIw0h+CwPQumiuVlfMcV4boxRjFIWDcLfFqTZNbkwOExBzfmswytHawObQX4OUhtNv8gIiB21kOurIg==}
@@ -4792,6 +4812,16 @@ packages:
       minimist: 1.2.8
     dev: true
 
+  /jsonwebtoken/9.0.0:
+    resolution: {integrity: sha512-tuGfYXxkQGDPnLJ7SibiQgVgeDgfbPq2k2ICcbgqW8WxWLBAxKQM/ZCu/IT8SOSwmaYl4dpTFCW5xZv7YbbWUw==}
+    engines: {node: '>=12', npm: '>=6'}
+    dependencies:
+      jws: 3.2.2
+      lodash: 4.17.21
+      ms: 2.1.3
+      semver: 7.5.0
+    dev: false
+
   /jspdf-autotable/3.5.28_jspdf@2.5.1:
     resolution: {integrity: sha512-eNYt5mUxCGa1Y0bmOhGXU+Va/P2jNkgOgUPGIpZp2rbZUauU34s0q3S59Jps5zi2u90nQy7DmD/D+sdesJLIEA==}
     peerDependencies:
@@ -4821,6 +4851,21 @@ packages:
       array-includes: 3.1.6
       object.assign: 4.1.4
     dev: true
+
+  /jwa/1.4.1:
+    resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+    dev: false
+
+  /jws/3.2.2:
+    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
+    dependencies:
+      jwa: 1.4.1
+      safe-buffer: 5.2.1
+    dev: false
 
   /language-subtag-registry/0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}
@@ -5002,7 +5047,6 @@ packages:
 
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
-    dev: true
 
   /mz/2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
@@ -5207,6 +5251,10 @@ packages:
       console-control-strings: 1.1.0
       gauge: 3.0.2
       set-blocking: 2.0.0
+    dev: false
+
+  /nprogress/0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
     dev: false
 
   /oauth/0.9.15:

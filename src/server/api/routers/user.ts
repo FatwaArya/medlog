@@ -12,7 +12,15 @@ export const userRouter = createTRPCRouter({
       z.object({
         phone: z.string(),
         email: z.string(),
-        password: z.string(),
+        password: z
+          .string()
+          .min(8, {
+            message: "Password harus memiliki minimal 8 karakter",
+          })
+          .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, {
+            message:
+              "Password harus mengandung huruf besar, huruf kecil, dan angka",
+          }),
         name: z.string(),
       })
     )
