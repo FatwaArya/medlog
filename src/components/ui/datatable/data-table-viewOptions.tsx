@@ -37,7 +37,7 @@ export function DataTableViewOptions<TData>({
             <DropdownMenuSeparator />
             {table
                 .getAllColumns()
-                .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
+                .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide() && column.id !== "id")
                 .map((column) => {
                     return (
                         <DropdownMenuCheckboxItem
