@@ -1,14 +1,14 @@
 import Layout from "@/components/dashboard/Layout";
 import { PasienPlusPage } from "@/pages/_app";
 import { ReactElement } from "react";
-
+import AdminList from "@/components/home/lists/admin";
 
 
 const Admin: PasienPlusPage = () => {
 
     return (
         <>
-            <h1>Admin</h1>
+            <AdminList />
         </>
     )
 }
