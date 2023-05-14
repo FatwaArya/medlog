@@ -12,9 +12,9 @@ datasource db {
 model Payment {
   id        String   @id @default(cuid())
   orderId   String
-  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
 }
 
 model Medicine {
@@ -32,9 +32,9 @@ model Medicine {
 model MedicineDetail {
   id              String        @id @default(cuid())
   medicineId      String
-  medicalRecordId String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  medicalRecordId String
   medicine        Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
   medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id], onDelete: Cascade)
 
@@ -63,13 +63,13 @@ model MedicalRecord {
   patientId      String
   complaint      String           @db.VarChar(700)
   diagnosis      String           @db.VarChar(700)
+  treatment      String?          @db.VarChar(400)
   note           String           @db.VarChar(700)
-  checkup        String?          @db.VarChar(400)
   pay            Int
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   labNote        String?          @db.VarChar(700)
-  treatment      String?          @db.VarChar(400)
+  checkup        String?          @db.VarChar(400)
   patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
   Attachment     Attachment[]
   MedicineDetail MedicineDetail[]
@@ -140,7 +140,9 @@ model User {
   emailVerified DateTime?
   image         String?
   isSubscribed  Boolean    @default(false)
-  customerId    String?
+  password      String?
+  phone         String?
+  role          User_role  @default(user)
   accounts      Account[]
   sessions      Session[]
   Patient       Patient[]
@@ -158,4 +160,9 @@ model VerificationToken {
 enum Gender {
   male
   female
+}
+
+enum User_role {
+  user
+  admin
 }

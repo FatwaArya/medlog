@@ -29,6 +29,7 @@ specifiers:
   '@trpc/server': ^10.24.0
   '@types/eslint': ^8.37.0
   '@types/node': ^18.16.3
+  '@types/nprogress': ^0.2.0
   '@types/prettier': ^2.7.2
   '@types/probe-image-size': ^7.2.0
   '@types/react': ^18.2.4
@@ -55,6 +56,7 @@ specifiers:
   next: ^13.3.4
   next-auth: ^4.22.1
   next-axiom: ^0.17.0
+  nprogress: ^0.2.0
   postcss: ^8.4.23
   prettier: ^2.8.8
   prettier-plugin-tailwindcss: ^0.2.8
@@ -125,6 +127,7 @@ dependencies:
   next: 13.3.4_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.22.1_vwuoxxmoeydgew5hhkavebkk4e
   next-axiom: 0.17.0_next@13.3.4
+  nprogress: 0.2.0
   prop-types: 15.8.1
   react: 18.2.0
   react-day-picker: 8.7.1_kzhlcyde2l6xjiirkbg7jzhosa
@@ -151,6 +154,7 @@ devDependencies:
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.2
   '@types/eslint': 8.37.0
   '@types/node': 18.16.3
+  '@types/nprogress': 0.2.0
   '@types/prettier': 2.7.2
   '@types/probe-image-size': 7.2.0
   '@types/react': 18.2.4
@@ -2495,6 +2499,10 @@ packages:
 
   /@types/node/18.16.3:
     resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
+
+  /@types/nprogress/0.2.0:
+    resolution: {integrity: sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==}
+    dev: true
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -5015,6 +5023,10 @@ packages:
     dependencies:
       path-key: 4.0.0
     dev: true
+
+  /nprogress/0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
+    dev: false
 
   /oauth/0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}
