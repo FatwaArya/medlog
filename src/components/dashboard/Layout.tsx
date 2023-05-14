@@ -46,7 +46,7 @@ export function AdminLayout(props: PropsWithChildren) {
     },
     {
       name: "Atur Pengguna",
-      href: "/dashboard/admin/home",
+      href: "/dashboard/admin",
       icon: ShieldIcon,
       current: false,
       isAdmin: data?.user.role === "admin" ? false : true
