@@ -10,11 +10,9 @@ import { Home, Users, Download, Shield } from "lucide-react";
 import Navbar from "./Navbar";
 import ContentArea from "./ContentArea";
 
-
 const AdminLayout = (props: PropsWithChildren) => {
   const { data, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
 
   const [navigation, setNavigation] = useState([
     {
@@ -44,8 +42,7 @@ const AdminLayout = (props: PropsWithChildren) => {
       icon: Shield,
       current: false,
       hide: data?.user.role !== "admin",
-    }
-
+    },
   ]);
 
   const { pathname } = useRouter();
@@ -78,6 +75,6 @@ const AdminLayout = (props: PropsWithChildren) => {
       <ContentArea {...props} />
     </>
   );
-}
+};
 
 export default AdminLayout;
