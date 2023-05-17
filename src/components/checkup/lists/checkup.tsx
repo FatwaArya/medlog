@@ -26,11 +26,11 @@ import {
 import { Spinner } from "@/components/ui/loading-overlay";
 import { rupiah } from "@/utils/intlformat";
 import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    ChevronUpIcon,
-    FilePlusIcon,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronUp,
+    FilePlus,
     UserPlus,
 } from "lucide-react";
 
@@ -166,7 +166,7 @@ export default function CheckupList({
                         </div>
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
                             <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
-                                <FilePlusIcon className="h-5 w-5 text-gray-400" />
+                                <FilePlus className="h-5 w-5 text-gray-400" />
                             </Button>
                             <DebouncedInput
                                 value={globalFilter ?? ""}
@@ -208,8 +208,8 @@ export default function CheckupList({
                                                                                 header.getContext()
                                                                             )}
                                                                             {{
-                                                                                asc: <ChevronUpIcon />,
-                                                                                desc: <ChevronDownIcon />,
+                                                                                asc: <ChevronUp />,
+                                                                                desc: <ChevronDown />,
                                                                             }[
                                                                                 header.column.getIsSorted() as string
                                                                             ] ?? null}
@@ -322,7 +322,7 @@ export default function CheckupList({
                                                 onClick={() => table.previousPage()}
                                                 disabled={!table.getCanPreviousPage()}
                                             >
-                                                <ChevronLeftIcon className="h-4 w-4" />
+                                                <ChevronLeft className="h-4 w-4" />
                                             </button>
                                             <button
                                                 className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""
@@ -330,7 +330,7 @@ export default function CheckupList({
                                                 onClick={() => table.nextPage()}
                                                 disabled={!table.getCanNextPage()}
                                             >
-                                                <ChevronRightIcon className="h-4 w-4" />
+                                                <ChevronRight className="h-4 w-4" />
                                             </button>
                                         </div>
                                     </div>

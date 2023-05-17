@@ -33,7 +33,7 @@ export function Loader() {
   );
 }
 
-const AuthGuard: React.FC<IAuthGuardProps> = ({ children, isSubscription = true }) => {
+const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
   const { data, status: sessionStatus } = useSession();
   const router = useRouter();
 
@@ -41,12 +41,10 @@ const AuthGuard: React.FC<IAuthGuardProps> = ({ children, isSubscription = true 
     if (sessionStatus === "unauthenticated") {
       void router.push("/auth/signin");
     }
-    if (data?.user?.isSubscribed === false && isSubscription === false || sessionStatus === "authenticated") {
-      void router.push("/subscription");
-    }
-  }, [data?.user?.isSubscribed, isSubscription, sessionStatus]);
 
-  if (["loading", "unauthenticated"].includes(sessionStatus) || (isSubscription && data?.user?.isSubscribed === false)) {
+  }, [data?.user?.isSubscribed, sessionStatus]);
+
+  if (["loading", "unauthenticated"].includes(sessionStatus)) {
     return <Loader />;
   }
 

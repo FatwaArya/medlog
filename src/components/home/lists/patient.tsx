@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, SearchIcon } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -293,7 +293,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                                 onClick={() => table.previousPage()}
                                                 disabled={!table.getCanPreviousPage()}
                                             >
-                                                <ChevronLeftIcon className="w-4 h-4" />
+                                                <ChevronLeft className="w-4 h-4" />
                                             </button>
                                             <button
                                                 className={`border rounded p-1 ${!table.getCanNextPage() ? 'bg-gray-200' : ''
@@ -301,7 +301,7 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                                                 onClick={() => table.nextPage()}
                                                 disabled={!table.getCanNextPage()}
                                             >
-                                                <ChevronRightIcon className="w-4 h-4" />
+                                                <ChevronRight className="w-4 h-4" />
                                             </button>
                                         </div>
 
@@ -349,7 +349,7 @@ export function DebouncedInput({
                     onChange={(e) => setValue(e.target.value)}
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </div>
             </div>
         </>

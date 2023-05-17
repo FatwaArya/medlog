@@ -1,4 +1,4 @@
-import { type LucideIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { type LucideIcon, Eye, EyeOff } from "lucide-react";
 
 
 import { cn } from "@/utils/cn";
@@ -44,7 +44,7 @@ export const Stats = (props: StatsProps) => {
         <props.header.icon className={cn("p-2 mr-4 h-9 w-9 rounded-full text-xl font-bold", bgColor)} />
         <p className="leading-6  scroll-m-20 text-xl font-semibold tracking-tight ">{props.header.title}</p>
         <button onClick={toggle} className="ml-auto text-blue-600 hover:text-blue-800">
-          {isHide ? <EyeIcon className="h-5 w-5" /> : <EyeOffIcon className="h-5 w-5" />}
+          {isHide ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
         </button>
       </div>
       <div className="flex justify-end items-center grow">

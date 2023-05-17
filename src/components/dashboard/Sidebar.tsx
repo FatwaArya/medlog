@@ -19,7 +19,7 @@ interface SidebarProps {
   setOpen: (open: boolean) => void;
 }
 
-export function Sidebar({ entries, open, setOpen }: SidebarProps) {
+export default function Sidebar({ entries, open, setOpen }: SidebarProps) {
   return (
     <>
       <Dialog.Root open={open} onOpenChange={setOpen}>

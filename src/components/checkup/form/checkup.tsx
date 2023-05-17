@@ -11,7 +11,7 @@ import { api } from "@/utils/api";
 import { NumericFormat } from "react-number-format";
 import { Label } from "@/components/ui/label";
 import { OptionProps, components } from "react-select";
-import { Cross, CrossIcon, X, XIcon } from "lucide-react";
+import { Cross, X } from "lucide-react";
 
 
 
@@ -79,7 +79,7 @@ export function CheckupForm() {
                         }}
                         disabled={!isRelated}
                     >
-                        {isRelated ? <XIcon className="w-5 h-5 text-gray-500" /> : null}
+                        {isRelated ? <X className="w-5 h-5 text-gray-500" /> : null}
                     </button>
                 </div>
             </div>

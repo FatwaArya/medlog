@@ -30,6 +30,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/utils/cn";
+import { GetServerSidePropsContext } from "next/types";
+import { getServerAuthSession } from "@/server/auth";
 
 export type CheckupExistingPatient =
     RouterInputs["patient"]["createMedicalRecord"];
@@ -277,9 +279,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
         </>
     );
 };
-export default ContinueCheckup;
-
-
 
 ContinueCheckup.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>;
@@ -287,4 +286,37 @@ ContinueCheckup.getLayout = function getLayout(page: ReactElement) {
 
 ContinueCheckup.authRequired = true;
 
-ContinueCheckup.isSubscriptionRequired = true;
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    if (session?.user?.isSubscribed === false) {
+        return {
+            redirect: {
+                destination: "/subscription",
+                permanent: false,
+            },
+        };
+    }
+
+
+
+    return {
+        props: { session },
+    };
+}
+
+export default ContinueCheckup;
+
+
+
+

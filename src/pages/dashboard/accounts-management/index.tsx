@@ -1,30 +1,27 @@
 import Layout from "@/components/dashboard/Layout";
-import type { PasienPlusPage } from "@/pages/_app";
-import Head from "next/head";
-import ReportList from "@/components/report/list/report";
-import { GetServerSidePropsContext } from "next/types";
+import { PasienPlusPage } from "@/pages/_app";
 import { getServerAuthSession } from "@/server/auth";
+import { GetServerSidePropsContext } from "next";
+import { ReactElement } from "react";
+import { Camera } from 'lucide-react';
 
 
-const Report: PasienPlusPage = () => {
-
+const accountsManagement = () => {
     return (
         <>
-            <Head>
-                <title>
-                    Pasien Plus | Laporan
-                </title>
-            </Head>
-            <ReportList isDetailed={true} isPaginated pageSize={50} />
-
+            <Camera color="red" size={48} />
+            <h1>accountsManagement</h1>
         </>
-    )
-}
-Report.authRequired = true
+    );
+};
 
-Report.getLayout = function getLayout(page) {
+accountsManagement.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>
 }
+
+accountsManagement.authRequired = true;
+accountsManagement.isSubscriptionRequired = true;
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getServerAuthSession(ctx);
 
@@ -36,16 +33,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             },
         };
     }
-
-    if (session?.user?.isSubscribed === false) {
+    if (session?.user?.role === "user") {
         return {
             redirect: {
-                destination: "/subscription",
+                destination: "/dashboard/home",
                 permanent: false,
             },
         };
     }
-
 
 
     return {
@@ -53,7 +48,4 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     };
 }
 
-export default Report
-
-
-
+export default accountsManagement;

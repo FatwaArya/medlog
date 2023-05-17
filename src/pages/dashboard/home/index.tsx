@@ -11,6 +11,8 @@ import { env } from "@/env.mjs";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "@/server/auth";
 
 const Home: PasienPlusPage = () => {
     return (
@@ -32,13 +34,40 @@ const Home: PasienPlusPage = () => {
         </>
     );
 }
-
-export default Home;
-
 Home.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>
 }
 
 Home.authRequired = true;
 
-Home.isSubscriptionRequired = true;
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    if (session?.user?.isSubscribed === false) {
+        return {
+            redirect: {
+                destination: "/subscription",
+                permanent: false,
+            },
+        };
+    }
+
+
+    return {
+        props: { session },
+    };
+}
+
+export default Home;
+
+
+

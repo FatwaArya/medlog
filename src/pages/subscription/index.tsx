@@ -28,7 +28,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 
-    if (session?.user.isSubscribed) {
+    if (session?.user.isSubscribed === true) {
         return {
             redirect: {
                 destination: '/dashboard/home',

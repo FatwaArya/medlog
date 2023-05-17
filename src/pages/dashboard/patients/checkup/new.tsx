@@ -22,6 +22,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "@/server/auth";
 
 export const redAsterisk = <span className="text-red-500">*</span>;
 
@@ -204,13 +206,40 @@ const NewCheckup = () => {
         </>
     );
 };
-
-export default NewCheckup;
-
 NewCheckup.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>;
 };
 
 NewCheckup.authRequired = true;
 
-NewCheckup.isSubscriptionRequired = true;
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    if (session?.user?.isSubscribed === false) {
+        return {
+            redirect: {
+                destination: "/subscription",
+                permanent: false,
+            },
+        };
+    }
+
+
+
+    return {
+        props: { session },
+    };
+}
+
+export default NewCheckup;
+

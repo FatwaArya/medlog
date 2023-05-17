@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DownloadIcon } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Download } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -143,7 +143,7 @@ export default function ReportList(props: ListProps) {
                                     content={() => componentRef.current}
                                 /> */}
                                 <Button onClick={() => generatePDF(reportsData)} disabled={reportsData?.length === 0} variant={"solidBlue"}>
-                                    <DownloadIcon className=" h-4 w-4" />
+                                    <Download className=" h-4 w-4" />
                                 </Button>
 
                                 <CalendarDateRangePicker setDate={setDate} date={date} />
@@ -181,8 +181,8 @@ export default function ReportList(props: ListProps) {
                                                                                     header.getContext()
                                                                                 )}
                                                                                 {{
-                                                                                    asc: <ChevronUpIcon />,
-                                                                                    desc: <ChevronDownIcon />,
+                                                                                    asc: <ChevronUp />,
+                                                                                    desc: <ChevronDown />,
                                                                                 }[
                                                                                     header.column.getIsSorted() as string
                                                                                 ] ?? null}
@@ -296,14 +296,14 @@ export default function ReportList(props: ListProps) {
                                                     onClick={() => table.previousPage()}
                                                     disabled={!table.getCanPreviousPage()}
                                                 >
-                                                    <ChevronLeftIcon className="h-4 w-4" />
+                                                    <ChevronLeft className="h-4 w-4" />
                                                 </button>
                                                 <button
                                                     className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""}`}
                                                     onClick={() => table.nextPage()}
                                                     disabled={!table.getCanNextPage()}
                                                 >
-                                                    <ChevronRightIcon className="h-4 w-4" />
+                                                    <ChevronRight className="h-4 w-4" />
                                                 </button>
                                             </div>
                                         </div>
@@ -358,8 +358,8 @@ export default function ReportList(props: ListProps) {
                                                                                     header.getContext()
                                                                                 )}
                                                                                 {{
-                                                                                    asc: <ChevronUpIcon />,
-                                                                                    desc: <ChevronDownIcon />,
+                                                                                    asc: <ChevronUp />,
+                                                                                    desc: <ChevronDown />,
                                                                                 }[
                                                                                     header.column.getIsSorted() as string
                                                                                 ] ?? null}

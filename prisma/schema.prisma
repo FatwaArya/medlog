@@ -142,7 +142,7 @@ model User {
   isSubscribed  Boolean    @default(false)
   password      String?
   phone         String?
-  role          User_role  @default(user)
+  role          Role       @default(user)
   accounts      Account[]
   sessions      Session[]
   Patient       Patient[]
@@ -162,7 +162,7 @@ enum Gender {
   female
 }
 
-enum User_role {
+enum Role {
   user
   admin
 }

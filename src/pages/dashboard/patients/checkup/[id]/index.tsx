@@ -5,7 +5,7 @@ import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
 import { useState } from "react"
 import Head from "next/head";
-import type { GetStaticPaths, GetStaticPropsContext } from "next/types";
+import type { GetServerSidePropsContext, GetStaticPaths, GetStaticPropsContext } from "next/types";
 import type { RouterOutputs } from "@/utils/api";
 import { PatientDescription } from "./new";
 import { Spinner } from "@/components/ui/loading-overlay";
@@ -18,7 +18,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { ImageOffIcon } from "lucide-react"
+import { ImageOff } from "lucide-react"
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "@/server/api/root";
+import { getServerAuthSession } from "@/server/auth";
+import superjson from "superjson";
+
 
 type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patient']
 
@@ -150,7 +155,7 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                     )) : (
                                         <div className="sm:w-[576px] w-full rounded-sm border p-2 flex justify-center items-center border-gray-200 h-[208px]">
                                             <div className="flex flex-col items-center gap-4">
-                                                <ImageOffIcon className="text-gray-400" />
+                                                <ImageOff className="text-gray-400" />
                                                 <p className="text-sm text-gray-400 font-medium">Belum ada foto</p>
                                             </div>
                                         </div>
@@ -175,42 +180,86 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
 
 export default CheckupDetail;
 
-export async function getStaticProps(
-    context: GetStaticPropsContext<{ id: string }>,
+export async function getServerSideProps(
+    context: GetServerSidePropsContext<{ id: string }>,
 ) {
+    const session = await getServerAuthSession(context);
 
-    const ssg = generateSSGHelper();
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    if (session?.user?.isSubscribed === false) {
+        return {
+            redirect: {
+                destination: "/subscription",
+                permanent: false,
+            },
+        };
+    }
+
+    const helpers = generateSSGHelper()
     const id = context.params?.id as string;
 
-
-    await ssg.record.getRecordById.prefetch({ id });
+    const reportExists = await helpers.record.getRecordById.fetch({ id });
+    if (reportExists) {
+        await helpers.record.getRecordById.prefetch({ id });
+    } else {
+        return {
+            props: { id },
+            notFound: true,
+        };
+    }
 
     return {
         props: {
-            trpcState: ssg.dehydrate(),
+            trpcState: helpers.dehydrate(),
             id,
         },
-        revalidate: 1,
     };
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await prisma.medicalRecord.findMany({
-        select: {
-            id: true,
-        },
-    });
+// export async function getStaticProps(
+//     context: GetStaticPropsContext<{ id: string }>,
+// ) {
 
-    return {
-        paths: paths.map((path) => ({
-            params: {
-                id: path.id,
-            },
-        })),
+//     const ssg = generateSSGHelper();
+//     const id = context.params?.id as string;
 
-        fallback: 'blocking',
-    };
-};
+
+//     await ssg.record.getRecordById.prefetch({ id });
+
+//     return {
+//         props: {
+//             trpcState: ssg.dehydrate(),
+//             id,
+//         },
+//         revalidate: 1,
+//     };
+// }
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//     const paths = await prisma.medicalRecord.findMany({
+//         select: {
+//             id: true,
+//         },
+//     });
+
+//     return {
+//         paths: paths.map((path) => ({
+//             params: {
+//                 id: path.id,
+//             },
+//         })),
+
+//         fallback: 'blocking',
+//     };
+// };
 
 CheckupDetail.authRequired = true;
 
@@ -218,4 +267,3 @@ CheckupDetail.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>;
 };
 
-CheckupDetail.isSubscriptionRequired = true;

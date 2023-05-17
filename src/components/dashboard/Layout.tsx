@@ -3,40 +3,49 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { type PropsWithChildren, useEffect, useState } from "react";
 
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import Sidebar from "@/components/dashboard/Sidebar";
 
-import {
-  HomeIcon,
-  UsersIcon,
-  DownloadIcon,
-} from "lucide-react";
+import { Home, Users, Download, Shield } from "lucide-react";
 
-import { Navbar } from "./Navbar";
+import Navbar from "./Navbar";
 import ContentArea from "./ContentArea";
 
-export function Layout(props: PropsWithChildren) {
-  const { status } = useSession();
+
+const AdminLayout = (props: PropsWithChildren) => {
+  const { data, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
 
   const [navigation, setNavigation] = useState([
     {
       name: "Beranda",
       href: "/dashboard/home",
-      icon: HomeIcon,
+      icon: Home,
       current: false,
+      hide: false,
     },
     {
       name: "Data Pasien",
       href: "/dashboard/patients",
-      icon: UsersIcon,
+      icon: Users,
       current: false,
+      hide: false,
     },
     {
       name: "Laporan",
       href: "/dashboard/report",
-      icon: DownloadIcon,
+      icon: Download,
       current: false,
+      hide: false,
     },
+    {
+      name: "Atur Pengguna",
+      href: "/dashboard/accounts-management",
+      icon: Shield,
+      current: false,
+      hide: data?.user.role !== "admin",
+    }
+
   ]);
 
   const { pathname } = useRouter();
@@ -51,17 +60,17 @@ export function Layout(props: PropsWithChildren) {
       });
       setNavigation(newNavigation);
     }
-
   }, [pathname]);
 
   if (status === "loading") {
     return <div>Loading user info...</div>;
   }
-
   return (
     <>
+      {/* layout problem */}
       <Sidebar
-        entries={navigation}
+        //filter navigation based on user role
+        entries={navigation.filter((nav) => !nav.hide)}
         open={sidebarOpen}
         setOpen={setSidebarOpen}
       />
@@ -71,4 +80,4 @@ export function Layout(props: PropsWithChildren) {
   );
 }
 
-export default Layout;
+export default AdminLayout;

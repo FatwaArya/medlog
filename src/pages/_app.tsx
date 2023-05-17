@@ -1,8 +1,9 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { Inter } from 'next/font/google'
+import { Inter } from 'next/font/google';
 export { reportWebVitals } from 'next-axiom';
+
 
 import { useEffect, type ReactElement, type ReactNode } from 'react'
 import type { NextPage } from 'next'
@@ -16,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 import { Analytics } from '@vercel/analytics/react';
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import AdminLayout from "@/components/dashboard/Layout";
 
 NProgress.configure({ showSpinner: false });
 
@@ -41,7 +43,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }: PasienPlusProps) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const authRequired = Component.authRequired ?? false;
-  const isSubscriptionRequired = Component.isSubscriptionRequired ?? false;
 
   useEffect(() => {
     const handleRouteStart = () => NProgress.start();
@@ -65,22 +66,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
         font-family: ${inter.style.fontFamily};
       }
     `}</style>
+
     <SessionProvider session={session}>
       <Toaster />
       {
         authRequired ? (
-          isSubscriptionRequired ? (
-            <AuthGuard isSubscription={true}>
-              {getLayout(<Component {...pageProps} />)}
-            </AuthGuard>
-          ) : (
-            <AuthGuard isSubscription={false}>
-              {getLayout(<Component {...pageProps} />)}
-            </AuthGuard>
-          )
-        ) : (
-          getLayout(<Component {...pageProps} />)
+          <AuthGuard>
+            {getLayout(<Component {...pageProps} />)}
+          </AuthGuard>
         )
+          : (
+            getLayout(<Component {...pageProps} />)
+          )
       }
     </SessionProvider>
 

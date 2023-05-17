@@ -1,7 +1,9 @@
 import Layout from "@/components/dashboard/Layout";
 import PatientList from "@/components/home/lists/patient";
 import { type PasienPlusPage } from "@/pages/_app";
+import { getServerAuthSession } from "@/server/auth";
 import Head from "next/head";
+import { GetServerSidePropsContext } from "next/types";
 import { type ReactElement } from "react";
 
 
@@ -13,14 +15,40 @@ const Patients: PasienPlusPage = () => (
         <PatientList pageSize={50} isPaginated />
     </>
 )
-
-
-export default Patients
-
 Patients.getLayout = function getLayout(page: ReactElement) {
     return <Layout>{page}</Layout>
 }
 
 Patients.authRequired = true;
 
-Patients.isSubscriptionRequired = true;
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    if (session?.user?.isSubscribed === false) {
+        return {
+            redirect: {
+                destination: "/subscription",
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: { session },
+    };
+}
+
+export default Patients
+
+
+

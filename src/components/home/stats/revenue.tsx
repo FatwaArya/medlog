@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DollarSignIcon } from "lucide-react";
+import { DollarSign } from "lucide-react";
 
 import { api } from "@/utils/api";
 import { readableDate, rupiah } from "@/utils/intlformat";
@@ -12,7 +12,7 @@ export const RevenueStats = () => {
     const [stats, setStats] = useState<StatsProps>({
         header: {
             title: "Pendapatan",
-            icon: DollarSignIcon,
+            icon: DollarSign,
             bgColor: "bg-pink-200",
             color: "text-pink-600",
         },

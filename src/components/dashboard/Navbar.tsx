@@ -1,11 +1,10 @@
-import { MenuIcon, BellIcon } from "lucide-react";
-
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { signOut, useSession } from "next-auth/react";
 import {
   LogOut,
+  Menu,
   Settings,
   User,
 } from "lucide-react"
@@ -20,8 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Loader } from "../auth/AuthGuard";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
+
 
 const userNavigation = [
   { name: "Profile", href: "/profile", icon: User },
@@ -29,20 +27,12 @@ const userNavigation = [
   { name: "Logout", href: "/", icon: LogOut },
 ];
 
-export function Navbar({
+export default function Navbar({
   setSidebarOpen,
 }: {
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
   const { data: session, status } = useSession();
-  const [time, setTime] = useState(dayjs());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(dayjs());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   if (status === "loading") {
     return <Loader />;
@@ -57,13 +47,13 @@ export function Navbar({
           onClick={() => setSidebarOpen(true)}
         >
           <span className="sr-only">Open sidebar</span>
-          <MenuIcon className="h-6 w-6" aria-hidden="true" />
+          <Menu className="h-6 w-6" aria-hidden="true" />
         </button>
         <div className="flex flex-1 justify-between px-4">
           <div className="flex flex-1">
             <div className="flex w-full md:ml-0 items-center" >
               {/* show realtime locale hours */}
-              <span className="sm:text-sm">{time.format('dddd D MMMM YYYY')}, {time.format('h:mm')}</span>
+              {/* <span className="sm:text-sm">{time.format('dddd D MMMM YYYY')}, {time.format('h:mm')}</span> */}
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
@@ -72,7 +62,7 @@ export function Navbar({
               className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               <span className="sr-only">View notifications</span>
-              <BellIcon className="h-6 w-6" aria-hidden="true" />
+              {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
             </button>
 
             {/* Profile dropdown */}

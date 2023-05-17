@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UsersIcon } from "lucide-react";
+import { Users } from "lucide-react";
 
 import { api } from "@/utils/api";
 import { readableDate } from "@/utils/intlformat";
@@ -13,7 +13,7 @@ export const PatientStats = () => {
     const [stats, setStats] = useState<StatsProps>({
         header: {
             title: "Total Pasien",
-            icon: UsersIcon,
+            icon: Users,
             bgColor: "bg-blue-200",
             color: "text-blue-600",
         },
