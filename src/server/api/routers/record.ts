@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedSubscribedProcedure } from "../trpc";
 
 export const recordRouter = createTRPCRouter({
-  getStatRevenue: protectedProcedure.query(async ({ ctx }) => {
+  getStatRevenue: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const result = await ctx.prisma.medicalRecord.aggregate({
       where: {
         patient: {
@@ -23,7 +23,7 @@ export const recordRouter = createTRPCRouter({
       lastRevenue,
     };
   }),
-  getRecordById: protectedProcedure
+  getRecordById: protectedSubscribedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -50,7 +50,7 @@ export const recordRouter = createTRPCRouter({
       });
       return record;
     }),
-  getRecords: protectedProcedure
+  getRecords: protectedSubscribedProcedure
     .input(
       z.object({
         patientId: z.string(),
@@ -83,7 +83,7 @@ export const recordRouter = createTRPCRouter({
       });
       return records;
     }),
-  getRecordReports: protectedProcedure
+  getRecordReports: protectedSubscribedProcedure
     .input(
       z.object({
         from: z.date(),

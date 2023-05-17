@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedSubscribedProcedure,
+} from "@/server/api/trpc";
 import dayjs from "dayjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "../../s3";
@@ -27,7 +30,8 @@ interface GenderCount {
 }
 
 export const patientRouter = createTRPCRouter({
-  createPresignedUrl: protectedProcedure
+  createPresignedUrl: protectedSubscribedProcedure
+
     .input(z.object({ count: z.number().gte(1).lte(8) }))
     .query(async ({ input }) => {
       const urls = [];
@@ -56,7 +60,8 @@ export const patientRouter = createTRPCRouter({
    * this procedure only calls when user is registering new patient for the first time
    *
    */
-  createNewPatient: protectedProcedure
+  createNewPatient: protectedSubscribedProcedure
+
     .input(
       z.object({
         name: z.string(),
@@ -224,7 +229,8 @@ export const patientRouter = createTRPCRouter({
    * this procedure only calls when user is creating new medical record for existing patient
    *
    */
-  createMedicalRecord: protectedProcedure
+  createMedicalRecord: protectedSubscribedProcedure
+
     .input(
       z.object({
         patientId: z.string(),
@@ -353,7 +359,7 @@ export const patientRouter = createTRPCRouter({
         }
       });
     }),
-  getNewestPatients: protectedProcedure.query(async ({ ctx }) => {
+  getNewestPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
     //select newest patients
     const result = await ctx.prisma.medicalRecord.findMany({
       where: {
@@ -380,7 +386,7 @@ export const patientRouter = createTRPCRouter({
     });
     return result;
   }),
-  getStatPatients: protectedProcedure.query(async ({ ctx }) => {
+  getStatPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const patientCount = await ctx.prisma.patient.count({
       where: {
         userId: ctx.session.user.id,
@@ -404,7 +410,8 @@ export const patientRouter = createTRPCRouter({
       lastVisit: lastVisit?.createdAt,
     };
   }),
-  getStatLine: protectedProcedure
+  getStatLine: protectedSubscribedProcedure
+
     .input(
       z
         .object({
@@ -547,7 +554,8 @@ export const patientRouter = createTRPCRouter({
           return monthlyVisits;
       }
     }),
-  getPatientById: protectedProcedure
+  getPatientById: protectedSubscribedProcedure
+
     .input(
       z.object({
         patientId: z.string(),
