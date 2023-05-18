@@ -147,7 +147,7 @@ export default function AdminList ({ pageSize = 10, isPaginated = true }: ListPr
                   {!isLoading && adminData ? (
                     <DataTable columns={adminColumns} data={adminData} />
                     ) : (
-                    <div>Admin data belum ada.</div>
+                    <Skeleton className="w-full whitespace-nowrap h-12" />
                   )}
                 </div>
               </div>
