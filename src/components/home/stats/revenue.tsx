@@ -5,7 +5,7 @@ import { api } from "@/utils/api";
 import { readableDate, rupiah } from "@/utils/intlformat";
 
 import { Stats, StatsProps } from "./stats";
-import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { LoadingStats } from "@/components/ui/loading-overlay";
 
 export const RevenueStats = () => {
     const { data: revenue, isLoading } = api.record.getStatRevenue.useQuery();
@@ -42,9 +42,7 @@ export const RevenueStats = () => {
 
     if (isLoading)
         return (
-            <LoadingOverlay>
-                <Stats {...stats} /> {/* pass isHide to Stats */}
-            </LoadingOverlay>
+            <LoadingStats />
         );
     //blur background
 

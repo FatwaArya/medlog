@@ -32,6 +32,7 @@ import {
 import { cn } from "@/utils/cn";
 import { GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 export type CheckupExistingPatient =
     RouterInputs["patient"]["createMedicalRecord"];
@@ -93,8 +94,19 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
     const { data: patient, isLoading: isLoadingPatient } =
         api.patient.getPatientById.useQuery({ patientId: id as string });
 
-    const methods = useForm<CheckupExistingPatient>();
-    const router = useRouter();
+    const methods = useForm<CheckupExistingPatient>({
+        defaultValues: {
+            complaint: "",
+            diagnosis: "",
+            note: "",
+            treatment: "",
+            checkup: "",
+            drugs: [],
+            pay: 0,
+            files: [],
+            labNote: "",
+        },
+    });
 
     const { mutate, isLoading } = api.patient.createMedicalRecord.useMutation();
     const utils = api.useContext();
@@ -173,20 +185,15 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
             },
             {
                 onSuccess: () => {
-                    //reset all fields
+                    //reset all
                     methods.reset();
-                    methods.resetField("drugs");
+
                     clearPreviewCheckUpAttachments();
                     clearPreviewLabAttachments();
                     toast.success("Pemeriksaan Pasien Berhasil!", {
                         position: "top-center",
                     });
                     utils.patient.getNewestPatients.invalidate();
-
-
-                    setTimeout(() => {
-                        router.push(`/dashboard/patients/record/${id}`);
-                    }, 500);
                 },
                 onError: (e) => {
                     const errorMessage = e.data?.zodError?.fieldErrors.phone;
@@ -220,6 +227,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 <title>Pasien Plus | Periksa Pasien {patient?.name}</title>
             </Head>
             <main>
+            <Breadcrumbs patientName={patient?.name} patientId={patient?.id} />
                 <PatientDescription {...patient} />
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

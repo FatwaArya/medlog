@@ -10,12 +10,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { redAsterisk } from "@/pages/dashboard/patients/checkup/new";
+import { RouterInputs } from "@/utils/api";
 import { Controller, useFormContext } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
-
+type NewCheckupPatient =
+    RouterInputs["patient"]['createNewPatient'];
 
 export function PatientInfoForm() {
-    const { register, control, formState: { errors } } = useFormContext()
+    const { register, control, formState: { errors } } = useFormContext<NewCheckupPatient>()
     return (
         <div>
             <div className="bg-white overflow-hidden sm:rounded-lg outline outline-1 outline-slate-200 mb-4 rounded-sm">
@@ -44,7 +46,7 @@ export function PatientInfoForm() {
                                             autoComplete="given-name"
                                             placeholder="Jono Dormand"
                                             className="mt-1 bg-white"
-                                            {...register("name", { required: true })}
+                                            {...register('name', { required: true })}
                                         />
                                         {errors.name && <span className="text-red-500 text-sm">Nama pasien harus diisi</span>}
                                     </div>
@@ -81,10 +83,16 @@ export function PatientInfoForm() {
                                                     />
                                                 )}
                                                 rules={{
+                                                    required: false,
+                                                    minLength: 10,
                                                     maxLength: 12,
+
                                                 }}
                                             />
+
                                         </div>
+                                        {errors.phone && <span className="text-red-500 text-sm">Nomor minimal 12 digit</span>}
+
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3">

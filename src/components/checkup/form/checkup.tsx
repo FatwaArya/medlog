@@ -193,13 +193,19 @@ export function CheckupForm() {
                                                             field.onChange(values.floatValue)
                                                         }}
                                                         className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                        defaultValue="20000"
                                                         name={field.name}
                                                         value={field.value as number}
                                                         onBlur={field.onBlur}
                                                         getInputRef={field.ref}
+                                                        //if submit success, reset the value
+                                                        onReset={() => field.onChange(0)}
                                                     />
                                                 )}
+                                                rules={
+                                                    {
+                                                        required: true,
+                                                    }
+                                                }
                                             />
                                             {errors.pay && (
                                                 <span className="text-red-500 text-xs">
@@ -350,7 +356,7 @@ export function CheckupForm() {
                                                                 type="file"
                                                                 className="sr-only"
                                                                 //only accept png and jpg
-                                                                accept="image/png, image/jpg"
+                                                                accept="image/jpg, image/png"
                                                                 onChange={onFilesChange}
                                                                 multiple
                                                             />
@@ -358,7 +364,7 @@ export function CheckupForm() {
                                                         <p className="pl-1">or drag and drop</p>
                                                     </div>
                                                     <p className="text-xs text-gray-500">
-                                                        PNG, JPG, GIF up to 10MB
+                                                        PNG, JPG up to 10MB
                                                     </p>
                                                 </div>
                                             )}

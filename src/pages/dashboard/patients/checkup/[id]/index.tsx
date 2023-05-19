@@ -24,6 +24,7 @@ import { appRouter } from "@/server/api/root";
 import { getServerAuthSession } from "@/server/auth";
 import superjson from "superjson";
 
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patient']
 
@@ -53,12 +54,12 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
     function goToNextSlide() {
         setActiveSlide((activeSlide + 1) % attachment.length);
     }
-
     return (
         <>
             <Head>
                 <title>Pasien Plus | Detail Pemeriksaan {report?.patient.name}</title>
             </Head>
+            <Breadcrumbs patientName={report?.patient.name} isPatientLast />
             <div>
                 <PatientDescription {...report?.patient as PatientInfo} />
                 <div className="bg-white overflow-hidden shadow sm:rounded-lg outline outline-1 outline-slate-200">

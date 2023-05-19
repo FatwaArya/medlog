@@ -65,13 +65,13 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        phone: z
-          .string()
-          .length(12, { message: "Pastikan nomor telfon 12 digit" }),
+        phone: z.string().nullish(),
         gender: z.enum(["male", "female"]),
         address: z.string(),
         birthDate: z.date(),
         complaint: z.string(),
+        treatment: z.string(),
+        checkup: z.string(),
         diagnosis: z.string(),
         drugs: z
           .array(
@@ -105,6 +105,8 @@ export const patientRouter = createTRPCRouter({
         complaint,
         diagnosis,
         drugs,
+        treatment,
+        checkup,
         note,
         pay,
         files,
@@ -121,10 +123,11 @@ export const patientRouter = createTRPCRouter({
           },
         });
 
-        if (isNumberUnique) {
+        //check if phone number is unique dont check if phone is nullish
+        if (phone && isNumberUnique) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Nomor telfon sudah terdaftar",
+            message: "Nomor telepon sudah terdaftar",
           });
         }
 
@@ -145,6 +148,7 @@ export const patientRouter = createTRPCRouter({
             patientId: patient.id,
             complaint,
             diagnosis,
+            treatment,
             labNote,
             note,
           },
@@ -188,6 +192,11 @@ export const patientRouter = createTRPCRouter({
             );
 
             const fileType = await probe(object.Body as Readable);
+
+            //if file mime is jpeg change it to jpg so it dont return error
+            if (upload.ext === "jpeg") {
+              upload.ext = "jpg";
+            }
 
             if (
               !object.ContentLength ||
@@ -324,6 +333,11 @@ export const patientRouter = createTRPCRouter({
               })
             );
             const fileType = await probe(object.Body as Readable);
+
+            //if file mime is jpeg change it to jpg so it dont return error
+            if (upload.ext === "jpeg") {
+              upload.ext = "jpg";
+            }
 
             if (
               !object.ContentLength ||

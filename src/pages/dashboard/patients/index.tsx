@@ -5,6 +5,7 @@ import { getServerAuthSession } from "@/server/auth";
 import Head from "next/head";
 import { GetServerSidePropsContext } from "next/types";
 import { type ReactElement } from "react";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const Patients: PasienPlusPage = () => (
@@ -12,6 +13,7 @@ const Patients: PasienPlusPage = () => (
         <Head>
             <title>Pasien Plus | Data Pasien</title>
         </Head>
+        <Breadcrumbs />
         <PatientList pageSize={50} isPaginated />
     </>
 )

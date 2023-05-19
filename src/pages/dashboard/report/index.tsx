@@ -4,6 +4,7 @@ import Head from "next/head";
 import ReportList from "@/components/report/list/report";
 import { GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const Report: PasienPlusPage = () => {
@@ -15,6 +16,7 @@ const Report: PasienPlusPage = () => {
                     Pasien Plus | Laporan
                 </title>
             </Head>
+            <Breadcrumbs />
             <ReportList isDetailed={true} isPaginated pageSize={50} />
 
         </>

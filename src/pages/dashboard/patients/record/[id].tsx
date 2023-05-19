@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/loading-overlay";
 import CheckupList from "@/components/checkup/lists/checkup";
 import { PatientDescription } from "../checkup/[id]/new";
 import { getServerAuthSession } from "@/server/auth";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
@@ -37,6 +38,7 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
           patient?.name ?? "Patient not found"
         }</title>
       </Head>
+      <Breadcrumbs patientName={patient?.name} isPatientLast />
       <PatientDescription {...patient} />
       <CheckupList patientId={id} />
     </>

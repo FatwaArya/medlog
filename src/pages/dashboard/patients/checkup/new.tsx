@@ -11,6 +11,7 @@ import { PatientInfoForm } from "@/components/checkup/form/patientInfo";
 import { CheckupForm } from "@/components/checkup/form/checkup";
 import { useCheckUpAttachmentStore, useLabsAttachmentStore } from "@/store/previewAttachment";
 import { LabForm } from "@/components/checkup/form/lab";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -54,7 +55,23 @@ export const createAttachment = (file: File, medicalRecordId: string) => {
 };
 const NewCheckup = () => {
     // { register, handleSubmit, control, reset }
-    const methods = useForm<CheckupNewPatient>();
+    const methods = useForm<CheckupNewPatient>({
+        defaultValues: {
+            name: "",
+            phone: "",
+            address: "",
+            birthDate: new Date(),
+            complaint: "",
+            diagnosis: "",
+            note: "",
+            treatment: "",
+            checkup: "",
+            drugs: [],
+            pay: 0,
+            files: [],
+            labNote: "",
+        },
+    });
     const { mutate, isLoading } = api.patient.createNewPatient.useMutation();
     const utils = api.useContext();
     const previewCheckUpAttachments = useCheckUpAttachmentStore((state) => state.fileAndAttachment);
@@ -115,9 +132,11 @@ const NewCheckup = () => {
                 birthDate: data.birthDate,
                 complaint: data.complaint,
                 diagnosis: data.diagnosis,
+                checkup: data.checkup,
                 drugs: data.drugs,
                 note: data.note,
                 pay: data.pay,
+                treatment: data.treatment,
                 //merge attachments
                 files: uploads,
                 labNote: data.labNote,
@@ -152,6 +171,7 @@ const NewCheckup = () => {
             <Head>
                 <title>Pasien Plus | Register New Patient</title>
             </Head>
+            <Breadcrumbs />
             <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
                     <div className="space-y-6">
