@@ -4,15 +4,21 @@ import { getServerAuthSession } from "@/server/auth";
 import { GetServerSidePropsContext } from "next";
 import { ReactElement } from "react";
 import { Camera } from 'lucide-react';
+import Head from "next/head";
+import Breadcrumbs from "@/components/ui/breadcrumb";
+import AdminList from "@/components/home/lists/admin";
 
 
-const accountsManagement = () => {
+const accountsManagement: PasienPlusPage = () => {
     return (
         <>
-            <Camera color="red" size={48} />
-            <h1>accountsManagement</h1>
+            <Head>
+                <title>Pasien Plus | Data Admin</title>
+            </Head>
+            <Breadcrumbs />
+            <AdminList />
         </>
-    );
+    )
 };
 
 accountsManagement.getLayout = function getLayout(page: ReactElement) {
@@ -49,3 +55,4 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 }
 
 export default accountsManagement;
+

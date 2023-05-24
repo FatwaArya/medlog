@@ -135,6 +135,21 @@ const enforceUserIsSubscribed = t.middleware(({ ctx, next }) => {
   });
 });
 
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  if (ctx.session.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the session as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
 /**
  * Protected (authenticated) procedure
  *
@@ -148,3 +163,4 @@ export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 export const protectedSubscribedProcedure = t.procedure.use(
   enforceUserIsSubscribed
 );
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);

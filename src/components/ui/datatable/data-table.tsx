@@ -1,28 +1,28 @@
 "use client"
- 
+
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  FilterFn,
-  flexRender,
-  getCoreRowModel,
-  VisibilityState,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  SortingState,
-  getSortedRowModel,
-  useReactTable,
+    type ColumnDef,
+    type ColumnFiltersState,
+    type FilterFn,
+    flexRender,
+    getCoreRowModel,
+    type VisibilityState,
+    getPaginationRowModel,
+    getFilteredRowModel,
+    type SortingState,
+    getSortedRowModel,
+    useReactTable,
 } from "@tanstack/react-table"
- 
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
-import { RankingInfo, rankItem } from "@tanstack/match-sorter-utils"
+import { type RankingInfo, rankItem } from "@tanstack/match-sorter-utils"
 import { SearchIcon, UserPlus } from "lucide-react"
 import { useState } from "react"
 
@@ -62,7 +62,7 @@ export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 export function DataTable<TData, TValue>(
     { columns, data, href }: DataTableProps<TData, TValue>
-){
+) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>(
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,  
+        onRowSelectionChange: setRowSelection,
         state: {
             sorting,
             columnFilters,
@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>(
     });
 
     return (
-       <>
+        <>
             <div className="flex items-center py-4 justify-between">
                 <div className="flex items-center gap-4">
                     <div className="relative mt-1 rounded-md shadow-sm">
@@ -109,45 +109,45 @@ export function DataTable<TData, TValue>(
                         <UserPlus className="h-5 w-5 text-gray-400" />
                     </Button>
                 </div>
-                {/* <DataTableViewOptions table={table} /> */}
+                <DataTableViewOptions table={table} />
             </div>
             <div className="rounded-md border bg-white overflow-x-auto">
                 <Table className="w-full">
-                <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header, index) => (
-                        <TableHead key={index} className="py-2 sm:py-4">
-                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header, index) => (
+                                    <TableHead key={index} className="py-2 sm:py-4">
+                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
                         ))}
-                    </TableRow>
-                    ))}
-                </TableHeader>
-                <TableBody>
-                    {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row, rowIndex) => (
-                        <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
-                        {row.getVisibleCells().map((cell, cellIndex) => (
-                            <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                        ))}
-                        </TableRow>
-                    ))
-                    ) : (
-                    <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                        No results to display.
-                        </TableCell>
-                    </TableRow>
-                    )}
-                </TableBody>
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row, rowIndex) => (
+                                <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
+                                    {row.getVisibleCells().map((cell, cellIndex) => (
+                                        <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                    No results to display.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
                 </Table>
             </div>
             <div className="pt-4 pb-2">
                 <DataTablePagination table={table} />
             </div>
-       </>
+        </>
     )
 }

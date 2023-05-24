@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { HomeIcon, Link } from "lucide-react";
+import { Home } from "lucide-react";
+import Link from "next/link";
 import React, { useMemo } from "react";
 
 interface BreadcrumbsProps {
@@ -8,16 +9,19 @@ interface BreadcrumbsProps {
   isPatientLast?: boolean;
 }
 
-const Breadcrumbs : React.FC<BreadcrumbsProps> = ({patientName, patientId, isPatientLast}) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
+  patientName,
+  patientId,
+  isPatientLast,
+}) => {
   const router = useRouter();
 
-  const breadcrumbs = useMemo((
+  const breadcrumbs = useMemo(
     function generateBreadcrumbs() {
       const asPathWithoutQuery = router.asPath.split("?")[0];
 
       // remove "/path1/path2/path3" => ["path1", "path2", "path3"]
-      const asPathNestedRoutes = asPathWithoutQuery?.split("/").filter(p => {
-
+      const asPathNestedRoutes = asPathWithoutQuery?.split("/").filter((p) => {
         return p.length > 0 && !p.includes("dashboard");
       });
 
@@ -31,30 +35,48 @@ const Breadcrumbs : React.FC<BreadcrumbsProps> = ({patientName, patientId, isPat
         } else if (subpath === "record") {
           text = "catatan medis";
         }
-        const href = "/dashboard/" + asPathNestedRoutes.slice(0, i + 1).join("/");
-        
-        return {href, text};
-      })
+        const href =
+          "/dashboard/" + asPathNestedRoutes.slice(0, i + 1).join("/");
+
+        return { href, text };
+      });
 
       // create default path wich is "Home"
-      return [{ href: "/dashboard/home", text: "Home" }, ...crumbList as { href: string, text: string }[]]
-    }
-  ), [router.asPath])
+      return [
+        { href: "/dashboard/home", text: "Home" },
+        ...(crumbList as { href: string; text: string }[]),
+      ];
+    },
+    [router.asPath]
+  );
 
   return (
-    <nav className="flex flex-wrap pb-5 lg:overflow-x-hidden overflow-x-scroll" aria-label="breadcrumb">
-      <ol role="list" className="bg-white rounded-md shadow pr-6 pl-2 flex space-x-4">
+    <nav
+      className="flex flex-wrap overflow-x-scroll pb-5 lg:overflow-x-hidden "
+      aria-label="breadcrumb"
+    >
+      <ol
+        role="list"
+        className="flex space-x-4 rounded-md bg-white pl-2 pr-6 shadow"
+      >
         <li className="flex flex-col">
-          <div className="flex items-center">
+          <div className="flex items-center ">
             {breadcrumbs.map((crumb, i) => (
-              <Crumb key={i} {...crumb} last={i === breadcrumbs.length - 1} patienName={patientName} patientId={patientId} isPatientLast={isPatientLast} />
+              <Crumb
+                key={i}
+                {...crumb}
+                last={i === breadcrumbs.length - 1}
+                patienName={patientName}
+                patientId={patientId}
+                isPatientLast={isPatientLast}
+              />
             ))}
           </div>
         </li>
       </ol>
     </nav>
-  )
-}
+  );
+};
 
 interface CrumbProps {
   text: string;
@@ -65,8 +87,14 @@ interface CrumbProps {
   isPatientLast?: boolean;
 }
 
-const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, patientId, isPatientLast}) => {
-
+const Crumb: React.FC<CrumbProps> = ({
+  text,
+  href,
+  last = false,
+  patienName,
+  patientId,
+  isPatientLast,
+}) => {
   const isRecord = href.includes("record");
   const isCheckup = href.includes("checkup");
   const isPatient = text.includes(patientId as string) ? patienName : text;
@@ -74,33 +102,38 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
   if (last) {
     return (
       <>
-      {isPatientLast ? (
-        <span className="ml-4 sm:text-sm text-xs font-medium text-gray-500 capitalize cursor-default">
+        {isPatientLast ? (
+          <span className="ml-4 cursor-default text-xs font-medium capitalize text-gray-500 sm:text-sm">
             {patienName}
-        </span>
-      ) : (
-        <span className="ml-4 sm:text-sm text-xs font-medium text-gray-500 capitalize cursor-default">
+          </span>
+        ) : (
+          <span className="ml-4 cursor-default text-xs font-medium capitalize text-gray-500 sm:text-sm">
             {text}
-        </span>
-      )}
+          </span>
+        )}
       </>
-    )
+    );
   }
 
   return (
     <>
-      <a href={href} className={`ml-4 sm:text-sm text-xs font-medium text-gray-400 hover:text-gray-700 
-          ${isRecord || isCheckup ? "cursor-default pointer-events-none text-gray-400" : ""}`}
+      <Link
+        href={href}
+        className={`ml-4 text-xs font-medium text-gray-400 hover:text-gray-700 sm:text-sm 
+          ${
+            isRecord || isCheckup
+              ? "pointer-events-none cursor-default text-gray-400"
+              : ""
+          }`}
       >
-        {
-          text === "Home" ? <HomeIcon className="flex-shrink-0 h-5 w-5" /> :
-            <span className="capitalize">
-              {isPatient}
-            </span>
-        }
-      </a>
+        {text === "Home" ? (
+          <Home className="h-5 w-5 flex-shrink-0" />
+        ) : (
+          <span className="capitalize">{isPatient}</span>
+        )}
+      </Link>
       <svg
-        className="flex-shrink-0 w-6 h-full text-gray-200"
+        className="h-full w-6 flex-shrink-0 text-gray-200"
         viewBox="0 0 24 44"
         preserveAspectRatio="none"
         fill="currentColor"
@@ -110,8 +143,7 @@ const Crumb : React.FC<CrumbProps> = ({ text, href, last=false, patienName, pati
         <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
       </svg>
     </>
-
-  )
-}
+  );
+};
 
 export default Breadcrumbs;

@@ -4,12 +4,12 @@ import { env } from "@/env.mjs";
 import { TRPCError } from "@trpc/server";
 
 export const adminRouter = createTRPCRouter({
-    getUserByRole: adminProcedure.query(async ({ctx}) => {
-        const admins = await ctx.prisma.user.findMany({
-            where: {
-                role: 'admin'
-            },
-        });
-        return admins;
-    })
-})
+  getUserByRole: adminProcedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany({
+      where: {
+        role: "user",
+      },
+    });
+    return users;
+  }),
+});

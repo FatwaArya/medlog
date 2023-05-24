@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Search, SearchIcon } from "lucide-react";
+import { Search } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -80,11 +80,7 @@ export interface ListProps {
   isDetailed?: boolean;
 }
 
-export default function PatientList({
-  pageSize = 10,
-  isPaginated = true,
-  isDetailed = true,
-}: ListProps) {
+export default function PatientList({ isDetailed = true }: ListProps) {
   const { data: patientData, isLoading } =
     api.patient.getNewestPatients.useQuery();
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -135,6 +131,16 @@ export default function PatientList({
       // filterFn: fuzzyFilter,
       // sortingFn: fuzzySort,
     }),
+    columnHelper.accessor("patient.phone", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="no telepon" />
+      ),
+      cell: (info) => (
+        <span className="capitalize">
+          {!info.getValue() ? "tidak tersedia" : info.getValue()}
+        </span>
+      ),
+    }),
     columnHelper.accessor("createdAt", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="kunjungan terakhir" />
@@ -180,62 +186,8 @@ export default function PatientList({
           </>
         );
       },
-      // cell: (info) => (
-      //     <>
-      //         <div className="flex gap-2 flex-col sm:flex-row">
-      //             {isDetailed ? (
-      //                 <Button
-      //                     variant="solidBlue"
-      //                     className=" px-6 text-sm font-normal"
-      //                     size="sm"
-      //                     href={`/dashboard/patients/record/${info.getValue()}`}
-      //                 >
-      //                     Detail
-      //                 </Button>
-      //             ) : (
-      //                 <Button
-      //                     variant="solidBlue"
-      //                     className=" px-6 text-sm font-normal"
-      //                     size="sm"
-      //                     href={`/dashboard/patients/checkup/${info.getValue()}/new`}
-      //                 >
-      //                     Periksa
-      //                 </Button>
-      //             )}
-
-      //         </div>
-      //     </>
-
-      // ),
     }),
   ];
-
-  // const table = useReactTable({
-  //     data: patientData || [],
-  //     columns: patientColumns,
-  //     initialState: {
-  //         pagination: {
-  //             pageSize,
-  //         }
-  //     },
-  //     filterFns: {
-  //         fuzzy: fuzzyFilter,
-  //     },
-  //     state: {
-  //         columnFilters,
-  //         globalFilter,
-  //     },
-  //     onColumnFiltersChange: setColumnFilters,
-  //     onGlobalFilterChange: setGlobalFilter,
-  //     globalFilterFn: fuzzyFilter,
-  //     getCoreRowModel: getCoreRowModel(),
-  //     getFilteredRowModel: getFilteredRowModel(),
-  //     getSortedRowModel: getSortedRowModel(),
-  //     getPaginationRowModel: getPaginationRowModel(),
-  //     getFacetedRowModel: getFacetedRowModel(),
-  //     getFacetedUniqueValues: getFacetedUniqueValues(),
-  //     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-  // });
 
   return (
     <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -263,119 +215,14 @@ export default function PatientList({
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full divide-gray-300 align-middle">
                 {!isLoading && patientData ? (
-                  <DataTable columns={patientColumns} data={patientData} />
+                  <DataTable
+                    columns={patientColumns}
+                    data={patientData}
+                    href="/dashboard/patients/checkup/new"
+                  />
                 ) : (
                   <Skeleton className="h-12 w-full whitespace-nowrap" />
                 )}
-                {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
-                                    <table className="min-w-full divide-y divide-gray-300 ">
-                                        <thead className="bg-white">
-                                            {table.getHeaderGroups().map((headerGroup) => (
-                                                <tr key={headerGroup.id}>
-                                                    {headerGroup.headers.map((header) => {
-                                                        return (
-                                                            <th
-                                                                key={header.id}
-                                                                scope="col"
-                                                                className={
-                                                                    "px-3 py-3.5 text-left text-sm  font-normal"
-                                                                }
-                                                            >
-                                                                {header.isPlaceholder ? null : (
-                                                                    <>
-                                                                        {flexRender(
-                                                                            header.column.columnDef.header,
-                                                                            header.getContext()
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </th>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))}
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 bg-white">
-                                            {isLoading && (
-                                                Array(3).fill(0).map((_, i) => (
-                                                    <tr key={i}>
-                                                        <td colSpan={6}>
-                                                            <div className="flex items-center max-w-full justify-center py-2">
-                                                                <Skeleton className="w-full whitespace-nowrap h-12" />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            )}
-
-                                            {!isLoading && table.getRowModel().rows.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={6}>
-                                                        <div className="flex items-center justify-center py-8">
-                                                            <Button
-                                                                variant="solidBlue"
-                                                                className=" px-6 text-sm font-normal"
-                                                                href="/dashboard/patients/checkup/new"
-                                                            >
-                                                                Daftar Pasien
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-
-                                            {table.getRowModel().rows.map((row) => {
-                                                return (
-                                                    <tr key={row.id} className="hover:bg-slate-700/10 cursor-pointer">
-                                                        {row.getVisibleCells().map((cell) => {
-                                                            return (
-                                                                <td
-                                                                    key={cell.id}
-                                                                    className={
-                                                                        cell.column.columnDef.header === "Patient"
-                                                                            ? "whitespace-nowrap py-4 pl-8 pr-3 text-sm font-medium text-gray-900"
-                                                                            : "whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                                                                    }
-                                                                >
-                                                                    {flexRender(
-                                                                        cell.column.columnDef.cell,
-                                                                        cell.getContext()
-                                                                    )}
-                                                                </td>
-                                                            );
-                                                        })}
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div> */}
-                {/* {isPaginated && (
-                                    <div className="flex items-center gap-2 justify-center mt-4 flex-row">
-                                        <span className="flex items-center gap-1">
-                                            {table.getState().pagination.pageIndex + 1} dari{' '}
-                                            {table.getPageCount()}
-                                        </span>
-                                        <div className="flex gap-4">
-                                            <button
-                                                className={`border rounded p-1 ${!table.getCanPreviousPage() ? 'bg-gray-200' : ''
-                                                    }`}
-                                                onClick={() => table.previousPage()}
-                                                disabled={!table.getCanPreviousPage()}
-                                            >
-                                                <ChevronLeft className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                className={`border rounded p-1 ${!table.getCanNextPage() ? 'bg-gray-200' : ''
-                                                    }`}
-                                                onClick={() => table.nextPage()}
-                                                disabled={!table.getCanNextPage()}
-                                            >
-                                                <ChevronRight className="w-4 h-4" />
-                                            </button>
-                                        </div>
-
-                                    </div>)} */}
               </div>
             </div>
           </div>

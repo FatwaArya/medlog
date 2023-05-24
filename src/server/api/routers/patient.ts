@@ -388,6 +388,7 @@ export const patientRouter = createTRPCRouter({
             name: true,
             birthDate: true,
             gender: true,
+            phone: true,
           },
         },
         createdAt: true,
