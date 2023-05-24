@@ -19,15 +19,23 @@ export const adminRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          isSubscribed: true,
-        },
+      await ctx.prisma.$transaction(async (tx) => {
+        await tx.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            isSubscribed: true,
+          },
+        });
+        await tx.subscription.create({
+          data: {
+            subscriberId: input.id,
+            adminId: ctx.session?.user.id,
+            status: "active",
+          },
+        });
       });
-      return user;
     }),
   deactivateUser: adminProcedure
     .input(
@@ -36,14 +44,22 @@ export const adminRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          isSubscribed: false,
-        },
+      await ctx.prisma.$transaction(async (tx) => {
+        await tx.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            isSubscribed: false,
+          },
+        });
+        await tx.subscription.create({
+          data: {
+            subscriberId: input.id,
+            adminId: ctx.session?.user.id,
+            status: "inactive",
+          },
+        });
       });
-      return user;
     }),
 });

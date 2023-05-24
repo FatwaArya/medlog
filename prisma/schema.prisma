@@ -126,19 +126,21 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  isSubscribed  Boolean    @default(false)
-  password      String?
-  phone         String?
-  role          Role       @default(user)
-  accounts      Account[]
-  sessions      Session[]
-  Patient       Patient[]
-  Medicine      Medicine[]
+  id                 String         @id @default(cuid())
+  name               String?
+  email              String?        @unique
+  emailVerified      DateTime?
+  image              String?
+  isSubscribed       Boolean        @default(false)
+  password           String?
+  phone              String?
+  role               Role           @default(user)
+  accounts           Account[]
+  sessions           Session[]
+  Patient            Patient[]
+  Medicine           Medicine[]
+  subscribedToAdmin  Subscription[] @relation("SubscriberRelation")
+  adminOfSubscribers Subscription[] @relation("AdminRelation")
 }
 
 model VerificationToken {
@@ -149,12 +151,24 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Payment {
-  id        String   @id
-  orderId   String
+model Subscription {
+  id           String             @id @default(cuid())
+  subscriber   User               @relation("SubscriberRelation", fields: [subscriberId], references: [id])
+  subscriberId String
+  admin        User               @relation("AdminRelation", fields: [adminId], references: [id])
+  adminId      String
+  status       SubscriptionStatus @default(inactive)
+
   createdAt DateTime @default(now())
-  updatedAt DateTime
-  userId    String
+  updatedAt DateTime @updatedAt
+
+  @@index([subscriberId])
+  @@index([adminId])
+}
+
+enum SubscriptionStatus {
+  active
+  inactive
 }
 
 enum Gender {

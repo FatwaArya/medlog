@@ -3,7 +3,13 @@ import { api, type RouterOutputs } from "@/utils/api";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, ArrowUpDown, User, UserX, Trash2 } from "lucide-react";
+import {
+  MoreHorizontal,
+  ArrowUpDown,
+  User,
+  UserX,
+  CircleSlashed,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
@@ -111,10 +117,11 @@ export default function AdminList() {
       ),
       cell: (info) => (
         <span className="capitalize">
-          {info.getValue() ? "subscribed" : "not subscribed"}
+          {info.getValue() ? "Langganan" : "Tidak Langganan"}
         </span>
       ),
     }),
+
     columnHelper.accessor("id", {
       header: "Aksi",
       cell: (info) => {
@@ -159,8 +166,8 @@ export default function AdminList() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  <CircleSlashed className="mr-2 h-4 w-4" />
+                  Ban User
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
