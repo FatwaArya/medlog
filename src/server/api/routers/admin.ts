@@ -12,4 +12,38 @@ export const adminRouter = createTRPCRouter({
     });
     return users;
   }),
+  activateUser: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isSubscribed: true,
+        },
+      });
+      return user;
+    }),
+  deactivateUser: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isSubscribed: false,
+        },
+      });
+      return user;
+    }),
 });

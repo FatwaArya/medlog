@@ -21,13 +21,27 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "react-hot-toast";
 
 type AdminColumn = RouterOutputs["admin"]["getUserByRole"][number];
 
 const columnHelper = createColumnHelper<AdminColumn>();
 
 export default function AdminList() {
+  const utils = api.useContext();
   const { data: adminData, isLoading } = api.admin.getUserByRole.useQuery();
+  const activateUser = api.admin.activateUser.useMutation({
+    onSuccess: () => {
+      utils.admin.getUserByRole.invalidate();
+      toast.success("Berhasil mengaktifkan akun");
+    },
+  });
+  const deactivateUser = api.admin.deactivateUser.useMutation({
+    onSuccess: () => {
+      utils.admin.getUserByRole.invalidate();
+      toast.success("Berhasil menonaktifkan akun");
+    },
+  });
 
   const isSubscribed = (id: string) => {
     const admin = adminData?.find((admin) => admin.id === id);
@@ -91,10 +105,19 @@ export default function AdminList() {
         </span>
       ),
     }),
+    columnHelper.accessor("isSubscribed", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="status" />
+      ),
+      cell: (info) => (
+        <span className="capitalize">
+          {info.getValue() ? "subscribed" : "not subscribed"}
+        </span>
+      ),
+    }),
     columnHelper.accessor("id", {
       header: "Aksi",
       cell: (info) => {
-        console.log(info.getValue());
         return (
           <>
             <DropdownMenu>
@@ -107,17 +130,23 @@ export default function AdminList() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={
+                    isSubscribed(info.getValue())
+                      ? () => deactivateUser.mutate({ id: info.getValue() })
+                      : () => activateUser.mutate({ id: info.getValue() })
+                  }
+                >
                   {isSubscribed(info.getValue()) ? (
-                    <>
+                    <button className="flex">
                       <UserX className="mr-2 h-4 w-4" />
-                      <span>Unactivate</span>
-                    </>
+                      <span>Deactive</span>
+                    </button>
                   ) : (
-                    <>
+                    <button className="flex">
                       <User className="mr-2 h-4 w-4" />
                       <span>Activate</span>
-                    </>
+                    </button>
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem>
