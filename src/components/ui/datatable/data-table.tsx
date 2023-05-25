@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/table"
 import { RankingInfo, rankItem } from "@tanstack/match-sorter-utils"
 import { SearchIcon, UserPlus } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -61,12 +61,13 @@ export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 };
 
 export function DataTable<TData, TValue>(
-    { columns, data, href }: DataTableProps<TData, TValue>
+    { columns, data, href}: DataTableProps<TData, TValue>
 ){
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
+    const [globalFilter, setGlobalFilter] = useState("");
 
     const table = useReactTable({
         data: data || [],
@@ -81,12 +82,15 @@ export function DataTable<TData, TValue>(
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter,
         onRowSelectionChange: setRowSelection,  
         state: {
             sorting,
             columnFilters,
             columnVisibility,
-            rowSelection
+            rowSelection,
+            globalFilter
         }
     });
 
@@ -95,15 +99,12 @@ export function DataTable<TData, TValue>(
             <div className="flex items-center py-4 justify-between">
                 <div className="flex items-center gap-4">
                     <div className="relative mt-1 rounded-md shadow-sm">
-                        <Input
-                            placeholder="Search..."
-                            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
+                        <DebouncedInput
+                            value={globalFilter ?? ""}
+                            onChange={(value) => setGlobalFilter(String(value))}
                             className="w-full sm:w-64"
+                            placeholder="Search"
                         />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                            <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </div>
                     </div>
                     <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
                         <UserPlus className="h-5 w-5 text-gray-400" />
@@ -150,4 +151,45 @@ export function DataTable<TData, TValue>(
             </div>
        </>
     )
+}
+
+// A debounced input react component
+export function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: {
+    value: string | number;
+    onChange: (value: string | number) => void;
+    debounce?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+    const [value, setValue] = useState(initialValue);
+
+    useEffect(() => {
+        setValue(initialValue);
+    }, [initialValue]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value);
+        }, debounce);
+
+        return () => clearTimeout(timeout);
+    }, [value]);
+
+    return (
+        <>
+            <div className="relative mt-1 rounded-md shadow-sm">
+                <Input
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </div>
+            </div>
+        </>
+    );
 }
