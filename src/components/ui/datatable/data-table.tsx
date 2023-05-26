@@ -34,6 +34,7 @@ import { DataTableViewOptions } from "@/components/ui/datatable/data-table-viewO
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
+    columnViews?: { title: string }[]
     data: TData[]
     href?: string
 }
@@ -61,7 +62,7 @@ export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 };
 
 export function DataTable<TData, TValue>(
-    { columns, data, href}: DataTableProps<TData, TValue>
+    { columns, data, href, columnViews }: DataTableProps<TData, TValue>
 ){
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -110,7 +111,7 @@ export function DataTable<TData, TValue>(
                         <UserPlus className="h-5 w-5 text-gray-400" />
                     </Button>
                 </div>
-                {/* <DataTableViewOptions table={table} /> */}
+                <DataTableViewOptions table={table} columnViews={columnViews} />
             </div>
             <div className="rounded-md border bg-white overflow-x-auto">
                 <Table className="w-full">
@@ -180,7 +181,7 @@ export function DebouncedInput({
 
     return (
         <>
-            <div className="relative mt-1 rounded-md shadow-sm">
+            <div className="relative rounded-md shadow-sm">
                 <Input
                     {...props}
                     value={value}
