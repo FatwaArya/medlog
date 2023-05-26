@@ -88,24 +88,6 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
     const [globalFilter, setGlobalFilter] = useState("");
 
     const patientColumns = [
-        columnHelper.accessor("patient.id", {
-            header: ({ table }) => (
-              <Checkbox
-                checked={table.getIsAllPageRowsSelected()}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-              />
-            ),
-            cell: ({ row }) => (
-              <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-              />
-            ),
-            enableSorting: false,
-            enableHiding: false,
-          }),
         columnHelper.accessor("patient.name", {
             header: ({column}) => (
                 <DataTableColumnHeader column={column} title='nama pasien' />
@@ -139,7 +121,6 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
         columnHelper.accessor('patient.id', {
             header: "Aksi",
             cell: (info) => {
-                console.log(info.getValue());
                 return (
                   <>
                     <DropdownMenu>
@@ -226,6 +207,13 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
     //     getFacetedMinMaxValues: getFacetedMinMaxValues(),
     // });
 
+    const columnViews = [
+        {title : "nama pasien" },
+        {title : "jenis kelamin" },
+        {title : "tanggal lahir" },
+        {title : "kunjungan terakhir" },
+    ]
+
     return (
         <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
             <div className="px-4 py-5 sm:p-6">
@@ -252,7 +240,12 @@ export default function PatientList({ pageSize = 10, isPaginated = true, isDetai
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full divide-gray-300 align-middle">
                             {!isLoading && patientData ? (
-                                <DataTable columns={patientColumns} data={patientData}/>
+                                <DataTable 
+                                    columns={patientColumns} 
+                                    href="/dashboard/patients/checkup/new" 
+                                    data={patientData}
+                                    columnViews={columnViews}
+                                />
                                 ) : (
                                 <Skeleton className="w-full whitespace-nowrap h-12" />
                             )}
