@@ -9,6 +9,9 @@ import {
   User,
   UserX,
   CircleSlashed,
+  Mail,
+  MessageSquare,
+  PlusCircle,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -25,9 +28,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuLabel,
+  DropdownMenuSubTrigger,
+  DropdownMenuSub,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "react-hot-toast";
+import dayjs from "dayjs";
 
 type AdminColumn = RouterOutputs["admin"]["getUserByRole"][number];
 
@@ -122,6 +130,19 @@ export default function AdminList() {
       ),
     }),
 
+    columnHelper.accessor("subscribedToAdmin", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="subscribed until" />
+      ),
+      cell: (info) => (
+        <span className="capitalize">
+          {!info.getValue()[0]?.subscribedUntil
+            ? "Belum berlangganan"
+            : dayjs(info.getValue()[0]?.subscribedUntil).format("DD MMMM YYYY")}
+        </span>
+      ),
+    }),
+
     columnHelper.accessor("id", {
       header: "Aksi",
       cell: (info) => {
@@ -137,25 +158,60 @@ export default function AdminList() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={
-                    isSubscribed(info.getValue())
-                      ? () => deactivateUser.mutate({ id: info.getValue() })
-                      : () => activateUser.mutate({ id: info.getValue() })
-                  }
-                >
-                  {isSubscribed(info.getValue()) ? (
-                    <button className="flex">
-                      <UserX className="mr-2 h-4 w-4" />
-                      <span>Deactive</span>
-                    </button>
-                  ) : (
-                    <button className="flex">
+                {isSubscribed(info.getValue()) ? (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      void deactivateUser.mutate({ id: info.getValue() });
+                    }}
+                  >
+                    <UserX className="mr-2 h-4 w-4" />
+                    <span>Deactive</span>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
                       <User className="mr-2 h-4 w-4" />
                       <span>Activate</span>
-                    </button>
-                  )}
-                </DropdownMenuItem>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        {/* header */}
+                        <DropdownMenuLabel>Plans</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            void activateUser.mutate({
+                              id: info.getValue(),
+                              plan: "1m",
+                            });
+                          }}
+                        >
+                          1 Month
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            void activateUser.mutate({
+                              id: info.getValue(),
+                              plan: "3m",
+                            });
+                          }}
+                        >
+                          3 Month
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            void activateUser.mutate({
+                              id: info.getValue(),
+                              plan: "6m",
+                            });
+                          }}
+                        >
+                          6 Month
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                )}
                 <DropdownMenuItem>
                   <MoreHorizontal className="mr-2 h-4 w-4" />
                   <Link
