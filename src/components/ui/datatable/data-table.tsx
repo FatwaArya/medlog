@@ -25,7 +25,6 @@ import {
 import { type RankingInfo, rankItem } from "@tanstack/match-sorter-utils"
 import { SearchIcon, UserPlus } from "lucide-react"
 import { useState, useEffect } from "react"
-import { useState, useEffect } from "react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -35,6 +34,7 @@ import { DataTableViewOptions } from "@/components/ui/datatable/data-table-viewO
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
+    columnViews?: { title: string }[]
     data: TData[]
     href?: string
 }
@@ -69,7 +69,6 @@ export function DataTable<TData, TValue>(
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState("");
-    const [globalFilter, setGlobalFilter] = useState("");
 
     const table = useReactTable({
         data: data || [],
@@ -90,9 +89,7 @@ export function DataTable<TData, TValue>(
             columnFilters,
             columnVisibility,
             rowSelection,
-            globalFilter
-            rowSelection,
-            globalFilter
+            globalFilter,
         }
     });
 
@@ -104,11 +101,7 @@ export function DataTable<TData, TValue>(
                         <DebouncedInput
                             value={globalFilter ?? ""}
                             onChange={(value) => setGlobalFilter(String(value))}
-                        <DebouncedInput
-                            value={globalFilter ?? ""}
-                            onChange={(value) => setGlobalFilter(String(value))}
                             className="w-full sm:w-64"
-                            placeholder="Search"
                             placeholder="Search"
                         />
                     </div>
@@ -116,7 +109,7 @@ export function DataTable<TData, TValue>(
                         <UserPlus className="h-5 w-5 text-gray-400" />
                     </Button>
                 </div>
-                <DataTableViewOptions table={table} />
+                <DataTableViewOptions table={table} columnViews={columnViews} />
             </div>
             <div className="rounded-md border bg-white overflow-x-auto">
                 <Table className="w-full">
@@ -186,48 +179,7 @@ export function DebouncedInput({
 
     return (
         <>
-            <div className="relative mt-1 rounded-md shadow-sm">
-                <Input
-                    {...props}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                />
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </div>
-            </div>
-        </>
-    );
-}
-
-// A debounced input react component
-export function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
-}: {
-    value: string | number;
-    onChange: (value: string | number) => void;
-    debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-    const [value, setValue] = useState(initialValue);
-
-    useEffect(() => {
-        setValue(initialValue);
-    }, [initialValue]);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            onChange(value);
-        }, debounce);
-
-        return () => clearTimeout(timeout);
-    }, [value]);
-
-    return (
-        <>
-            <div className="relative mt-1 rounded-md shadow-sm">
+            <div className="relative rounded-md shadow-sm">
                 <Input
                     {...props}
                     value={value}
