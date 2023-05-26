@@ -129,11 +129,10 @@ model User {
     id            String     @id @default(cuid())
     name          String?
     email         String?    @unique
-    password      String?
     emailVerified DateTime?
     image         String?
     isSubscribed  Boolean    @default(false)
-    customerId    String?
+    password      String?
     phone         String?
     role          Role       @default(user)
     Patient       Patient[]
@@ -142,12 +141,24 @@ model User {
     Session       Session[]
 }
 
-model Payment {
-    id        String   @id
-    orderId   String
-    userId    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime
+model Subscription {
+    id           String              @id
+    subscriberId String
+    adminId      String
+    status       Subscription_status @default(inactive)
+    createdAt    DateTime            @default(now())
+    updatedAt    DateTime
+
+    @@index([adminId])
+    @@index([subscriberId])
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
 }
 
 enum Gender {
@@ -158,4 +169,9 @@ enum Gender {
 enum Role {
     user
     admin
+}
+
+enum Subscription_status {
+    active
+    inactive
 }
