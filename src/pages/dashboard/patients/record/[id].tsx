@@ -3,7 +3,11 @@ import type { PasienPlusPage } from "@/pages/_app";
 import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
-import { GetServerSidePropsContext, type GetStaticPaths, type GetStaticPropsContext } from "next";
+import {
+  GetServerSidePropsContext,
+  type GetStaticPaths,
+  type GetStaticPropsContext,
+} from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
 import { Spinner } from "@/components/ui/loading-overlay";
@@ -12,41 +16,41 @@ import { PatientDescription } from "../checkup/[id]/new";
 import { getServerAuthSession } from "@/server/auth";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 
-
 const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
-  const { data: patient, isLoading } = api.patient.getPatientById.useQuery({ patientId: id }, {
-    //if patient is not found, don't retry
-    retry: false,
-  })
+  const { data: patient, isLoading } = api.patient.getPatientById.useQuery({
+    patientId: id,
+  });
 
   if (isLoading) {
-    return <div className="flex justify-center h-full items-center">
-      <Spinner />
-    </div>
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!patient) {
-    return <div className="flex justify-center items-center">
-      <h1 className="text-xl font-bold">Patient not found</h1>
-    </div>
+    return (
+      <div className="flex items-center justify-center">
+        <h1 className="text-xl font-bold">Patient not found</h1>
+      </div>
+    );
   }
 
   return (
     <>
       <Head>
-        <title>Pasien Plus | {
-          patient?.name ?? "Patient not found"
-        }</title>
+        <title>Pasien Plus | {patient?.name ?? "Patient not found"}</title>
       </Head>
       <Breadcrumbs patientName={patient?.name} isPatientLast />
       <PatientDescription {...patient} />
       <CheckupList patientId={id} />
     </>
-  )
+  );
 };
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>,
+  context: GetServerSidePropsContext<{ id: string }>
 ) {
   const session = await getServerAuthSession(context);
 
@@ -59,7 +63,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (session?.user?.isSubscribed === false) {
+  if (!session?.user?.isSubscribed) {
     return {
       redirect: {
         destination: "/subscription",
@@ -68,12 +72,14 @@ export async function getServerSideProps(
     };
   }
 
-  const helpers = generateSSGHelper()
+  const helpers = generateSSGHelper();
   const id = context.params?.id as string;
 
-  const reportExists = await helpers.patient.getPatientById.fetch({ patientId: id })
+  const reportExists = await helpers.patient.getPatientById.fetch({
+    patientId: id,
+  });
   if (reportExists) {
-    await helpers.patient.getPatientById.prefetch({ patientId: id })
+    await helpers.patient.getPatientById.prefetch({ patientId: id });
   } else {
     return {
       props: { id },
@@ -89,47 +95,10 @@ export async function getServerSideProps(
   };
 }
 
-// export async function getStaticProps(
-//   context: GetStaticPropsContext<{ id: string }>
-// ) {
-//   const ssg = generateSSGHelper();
-//   const id = context.params?.id as string;
-
-//   await ssg.patient.getPatientById.prefetch({ patientId: id })
-
-//   return {
-//     props: {
-//       trpcState: ssg.dehydrate(),
-//       id,
-//     },
-//     revalidate: 1,
-//   };
-// }
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const paths = await prisma.patient.findMany({
-//     select: {
-//       id: true,
-//     },
-//   });
-
-//   return {
-//     paths: paths.map((path) => ({
-//       params: {
-//         id: path.id,
-//       },
-//     })),
-
-//     fallback: 'blocking',
-//   };
-// }
-
 PatientRecord.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 PatientRecord.authRequired = true;
 
-
 export default PatientRecord;
-
