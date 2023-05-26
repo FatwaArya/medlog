@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedSubscribedProcedure,
+  protectedProcedure,
+  publicProcedure,
 } from "@/server/api/trpc";
 import dayjs from "dayjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -569,7 +571,7 @@ export const patientRouter = createTRPCRouter({
           return monthlyVisits;
       }
     }),
-  getPatientById: protectedSubscribedProcedure
+  getPatientById: publicProcedure
 
     .input(
       z.object({
@@ -581,7 +583,7 @@ export const patientRouter = createTRPCRouter({
       const patient = await ctx.prisma.patient.findFirst({
         where: {
           id: input.patientId,
-          userId: ctx.session.user.id,
+          userId: ctx.session?.user.id,
         },
       });
       if (!patient) {

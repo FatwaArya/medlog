@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Activity, Search } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -166,20 +166,18 @@ export default function PatientList({ isDetailed = true }: ListProps) {
                 <DropdownMenuLabel>Aksi</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
+                  <Activity className="mr-2 h-4 w-4" />
+                  <Link
+                    href={`/dashboard/patients/checkup/${info.getValue()}/new`}
+                  >
+                    Periksa
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
                   <MoreHorizontal className="mr-2 h-4 w-4" />
-                  {isDetailed ? (
-                    <Link
-                      href={`/dashboard/patients/record/${info.getValue()}`}
-                    >
-                      Detail
-                    </Link>
-                  ) : (
-                    <Link
-                      href={`/dashboard/patients/checkup/${info.getValue()}/new`}
-                    >
-                      Periksa
-                    </Link>
-                  )}
+                  <Link href={`/dashboard/patients/record/${info.getValue()}`}>
+                    Detail
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

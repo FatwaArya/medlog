@@ -1,6 +1,5 @@
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedSubscribedProcedure,
 } from "@/server/api/trpc";
 import { z } from "zod";
