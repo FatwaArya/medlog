@@ -141,20 +141,24 @@ model User {
   Session       Session[]
 }
 
-model Payment {
-  id        String   @id
-  orderId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  userId    String
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Subscription {
+  id           String              @id
+  subscriberId String
+  adminId      String
+  status       Subscription_status @default(inactive)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime
+
+  @@index([adminId])
+  @@index([subscriberId])
 }
 
 enum Gender {
@@ -165,4 +169,9 @@ enum Gender {
 enum Role {
   user
   admin
+}
+
+enum Subscription_status {
+  active
+  inactive
 }
