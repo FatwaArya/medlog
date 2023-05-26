@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
-import { createColumnHelper } from "@tanstack/react-table";
+import { type FilterFn, createColumnHelper, SortingFn } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -33,43 +33,6 @@ import {
 } from "@tanstack/match-sorter-utils";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { UserPlus, MoreHorizontal } from "lucide-react";
-
-// declare module "@tanstack/table-core" {
-//     interface FilterFns {
-//         fuzzy: FilterFn<unknown>;
-//     }
-//     interface FilterMeta {
-//         itemRank: RankingInfo;
-//     }
-// }
-
-// export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-//     // Rank the item
-//     const itemRank = rankItem(row.getValue(columnId), value);
-
-//     // Store the itemRank info
-//     addMeta({
-//         itemRank,
-//     });
-
-//     // Return if the item should be filtered in/out
-//     return itemRank.passed;
-// };
-
-// export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-//     let dir = 0;
-
-//     // Only sort by rank if the column has ranking information
-//     if (rowA.columnFiltersMeta[columnId]) {
-//         dir = compareItems(
-//             rowA.columnFiltersMeta[columnId]?.itemRank!,
-//             rowB.columnFiltersMeta[columnId]?.itemRank!
-//         );
-//     }
-
-//     // Provide an alphanumeric fallback for when the item ranks are equal
-//     return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-// };
 
 const columnHelper = createColumnHelper<PatientColumn>();
 
@@ -187,13 +150,48 @@ export default function PatientList({ isDetailed = true }: ListProps) {
     }),
   ];
 
+
+  // const table = useReactTable({
+  //     data: patientData || [],
+  //     columns: patientColumns,
+  //     initialState: {
+  //         pagination: {
+  //             pageSize,
+  //         }
+  //     },
+  //     filterFns: {
+  //         fuzzy: fuzzyFilter,
+  //     },
+  //     state: {
+  //         columnFilters,
+  //         globalFilter,
+  //     },
+  //     onColumnFiltersChange: setColumnFilters,
+  //     onGlobalFilterChange: setGlobalFilter,
+  //     globalFilterFn: fuzzyFilter,
+  //     getCoreRowModel: getCoreRowModel(),
+  //     getFilteredRowModel: getFilteredRowModel(),
+  //     getSortedRowModel: getSortedRowModel(),
+  //     getPaginationRowModel: getPaginationRowModel(),
+  //     getFacetedRowModel: getFacetedRowModel(),
+  //     getFacetedUniqueValues: getFacetedUniqueValues(),
+  //     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+  // });
+
+  const columnViews = [
+    { title: "nama pasien" },
+    { title: "jenis kelamin" },
+    { title: "tanggal lahir" },
+    { title: "kunjungan terakhir" },
+  ]
+
   return (
-    <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
+    <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
       <div className="px-4 py-5 sm:p-6">
         <div className="">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
-              <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
+              <h1 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">
                 Daftar Pasien
               </h1>
             </div>
@@ -215,12 +213,122 @@ export default function PatientList({ isDetailed = true }: ListProps) {
                 {!isLoading && patientData ? (
                   <DataTable
                     columns={patientColumns}
-                    data={patientData}
                     href="/dashboard/patients/checkup/new"
+                    data={patientData}
+                    columnViews={columnViews}
                   />
                 ) : (
-                  <Skeleton className="h-12 w-full whitespace-nowrap" />
+                  <Skeleton className="w-full whitespace-nowrap h-12" />
                 )}
+                {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+                                    <table className="min-w-full divide-y divide-gray-300 ">
+                                        <thead className="bg-white">
+                                            {table.getHeaderGroups().map((headerGroup) => (
+                                                <tr key={headerGroup.id}>
+                                                    {headerGroup.headers.map((header) => {
+                                                        return (
+                                                            <th
+                                                                key={header.id}
+                                                                scope="col"
+                                                                className={
+                                                                    "px-3 py-3.5 text-left text-sm  font-normal"
+                                                                }
+                                                            >
+                                                                {header.isPlaceholder ? null : (
+                                                                    <>
+                                                                        {flexRender(
+                                                                            header.column.columnDef.header,
+                                                                            header.getContext()
+                                                                        )}
+                                                                    </>
+                                                                )}
+                                                            </th>
+                                                        );
+                                                    })}
+                                                </tr>
+                                            ))}
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 bg-white">
+                                            {isLoading && (
+                                                Array(3).fill(0).map((_, i) => (
+                                                    <tr key={i}>
+                                                        <td colSpan={6}>
+                                                            <div className="flex items-center max-w-full justify-center py-2">
+                                                                <Skeleton className="w-full whitespace-nowrap h-12" />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+
+                                            {!isLoading && table.getRowModel().rows.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={6}>
+                                                        <div className="flex items-center justify-center py-8">
+                                                            <Button
+                                                                variant="solidBlue"
+                                                                className=" px-6 text-sm font-normal"
+                                                                href="/dashboard/patients/checkup/new"
+                                                            >
+                                                                Daftar Pasien
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+
+                                            {table.getRowModel().rows.map((row) => {
+                                                return (
+                                                    <tr key={row.id} className="hover:bg-slate-700/10 cursor-pointer">
+                                                        {row.getVisibleCells().map((cell) => {
+                                                            return (
+                                                                <td
+                                                                    key={cell.id}
+                                                                    className={
+                                                                        cell.column.columnDef.header === "Patient"
+                                                                            ? "whitespace-nowrap py-4 pl-8 pr-3 text-sm font-medium text-gray-900"
+                                                                            : "whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                                                                    }
+                                                                >
+                                                                    {flexRender(
+                                                                        cell.column.columnDef.cell,
+                                                                        cell.getContext()
+                                                                    )}
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div> */}
+                {/* {isPaginated && (
+                                    <div className="flex items-center gap-2 justify-center mt-4 flex-row">
+                                        <span className="flex items-center gap-1">
+                                            {table.getState().pagination.pageIndex + 1} dari{' '}
+                                            {table.getPageCount()}
+                                        </span>
+                                        <div className="flex gap-4">
+                                            <button
+                                                className={`border rounded p-1 ${!table.getCanPreviousPage() ? 'bg-gray-200' : ''
+                                                    }`}
+                                                onClick={() => table.previousPage()}
+                                                disabled={!table.getCanPreviousPage()}
+                                            >
+                                                <ChevronLeftIcon className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                className={`border rounded p-1 ${!table.getCanNextPage() ? 'bg-gray-200' : ''
+                                                    }`}
+                                                onClick={() => table.nextPage()}
+                                                disabled={!table.getCanNextPage()}
+                                            >
+                                                <ChevronRightIcon className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                    </div>)} */}
               </div>
             </div>
           </div>

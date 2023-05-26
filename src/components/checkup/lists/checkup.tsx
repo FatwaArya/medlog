@@ -20,8 +20,7 @@ import { useState } from "react";
 import {
     DebouncedInput,
     type ListProps,
-    fuzzyFilter,
-    fuzzySort,
+
 } from "@/components/home/lists/patient";
 import { Spinner } from "@/components/ui/loading-overlay";
 import { rupiah } from "@/utils/intlformat";
@@ -69,8 +68,8 @@ export default function CheckupList({
             cell: (info) => {
                 return info.getValue();
             },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
+            // filterFn: fuzzyFilter,
+            // sortingFn: fuzzySort,
         }),
 
         columnHelper.accessor("patient.gender", {
@@ -78,8 +77,8 @@ export default function CheckupList({
             cell: (info) => {
                 return <span className="capitalize">{info.getValue()}</span>;
             },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
+            // filterFn: fuzzyFilter,
+            // sortingFn: fuzzySort,
         }),
         columnHelper.accessor('MedicineDetail', {
             header: "Terapi",
@@ -108,8 +107,8 @@ export default function CheckupList({
                     </span>
                 );
             },
-            filterFn: fuzzyFilter,
-            sortingFn: fuzzySort,
+            // filterFn: fuzzyFilter,
+            // sortingFn: fuzzySort,
         }),
         columnHelper.accessor("id", {
             header: "Aksi",
@@ -135,9 +134,9 @@ export default function CheckupList({
                 pageSize,
             },
         },
-        filterFns: {
-            fuzzy: fuzzyFilter,
-        },
+        // filterFns: {
+        //     fuzzy: fuzzyFilter,
+        // },
         state: {
             columnFilters,
             globalFilter,

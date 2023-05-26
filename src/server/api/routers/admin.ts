@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, adminProcedure, publicProcedure } from "../trpc";
 import { env } from "@/env.mjs";
 import { TRPCError } from "@trpc/server";
+import { addDays } from "date-fns";
 
 export const adminRouter = createTRPCRouter({
   getUserByRole: adminProcedure.query(async ({ ctx }) => {
@@ -9,16 +10,39 @@ export const adminRouter = createTRPCRouter({
       where: {
         role: "user",
       },
+      include: {
+        subscribedToAdmin: {
+          select: {
+            subscribedUntil: true,
+          },
+        },
+      },
     });
+
     return users;
   }),
   activateUser: adminProcedure
     .input(
       z.object({
         id: z.string(),
+        plan: z.enum(["1m", "3m", "6m"]),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      let addedDays = 0;
+
+      switch (input.plan) {
+        case "1m":
+          addedDays = 30;
+          break;
+        case "3m":
+          addedDays = 90;
+          break;
+        case "6m":
+          addedDays = 180;
+          break;
+      }
+
       await ctx.prisma.$transaction(async (tx) => {
         await tx.user.update({
           where: {
@@ -33,6 +57,7 @@ export const adminRouter = createTRPCRouter({
             subscriberId: input.id,
             adminId: ctx.session?.user.id,
             status: "active",
+            subscribedUntil: addDays(new Date(), addedDays),
           },
         });
       });

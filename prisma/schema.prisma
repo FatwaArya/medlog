@@ -152,14 +152,15 @@ model VerificationToken {
 }
 
 model Subscription {
-  id           String             @id @default(cuid())
-  subscriberId String
-  adminId      String
-  status       SubscriptionStatus @default(inactive)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  subscriber   User               @relation("SubscriberRelation", fields: [subscriberId], references: [id])
-  admin        User               @relation("AdminRelation", fields: [adminId], references: [id])
+  id              String             @id @default(cuid())
+  subscriberId    String
+  adminId         String
+  status          SubscriptionStatus @default(inactive)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  subscribedUntil DateTime?
+  subscriber      User               @relation("SubscriberRelation", fields: [subscriberId], references: [id])
+  admin           User               @relation("AdminRelation", fields: [adminId], references: [id])
 
   @@index([subscriberId])
   @@index([adminId])
@@ -178,4 +179,9 @@ enum Gender {
 enum Role {
   user
   admin
+}
+
+enum Subscription_status {
+  active
+  inactive
 }
