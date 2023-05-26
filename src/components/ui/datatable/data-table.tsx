@@ -62,7 +62,7 @@ export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 };
 
 export function DataTable<TData, TValue>(
-    { columns, data, href }: DataTableProps<TData, TValue>
+    { columns, data, href, columnViews }: DataTableProps<TData, TValue>
 ) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -156,7 +156,7 @@ export function DataTable<TData, TValue>(
 export function DebouncedInput({
     value: initialValue,
     onChange,
-    debounce = 500,
+    debounce = 200,
     ...props
 }: {
     value: string | number;

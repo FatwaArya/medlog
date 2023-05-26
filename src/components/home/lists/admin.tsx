@@ -41,6 +41,14 @@ type AdminColumn = RouterOutputs["admin"]["getUserByRole"][number];
 
 const columnHelper = createColumnHelper<AdminColumn>();
 
+const columnViews = [
+  { title: "nama" },
+  { title: "email" },
+  { title: "no telepon" },
+  { title: "status" },
+  { title: "subscribed until" },
+]
+
 export default function AdminList() {
   const utils = api.useContext();
   const { data: adminData, isLoading } = api.admin.getUserByRole.useQuery();
@@ -250,7 +258,7 @@ export default function AdminList() {
                 <div className="inline-block min-w-full divide-gray-300 align-middle">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                     {!isLoading && adminData ? (
-                      <DataTable columns={adminColumns} data={adminData} />
+                      <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} />
                     ) : (
                       <Skeleton className="h-12 w-full whitespace-nowrap" />
                     )}
