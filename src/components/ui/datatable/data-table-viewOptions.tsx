@@ -15,11 +15,29 @@ import {
 
 interface DataTableViewOptionsProps<TData> {
     table: Table<TData>
+    columnViews?: { title: string }[]
 }
 
 export function DataTableViewOptions<TData>({
-    table
+    table, columnViews
 }: DataTableViewOptionsProps<TData>){
+    const columnShow = () => {
+        const getAllColumns = table.getAllColumns().filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide() && !column.id.includes("id")).map((column) => column)
+
+        const mappedArray = getAllColumns.map((element, index) => {
+            const correspondingElement = columnViews && columnViews[index];
+            return {
+                columnData: element,
+                title: correspondingElement
+            };
+        });
+
+        return {
+            mappedArray,
+            getAllColumns
+        }
+    }
+    
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -35,21 +53,32 @@ export function DataTableViewOptions<TData>({
         <DropdownMenuContent align="end" className="w-[150px]">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {table
-                .getAllColumns()
-                .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide() && column.id !== "id")
-                .map((column) => {
+            {
+                columnViews ? columnShow().mappedArray.map((column, columnIdx) => {
                     return (
                         <DropdownMenuCheckboxItem
-                            key={column.id}
+                            key={columnIdx}
                             className="capitalize"
-                            checked={column.getIsVisible()}
-                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                            checked={column.columnData.getIsVisible()}
+                            onCheckedChange={(value) => column.columnData.toggleVisibility(!!value)}
                         >
-                            {column.id}
+                            {column.title?.title}
                         </DropdownMenuCheckboxItem>
                     )
-                })
+                }) : (
+                    columnShow().getAllColumns.map((column, columnIdx) => {
+                        return (
+                            <DropdownMenuCheckboxItem
+                                key={columnIdx}
+                                className="capitalize"
+                                checked={column.getIsVisible()}
+                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                            >
+                            {column.id}
+                            </DropdownMenuCheckboxItem>
+                        )
+                    })
+                )
             }
         </DropdownMenuContent>
     </DropdownMenu>
