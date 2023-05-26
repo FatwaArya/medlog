@@ -110,6 +110,12 @@ export default function AdminList ({ pageSize = 10, isPaginated = true }: ListPr
       }),
     ]
 
+    const columnViews = [
+      {title : "nama" },
+      {title : "email" },
+      {title : "no telepon" },
+  ]
+
   return (
     <>
     <div className='overflow-hidden bg-white shadow sm:rounded-lg outline-1 outline-slate-200'>
@@ -127,7 +133,7 @@ export default function AdminList ({ pageSize = 10, isPaginated = true }: ListPr
               <div className='inline-block min-w-full divide-gray-300 align-middle'>
                 <div className='overflow-hidden shadow ring-1 ring-black ring-opacity-5'>
                   {!isLoading && adminData ? (
-                    <DataTable columns={adminColumns} data={adminData} />
+                    <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} />
                     ) : (
                     <Skeleton className="w-full whitespace-nowrap h-12" />
                   )}
