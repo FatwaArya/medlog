@@ -180,3 +180,8 @@ enum Role {
   user
   admin
 }
+
+enum Subscription_status {
+  active
+  inactive
+}
