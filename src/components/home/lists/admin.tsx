@@ -71,11 +71,12 @@ export default function AdminList() {
   };
 
   const adminColumns = [
-    columnHelper.accessor("image", {
-      header: ({ column }) => (
+    {
+      accessorKey: "image",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="Profil" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <Avatar>
           <AvatarImage src={info.getValue() as string} />
           <AvatarFallback>
@@ -85,57 +86,60 @@ export default function AdminList() {
       ),
       enableSorting: false,
       enableHiding: false,
-    }),
-
-    columnHelper.accessor("name", {
-      header: ({ column }) => (
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="nama" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("email", {
-      header: ({ column }) => (
+      cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="email" />
       ),
-      cell: (info) => <span>{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("phone", {
-      header: ({ column }) => (
+      cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
+    },
+    {
+      accessorKey: "phone",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <span className="capitalize">
           {!info.getValue() ? "tidak tersedia" : info.getValue()}
         </span>
       ),
-    }),
-    columnHelper.accessor("isSubscribed", {
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="status" />
+    },
+    {
+      accessorKey: "isSubscribed",
+      header: ({ column }: any) => (
+        <DataTableColumnHeader column={column} title="isSubscribed" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <span className="capitalize">
           {info.getValue() ? "Langganan" : "Tidak Langganan"}
         </span>
       ),
-    }),
-
-    columnHelper.accessor("subscribedToAdmin", {
-      header: ({ column }) => (
+    },
+    {
+      accessorKey: "subscribedToAdmin",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="subscribed until" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <span className="capitalize">
           {!info.getValue()[0]?.subscribedUntil
             ? "Belum berlangganan"
             : dayjs(info.getValue()[0]?.subscribedUntil).format("DD MMMM YYYY")}
         </span>
       ),
-    }),
-
-    columnHelper.accessor("id", {
-      header: "Aksi",
-      cell: (info) => {
+    },
+    {
+      accessorKey: "id",
+      header: "aksi",
+      cell: (info: any) => {
         return (
           <>
             <DropdownMenu>
@@ -220,8 +224,8 @@ export default function AdminList() {
           </>
         );
       },
-    }),
-  ];
+    },
+  ]
 
   return (
     <>
