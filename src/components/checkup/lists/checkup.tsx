@@ -13,7 +13,7 @@ import { DataTable } from "@/components/ui/datatable/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
 import { rupiah } from "@/utils/intlformat";
-import { MoreHorizontal, User, } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import {
     DropdownMenu,
@@ -23,8 +23,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { createColumnHelper } from "@tanstack/react-table";
 
 dayjs.extend(relativeTime);
+
+type CheckupColumn = RouterOutputs["record"]["getRecords"][number];
+
+const columnHelper = createColumnHelper<CheckupColumn>();
 
 const columnViews = [
     { title: "tanggal pemeriksaan" },
@@ -36,52 +41,45 @@ const columnViews = [
   ]
 
 export default function CheckupList({
-    pageSize = 10,
-    isPaginated = true,
     patientId,
 }: ListProps) {
     const { data: CheckupData, isLoading } = api.record.getRecords.useQuery({ patientId: patientId as string });
 
     const checkupColumns = [
-        {
-            accessorKey: "createdAt",
-            header: ({ column }: any) => (
+        columnHelper.accessor("createdAt", {
+            header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="tanggal pemeriksaan" />
               ),
-            cell: (info: any) => dayjs(info.getValue()).format("DD MMMM YYYY"),
-        },
-        {
-            accessorKey: "diagnosis",
-            header: ({ column }: any) => (
+            cell: (info) => dayjs(info.getValue()).format("DD MMMM YYYY"),
+        }),
+        columnHelper.accessor("diagnosis", {
+            header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="diagnosis" />
               ),
-            cell: (info: any) => <span>{info.getValue()}</span>,
-        },
-        {
-            accessorKey: "patient.name",
-            header: ({ column }: any) => (
+            cell: (info) => <span>{info.getValue()}</span>,
+        }),
+        columnHelper.accessor("patient.name", {
+            header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="nama pasien" />
               ),
-            cell: (info: any) => <span>{info.getValue()}</span>,
-        },
-        {
-            accessorKey: "patient.gender",
-            header: ({ column }: any) => (
+            cell: (info) => <span>{info.getValue()}</span>,
+        }),
+        columnHelper.accessor("patient.gender", {
+            header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="jenis kelamin" />
               ),
-            cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
-        },
-        {
-            accessorKey: "MedicineDetail",
-            header: ({ column }: any) => (
+            cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+        }),
+        columnHelper.accessor("MedicineDetail", {
+            header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="terapi" />
               ),
-            cell: (info: any) => {
+              cell: (info) => {
     
                 if (!info.getValue() || info.getValue().length === 0) {
                     return "Tidak ada terapi";
                 } else {
-                    return info.getValue().map((item: any, i: any) => (
+                    return info.getValue().map((item, i) => (
                         <span key={i} className="capitalize">
                             {/* create delimiter */}
                             {i > 0 && ", "}
@@ -90,24 +88,24 @@ export default function CheckupList({
                     ));
                 }
             },
-        },
-        {
-            accessorKey: "pay",
-            header: ({ column }: any) => (
-                <DataTableColumnHeader column={column} title="biaya" />
+        }),
+        columnHelper.accessor("pay", {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="jenis kelamin" />
               ),
-            cell: (info: any) => {
+              cell: (info) => {
                 return (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         {rupiah.format(info.getValue())}
                     </span>
                 );
             },
-        },
-        {
-            accessorKey: "id",
-            header: "Aksi",
-            cell: (info: any) => {
+        }),
+        columnHelper.accessor("id", {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="jenis kelamin" />
+              ),
+              cell: (info) => {
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -129,7 +127,7 @@ export default function CheckupList({
                     </DropdownMenu>
                 );
             },
-        },
+        }),
     ]
 
     return (

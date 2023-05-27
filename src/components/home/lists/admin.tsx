@@ -1,19 +1,13 @@
 import React from "react";
 import { api, type RouterOutputs } from "@/utils/api";
-import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   MoreHorizontal,
-  ArrowUpDown,
   User,
   UserX,
   CircleSlashed,
-  Mail,
-  MessageSquare,
-  PlusCircle,
 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
 import { DataTable } from "@/components/ui/datatable/data-table";
@@ -71,12 +65,11 @@ export default function AdminList() {
   };
 
   const adminColumns = [
-    {
-      accessorKey: "image",
-      header: ({ column }: any) => (
+    columnHelper.accessor("image", {
+      header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Profil" />
       ),
-      cell: (info: any) => (
+      cell: (info) => (
         <Avatar>
           <AvatarImage src={info.getValue() as string} />
           <AvatarFallback>
@@ -86,60 +79,54 @@ export default function AdminList() {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
-    {
-      accessorKey: "name",
-      header: ({ column }: any) => (
+    }),
+    columnHelper.accessor("name", {
+      header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama" />
       ),
-      cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
-    },
-    {
-      accessorKey: "email",
-      header: ({ column }: any) => (
+      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+    }),
+    columnHelper.accessor("email", {
+      header: ({ column }) => (
         <DataTableColumnHeader column={column} title="email" />
       ),
-      cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
-    },
-    {
-      accessorKey: "phone",
-      header: ({ column }: any) => (
+      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+    }),
+    columnHelper.accessor("phone", {
+      header: ({ column }) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
-      cell: (info: any) => (
+      cell: (info) => (
         <span className="capitalize">
           {!info.getValue() ? "tidak tersedia" : info.getValue()}
         </span>
       ),
-    },
-    {
-      accessorKey: "isSubscribed",
-      header: ({ column }: any) => (
-        <DataTableColumnHeader column={column} title="isSubscribed" />
+    }),
+    columnHelper.accessor("isSubscribed", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="langganan" />
       ),
-      cell: (info: any) => (
+      cell: (info) => (
         <span className="capitalize">
           {info.getValue() ? "Langganan" : "Tidak Langganan"}
         </span>
       ),
-    },
-    {
-      accessorKey: "subscribedToAdmin",
-      header: ({ column }: any) => (
-        <DataTableColumnHeader column={column} title="subscribed until" />
+    }),
+    columnHelper.accessor("subscribedToAdmin", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="langganan hingga" />
       ),
-      cell: (info: any) => (
+      cell: (info) => (
         <span className="capitalize">
           {!info.getValue()[0]?.subscribedUntil
             ? "Belum berlangganan"
             : dayjs(info.getValue()[0]?.subscribedUntil).format("DD MMMM YYYY")}
         </span>
       ),
-    },
-    {
-      accessorKey: "id",
+    }),
+    columnHelper.accessor("id", {
       header: "Aksi",
-      cell: (info: any) => {
+      cell: (info) => {
         return (
           <>
             <DropdownMenu>
@@ -224,7 +211,7 @@ export default function AdminList() {
           </>
         );
       },
-    },
+    }),
   ]
 
   return (
