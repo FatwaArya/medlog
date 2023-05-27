@@ -1,43 +1,39 @@
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
-import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
 import {
-    useReactTable,
-    type ColumnFiltersState,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFacetedMinMaxValues,
-    getPaginationRowModel,
-    getSortedRowModel,
-    flexRender,
-    createColumnHelper,
-} from "@tanstack/react-table";
-import { useState } from "react";
-import {
-    DebouncedInput,
     type ListProps,
 
 } from "@/components/home/lists/patient";
-import { Spinner } from "@/components/ui/loading-overlay";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+import { DataTable } from "@/components/ui/datatable/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
 import { rupiah } from "@/utils/intlformat";
+import { MoreHorizontal, User, } from "lucide-react";
+
 import {
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    ChevronUp,
-    FilePlus,
-    UserPlus,
-} from "lucide-react";
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 
 dayjs.extend(relativeTime);
 
-type CheckupColumn = RouterOutputs["record"]["getRecords"][number];
-
-const columnHelper = createColumnHelper<CheckupColumn>();
+const columnViews = [
+    { title: "tanggal pemeriksaan" },
+    { title: "diagnosis" },
+    { title: "nama pasien" },
+    { title: "jenis kelamin" },
+    { title: "terapi" },
+    { title: "biaya" },
+  ]
 
 export default function CheckupList({
     pageSize = 10,
@@ -45,49 +41,47 @@ export default function CheckupList({
     patientId,
 }: ListProps) {
     const { data: CheckupData, isLoading } = api.record.getRecords.useQuery({ patientId: patientId as string });
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [globalFilter, setGlobalFilter] = useState("");
 
-    const CheckupColumns = [
-        columnHelper.accessor("createdAt", {
-            header: "Tanggal Pemeriksaan",
-            cell: (info) => {
-                return dayjs(info.getValue()).format("DD MMMM YYYY");
-            },
-
-        }),
-        columnHelper.accessor('diagnosis', {
-            header: "Diagnosis",
-            cell: (info) => {
-                return info.getValue();
-            },
-
-        }),
-        columnHelper.accessor("patient.name", {
-            header: "Nama Pasien",
-            cell: (info) => {
-                return info.getValue();
-            },
-            // filterFn: fuzzyFilter,
-            // sortingFn: fuzzySort,
-        }),
-
-        columnHelper.accessor("patient.gender", {
-            header: "Jenis Kelamin",
-            cell: (info) => {
-                return <span className="capitalize">{info.getValue()}</span>;
-            },
-            // filterFn: fuzzyFilter,
-            // sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor('MedicineDetail', {
-            header: "Terapi",
-            cell: (info) => {
-
+    const checkupColumns = [
+        {
+            accessorKey: "createdAt",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="tanggal pemeriksaan" />
+              ),
+            cell: (info: any) => dayjs(info.getValue()).format("DD MMMM YYYY"),
+        },
+        {
+            accessorKey: "diagnosis",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="diagnosis" />
+              ),
+            cell: (info: any) => <span>{info.getValue()}</span>,
+        },
+        {
+            accessorKey: "patient.name",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="nama pasien" />
+              ),
+            cell: (info: any) => <span>{info.getValue()}</span>,
+        },
+        {
+            accessorKey: "patient.gender",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="jenis kelamin" />
+              ),
+            cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
+        },
+        {
+            accessorKey: "MedicineDetail",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="terapi" />
+              ),
+            cell: (info: any) => {
+    
                 if (!info.getValue() || info.getValue().length === 0) {
                     return "Tidak ada terapi";
                 } else {
-                    return info.getValue().map((item, i) => (
+                    return info.getValue().map((item: any, i: any) => (
                         <span key={i} className="capitalize">
                             {/* create delimiter */}
                             {i > 0 && ", "}
@@ -96,62 +90,47 @@ export default function CheckupList({
                     ));
                 }
             },
-
-        }),
-        columnHelper.accessor("pay", {
-            header: "Biaya",
-            cell: (info) => {
+        },
+        {
+            accessorKey: "pay",
+            header: ({ column }: any) => (
+                <DataTableColumnHeader column={column} title="biaya" />
+              ),
+            cell: (info: any) => {
                 return (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         {rupiah.format(info.getValue())}
                     </span>
                 );
             },
-            // filterFn: fuzzyFilter,
-            // sortingFn: fuzzySort,
-        }),
-        columnHelper.accessor("id", {
+        },
+        {
+            accessorKey: "id",
             header: "Aksi",
-            cell: (info) => {
+            cell: (info: any) => {
                 return (
-                    <Button
-                        href={`/dashboard/patients/checkup/${info.getValue()}`}
-                        variant="solidBlue"
-                        size="sm"
-                        className=" px-6 text-sm font-normal"
-                    >
-                        Lihat
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Buka menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <MoreHorizontal className="mr-2 h-4 w-4" />
+                                <Link href={`/dashboard/patients/checkup/${info.getValue()}`}>
+                                Detail
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 );
             },
-        }),
-    ];
-    const table = useReactTable({
-        data: CheckupData || [],
-        columns: CheckupColumns,
-        initialState: {
-            pagination: {
-                pageSize,
-            },
         },
-        // filterFns: {
-        //     fuzzy: fuzzyFilter,
-        // },
-        state: {
-            columnFilters,
-            globalFilter,
-        },
-        onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: fuzzyFilter,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getFacetedRowModel: getFacetedRowModel(),
-        getFacetedUniqueValues: getFacetedUniqueValues(),
-        getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    });
+    ]
 
     return (
         <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -163,177 +142,19 @@ export default function CheckupList({
                                 Riwayat Pemeriksaan
                             </h1>
                         </div>
-                        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
-                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={`/dashboard/patients/checkup/${patientId}/new`}>
-                                <FilePlus className="h-5 w-5 text-gray-400" />
-                            </Button>
-                            <DebouncedInput
-                                value={globalFilter ?? ""}
-                                onChange={(value) => setGlobalFilter(String(value))}
-                                className="font-lg border-block border p-2"
-                                placeholder="Search"
-                            />
-                        </div>
                     </div>
                     <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full divide-gray-300 align-middle">
                                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
-                                    <table className="min-w-full divide-y divide-gray-300 ">
-                                        <thead className="bg-white">
-                                            {table.getHeaderGroups().map((headerGroup) => (
-                                                <tr key={headerGroup.id}>
-                                                    {headerGroup.headers.map((header) => {
-                                                        return (
-                                                            <th
-                                                                key={header.id}
-                                                                colSpan={header.colSpan}
-                                                                className="px-3 py-3.5 text-left text-sm  font-normal"
-                                                            >
-                                                                {header.isPlaceholder ? null : (
-                                                                    <>
-                                                                        <div
-                                                                            {...{
-                                                                                className: header.column.getCanSort()
-                                                                                    ? "cursor-pointer select-none"
-                                                                                    : "",
-                                                                                onClick:
-                                                                                    header.column.getToggleSortingHandler(),
-                                                                            }}
-                                                                            className="flex items-center gap-1"
-                                                                        >
-                                                                            {flexRender(
-                                                                                header.column.columnDef.header,
-                                                                                header.getContext()
-                                                                            )}
-                                                                            {{
-                                                                                asc: <ChevronUp />,
-                                                                                desc: <ChevronDown />,
-                                                                            }[
-                                                                                header.column.getIsSorted() as string
-                                                                            ] ?? null}
-                                                                        </div>
-                                                                    </>
-                                                                )}
-                                                            </th>
-                                                            // <th
-                                                            //     key={header.id}
-                                                            //     scope="col"
-                                                            //     className={
-                                                            //         "px-3 py-3.5 text-left text-sm  font-normal"
-                                                            //     }
-                                                            // >
-                                                            //     {header.isPlaceholder ? null : (
-                                                            //         <div
-                                                            //             {...{
-                                                            //                 className: header.column.getCanSort()
-                                                            //                     ? 'cursor-pointer select-none'
-                                                            //                     : '',
-                                                            //                 onClick: header.column.getToggleSortingHandler(),
-                                                            //             }}
-
-                                                            //         >
-                                                            //             <>
-                                                            //                 {flexRender(
-                                                            //                     header.column.columnDef.header,
-                                                            //                     header.getContext()
-                                                            //                 )}
-                                                            //                 {{
-                                                            //                     asc: ChevronUpIcon,
-                                                            //                     desc: ChevronDownIcon,
-                                                            //                 }[header.column.getIsSorted() as string] ?? null}
-
-                                                            //             </>
-                                                            //         </div>
-                                                            //     )}
-                                                            // </th>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))}
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 bg-white">
-                                            {isLoading && (
-                                                <tr>
-                                                    <td colSpan={6}>
-                                                        <div className="flex items-center justify-center py-8">
-                                                            <Spinner />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-
-                                            {!isLoading && table.getRowModel().rows.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={6}>
-                                                        <div className="flex items-center justify-center py-8">
-                                                            <Button
-                                                                variant="solidBlue"
-                                                                className=" px-6 text-sm font-normal"
-                                                                href="/dashboard/checkup/new"
-                                                            >
-                                                                Daftar Pasien
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-
-                                            {table.getRowModel().rows.map((row) => {
-                                                return (
-                                                    <tr
-                                                        key={row.id}
-                                                        className="cursor-pointer hover:bg-slate-700/10"
-                                                    >
-                                                        {row.getVisibleCells().map((cell) => {
-                                                            return (
-                                                                <td
-                                                                    key={cell.id}
-                                                                    className={
-                                                                        cell.column.columnDef.header === "Patient"
-                                                                            ? "whitespace-nowrap py-4 pl-8 pr-3 text-sm font-medium text-gray-900"
-                                                                            : "whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                                                                    }
-                                                                >
-                                                                    {flexRender(
-                                                                        cell.column.columnDef.cell,
-                                                                        cell.getContext()
-                                                                    )}
-                                                                </td>
-                                                            );
-                                                        })}
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
+                                    {
+                                        !isLoading && CheckupData ? (
+                                        <DataTable columns={checkupColumns} data={CheckupData} columnViews={columnViews} ></DataTable>
+                                        ) : (
+                                            <Skeleton className="h-12 w-full whitespace-nowrap" />
+                                        )
+                                    }
                                 </div>
-                                {isPaginated && (
-                                    <div className="mt-4 flex flex-row items-center justify-center gap-2">
-                                        <span className="flex items-center gap-1">
-                                            {table.getState().pagination.pageIndex + 1} dari{" "}
-                                            {table.getPageCount()}
-                                        </span>
-                                        <div className="flex gap-4">
-                                            <button
-                                                className={`rounded border p-1 ${!table.getCanPreviousPage() ? "bg-gray-200" : ""
-                                                    }`}
-                                                onClick={() => table.previousPage()}
-                                                disabled={!table.getCanPreviousPage()}
-                                            >
-                                                <ChevronLeft className="h-4 w-4" />
-                                            </button>
-                                            <button
-                                                className={`rounded border p-1 ${!table.getCanNextPage() ? "bg-gray-200" : ""
-                                                    }`}
-                                                onClick={() => table.nextPage()}
-                                                disabled={!table.getCanNextPage()}
-                                            >
-                                                <ChevronRight className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>
