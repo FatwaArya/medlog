@@ -5,10 +5,10 @@ import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
-import { type FilterFn, createColumnHelper, SortingFn } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   DropdownMenu,
@@ -21,18 +21,11 @@ import {
 
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
-import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
 
-import {
-  type RankingInfo,
-  rankItem,
-  compareItems,
-} from "@tanstack/match-sorter-utils";
-import { Spinner } from "@/components/ui/loading-overlay";
-import { UserPlus, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 const columnHelper = createColumnHelper<PatientColumn>();
 
@@ -50,56 +43,54 @@ export default function PatientList({ isDetailed = true }: ListProps) {
   const [globalFilter, setGlobalFilter] = useState("");
 
   const patientColumns = [
-    columnHelper.accessor("patient.name", {
-      header: ({ column }) => (
+    {
+      accessorKey: "patient.name",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="nama pasien" />
       ),
-      cell: (info) => <span>{info.getValue()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.gender", {
-      header: ({ column }) => (
+      cell: (info: any) => <span>{info.getValue()}</span>,
+    },
+    {
+      accessorKey: "patient.gender",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="jenis kelamin" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("patient.birthDate", {
-      header: ({ column }) => (
+      cell: (info: any) => <span className="capitalize">{info.getValue()}</span>,
+    },
+    {
+      accessorKey: "patient.birthDate",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="tanggal lahir" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <span className="capitalize">
           {dayjs(info.getValue()).format("DD MMM YYYY")}
         </span>
       ),
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.phone", {
-      header: ({ column }) => (
+    },
+    {
+      accessorKey: "patient.phone",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
-      cell: (info) => (
+      cell: (info: any) => (
         <span className="capitalize">
           {!info.getValue() ? "tidak tersedia" : info.getValue()}
         </span>
       ),
-    }),
-    columnHelper.accessor("createdAt", {
-      header: ({ column }) => (
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }: any) => (
         <DataTableColumnHeader column={column} title="kunjungan terakhir" />
       ),
-      cell: (info) => <span>{dayjs(info.getValue()).fromNow()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.id", {
+      cell: (info: any) => <span>{dayjs(info.getValue()).fromNow()}</span>,
+    },
+    {
+      accessorKey: "id",
       header: "Aksi",
-      cell: (info) => {
-        console.log(info.getValue());
-        return (
-          <>
+      cell: (info: any) => (
+        <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -127,10 +118,9 @@ export default function PatientList({ isDetailed = true }: ListProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </>
-        );
-      },
-    }),
-  ];
+      ),
+    },
+  ]
 
 
   // const table = useReactTable({

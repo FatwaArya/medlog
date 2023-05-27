@@ -138,7 +138,7 @@ export default function AdminList() {
     },
     {
       accessorKey: "id",
-      header: "aksi",
+      header: "Aksi",
       cell: (info: any) => {
         return (
           <>
