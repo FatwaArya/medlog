@@ -50,24 +50,6 @@ export default function PatientList({ isDetailed = true }: ListProps) {
   const [globalFilter, setGlobalFilter] = useState("");
 
   const patientColumns = [
-    columnHelper.accessor("patient.id", {
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    }),
     columnHelper.accessor("patient.name", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama pasien" />
@@ -182,6 +164,7 @@ export default function PatientList({ isDetailed = true }: ListProps) {
     { title: "nama pasien" },
     { title: "jenis kelamin" },
     { title: "tanggal lahir" },
+    { title: "no telepon" },
     { title: "kunjungan terakhir" },
   ]
 
