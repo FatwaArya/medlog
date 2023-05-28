@@ -14,7 +14,7 @@ const Patients: PasienPlusPage = () => (
             <title>Pasien Plus | Data Pasien</title>
         </Head>
         <Breadcrumbs />
-        <PatientList pageSize={50} isPaginated />
+        <PatientList />
     </>
 )
 Patients.getLayout = function getLayout(page: ReactElement) {
