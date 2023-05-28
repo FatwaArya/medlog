@@ -1,19 +1,13 @@
 import React from "react";
 import { api, type RouterOutputs } from "@/utils/api";
-import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   MoreHorizontal,
-  ArrowUpDown,
   User,
   UserX,
   CircleSlashed,
-  Mail,
-  MessageSquare,
-  PlusCircle,
 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
 import { DataTable } from "@/components/ui/datatable/data-table";
@@ -71,24 +65,6 @@ export default function AdminList() {
   };
 
   const adminColumns = [
-    columnHelper.accessor("id", {
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    }),
     columnHelper.accessor("image", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Profil" />
@@ -104,7 +80,6 @@ export default function AdminList() {
       enableSorting: false,
       enableHiding: false,
     }),
-
     columnHelper.accessor("name", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama" />
@@ -115,7 +90,7 @@ export default function AdminList() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="email" />
       ),
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
     }),
     columnHelper.accessor("phone", {
       header: ({ column }) => (
@@ -129,7 +104,7 @@ export default function AdminList() {
     }),
     columnHelper.accessor("isSubscribed", {
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="status" />
+        <DataTableColumnHeader column={column} title="langganan" />
       ),
       cell: (info) => (
         <span className="capitalize">
@@ -137,10 +112,9 @@ export default function AdminList() {
         </span>
       ),
     }),
-
     columnHelper.accessor("subscribedToAdmin", {
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="subscribed until" />
+        <DataTableColumnHeader column={column} title="langganan hingga" />
       ),
       cell: (info) => (
         <span className="capitalize">
@@ -150,7 +124,6 @@ export default function AdminList() {
         </span>
       ),
     }),
-
     columnHelper.accessor("id", {
       header: "Aksi",
       cell: (info) => {
@@ -239,7 +212,7 @@ export default function AdminList() {
         );
       },
     }),
-  ];
+  ]
 
   return (
     <>

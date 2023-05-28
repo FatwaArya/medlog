@@ -1,14 +1,12 @@
-import { Input } from "@/components/ui/input";
-import { Activity, Search } from "lucide-react";
+import { Activity } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
-import { type FilterFn, createColumnHelper, SortingFn } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   DropdownMenu,
@@ -21,18 +19,11 @@ import {
 
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
-import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
 
-import {
-  type RankingInfo,
-  rankItem,
-  compareItems,
-} from "@tanstack/match-sorter-utils";
-import { Spinner } from "@/components/ui/loading-overlay";
-import { UserPlus, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 const columnHelper = createColumnHelper<PatientColumn>();
 
@@ -43,38 +34,20 @@ export interface ListProps {
   isDetailed?: boolean;
 }
 
-export default function PatientList({ isDetailed = true }: ListProps) {
+export default function PatientList(
+  // { isDetailed = true }: ListProps
+  ) {
   const { data: patientData, isLoading } =
     api.patient.getNewestPatients.useQuery();
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  // const [globalFilter, setGlobalFilter] = useState("");
 
   const patientColumns = [
-    columnHelper.accessor("patient.id", {
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    }),
     columnHelper.accessor("patient.name", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama pasien" />
       ),
       cell: (info) => <span>{info.getValue()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
     }),
     columnHelper.accessor("patient.gender", {
       header: ({ column }) => (
@@ -91,8 +64,6 @@ export default function PatientList({ isDetailed = true }: ListProps) {
           {dayjs(info.getValue()).format("DD MMM YYYY")}
         </span>
       ),
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
     }),
     columnHelper.accessor("patient.phone", {
       header: ({ column }) => (
@@ -101,23 +72,18 @@ export default function PatientList({ isDetailed = true }: ListProps) {
       cell: (info) => (
         <span className="capitalize">
           {!info.getValue() ? "tidak tersedia" : info.getValue()}
-        </span>
-      ),
+        </span>),
     }),
     columnHelper.accessor("createdAt", {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="kunjungan terakhir" />
       ),
       cell: (info) => <span>{dayjs(info.getValue()).fromNow()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
     }),
     columnHelper.accessor("patient.id", {
       header: "Aksi",
-      cell: (info) => {
-        console.log(info.getValue());
-        return (
-          <>
+      cell: (info) => (
+        <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -145,8 +111,7 @@ export default function PatientList({ isDetailed = true }: ListProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </>
-        );
-      },
+      ),
     }),
   ];
 
@@ -182,6 +147,7 @@ export default function PatientList({ isDetailed = true }: ListProps) {
     { title: "nama pasien" },
     { title: "jenis kelamin" },
     { title: "tanggal lahir" },
+    { title: "no telepon" },
     { title: "kunjungan terakhir" },
   ]
 
@@ -339,42 +305,42 @@ export default function PatientList({ isDetailed = true }: ListProps) {
 }
 
 // A debounced input react component
-export function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = useState(initialValue);
+// export function DebouncedInput({
+//   value: initialValue,
+//   onChange,
+//   debounce = 500,
+//   ...props
+// }: {
+//   value: string | number;
+//   onChange: (value: string | number) => void;
+//   debounce?: number;
+// } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+//   const [value, setValue] = useState(initialValue);
 
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+//   useEffect(() => {
+//     setValue(initialValue);
+//   }, [initialValue]);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
+//   useEffect(() => {
+//     const timeout = setTimeout(() => {
+//       onChange(value);
+//     }, debounce);
 
-    return () => clearTimeout(timeout);
-  }, [value]);
+//     return () => clearTimeout(timeout);
+//   }, [value]);
 
-  return (
-    <>
-      <div className="relative mt-1 rounded-md shadow-sm">
-        <Input
-          {...props}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
-        </div>
-      </div>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <div className="relative mt-1 rounded-md shadow-sm">
+//         <Input
+//           {...props}
+//           value={value}
+//           onChange={(e) => setValue(e.target.value)}
+//         />
+//         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+//           <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
