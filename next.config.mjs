@@ -21,6 +21,9 @@ const config = {
   images: {
     domains: ["pasienplus.sgp1.digitaloceanspaces.com"],
   },
+  experimental: {
+    appDir: false,
+  },
 };
 
 export default withAxiom(config);
