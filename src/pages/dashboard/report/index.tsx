@@ -17,7 +17,7 @@ const Report: PasienPlusPage = () => {
                 </title>
             </Head>
             <Breadcrumbs />
-            <ReportList isDetailed={true} isPaginated pageSize={50} />
+            <ReportList />
 
         </>
     )
