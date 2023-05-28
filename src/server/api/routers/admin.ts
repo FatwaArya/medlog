@@ -10,7 +10,13 @@ export const adminRouter = createTRPCRouter({
       where: {
         role: "user",
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isSubscribed: true,
+        image: true,
+        phone: true,
         subscribedToAdmin: {
           select: {
             subscribedUntil: true,

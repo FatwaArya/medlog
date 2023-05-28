@@ -38,7 +38,7 @@ const columnViews = [
     { title: "jenis kelamin" },
     { title: "terapi" },
     { title: "biaya" },
-  ]
+]
 
 export default function CheckupList({
     patientId,
@@ -49,33 +49,33 @@ export default function CheckupList({
         columnHelper.accessor("createdAt", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="tanggal pemeriksaan" />
-              ),
+            ),
             cell: (info) => dayjs(info.getValue()).format("DD MMMM YYYY"),
         }),
         columnHelper.accessor("diagnosis", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="diagnosis" />
-              ),
+            ),
             cell: (info) => <span>{info.getValue()}</span>,
         }),
         columnHelper.accessor("patient.name", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="nama pasien" />
-              ),
+            ),
             cell: (info) => <span>{info.getValue()}</span>,
         }),
         columnHelper.accessor("patient.gender", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="jenis kelamin" />
-              ),
+            ),
             cell: (info) => <span className="capitalize">{info.getValue()}</span>,
         }),
         columnHelper.accessor("MedicineDetail", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="terapi" />
-              ),
-              cell: (info) => {
-    
+            ),
+            cell: (info) => {
+
                 if (!info.getValue() || info.getValue().length === 0) {
                     return "Tidak ada terapi";
                 } else {
@@ -92,8 +92,8 @@ export default function CheckupList({
         columnHelper.accessor("pay", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="jenis kelamin" />
-              ),
-              cell: (info) => {
+            ),
+            cell: (info) => {
                 return (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         {rupiah.format(info.getValue())}
@@ -104,8 +104,8 @@ export default function CheckupList({
         columnHelper.accessor("id", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="jenis kelamin" />
-              ),
-              cell: (info) => {
+            ),
+            cell: (info) => {
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -120,7 +120,7 @@ export default function CheckupList({
                             <DropdownMenuItem>
                                 <MoreHorizontal className="mr-2 h-4 w-4" />
                                 <Link href={`/dashboard/patients/checkup/${info.getValue()}`}>
-                                Detail
+                                    Detail
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -147,7 +147,9 @@ export default function CheckupList({
                                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                                     {
                                         !isLoading && CheckupData ? (
-                                        <DataTable columns={checkupColumns} data={CheckupData} columnViews={columnViews} ></DataTable>
+                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                            // @ts-ignore
+                                            <DataTable columns={checkupColumns} data={CheckupData} columnViews={columnViews} ></DataTable>
                                         ) : (
                                             <Skeleton className="h-12 w-full whitespace-nowrap" />
                                         )

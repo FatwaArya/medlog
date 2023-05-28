@@ -36,7 +36,7 @@ export interface ListProps {
 
 export default function PatientList(
   // { isDetailed = true }: ListProps
-  ) {
+) {
   const { data: patientData, isLoading } =
     api.patient.getNewestPatients.useQuery();
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -84,33 +84,33 @@ export default function PatientList(
       header: "Aksi",
       cell: (info) => (
         <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Buka menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Activity className="mr-2 h-4 w-4" />
-                  <Link
-                    href={`/dashboard/patients/checkup/${info.getValue()}/new`}
-                  >
-                    Periksa
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MoreHorizontal className="mr-2 h-4 w-4" />
-                  <Link href={`/dashboard/patients/record/${info.getValue()}`}>
-                    Detail
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Buka menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Activity className="mr-2 h-4 w-4" />
+                <Link
+                  href={`/dashboard/patients/checkup/${info.getValue()}/new`}
+                >
+                  Periksa
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MoreHorizontal className="mr-2 h-4 w-4" />
+                <Link href={`/dashboard/patients/record/${info.getValue()}`}>
+                  Detail
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       ),
     }),
   ];
@@ -177,7 +177,10 @@ export default function PatientList(
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full divide-gray-300 align-middle">
                 {!isLoading && patientData ? (
+
                   <DataTable
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     columns={patientColumns}
                     href="/dashboard/patients/checkup/new"
                     data={patientData}

@@ -28,7 +28,7 @@ const columnViews = [
     { title: "no telepon" },
     { title: "nama perawat" },
     { title: "biaya" },
-  ]
+]
 
 export default function ReportList() {
     // const { pageSize = 10, isPaginated = true } = props
@@ -74,7 +74,7 @@ export default function ReportList() {
             ),
             cell: (info) => (
                 <span className="capitalize">
-                  {!info.getValue() ? "tidak tersedia" : info.getValue()}
+                    {!info.getValue() ? "tidak tersedia" : info.getValue()}
                 </span>
             ),
         }),
@@ -99,29 +99,6 @@ export default function ReportList() {
     useEffect(() => {
         setReportsData(data || [])
     }, [data])
-    // const componentRef = useRef(null);
-
-
-    // const table = useReactTable({
-    //     data: reportsData || [],
-    //     columns: ReportColumns,
-    //     initialState: {
-    //         pagination: {
-    //             pageSize,
-    //         },
-    //     },
-    //     filterFns: {
-    //         fuzzy: fuzzyFilter,
-    //     },
-    //     getCoreRowModel: getCoreRowModel(),
-    //     getFilteredRowModel: getFilteredRowModel(),
-    //     getSortedRowModel: getSortedRowModel(),
-    //     getPaginationRowModel: getPaginationRowModel(),
-    //     getFacetedRowModel: getFacetedRowModel(),
-    //     getFacetedUniqueValues: getFacetedUniqueValues(),
-    //     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    // });
-    //https://www.npmjs.com/package/react-to-print
     return (
         <>
             <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -147,6 +124,8 @@ export default function ReportList() {
                                     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                                         {
                                             !isLoading && reportsData ? (
+                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                // @ts-ignore
                                                 <DataTable columns={reportColumns} data={reportsData} columnViews={columnViews} />
                                             ) : (
                                                 <Skeleton className="h-12 w-full whitespace-nowrap" />
@@ -161,7 +140,7 @@ export default function ReportList() {
             </div>
 
             {/* PDF View */}
-            
+
         </>
     );
 }

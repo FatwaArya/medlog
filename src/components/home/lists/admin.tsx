@@ -112,7 +112,7 @@ export default function AdminList() {
         </span>
       ),
     }),
-    columnHelper.accessor("subscribedToAdmin", {
+    columnHelper.accessor('subscribedToAdmin', {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="langganan hingga" />
       ),
@@ -213,6 +213,8 @@ export default function AdminList() {
       },
     }),
   ]
+  console.log(adminData)
+
   return (
     <>
       <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
@@ -230,6 +232,8 @@ export default function AdminList() {
                 <div className="inline-block min-w-full divide-gray-300 align-middle">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                     {!isLoading && adminData ? (
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
                       <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} />
                     ) : (
                       <Skeleton className="h-12 w-full whitespace-nowrap" />
