@@ -90,7 +90,7 @@ export default function AdminList() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="email" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+      cell: (info) => <span >{info.getValue()}</span>,
     }),
     columnHelper.accessor("phone", {
       header: ({ column }) => (
@@ -213,7 +213,6 @@ export default function AdminList() {
       },
     }),
   ]
-
   return (
     <>
       <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
