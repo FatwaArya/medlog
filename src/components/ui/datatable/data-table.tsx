@@ -105,9 +105,13 @@ export function DataTable<TData, TValue>(
                             placeholder="Search"
                         />
                     </div>
-                    <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
-                        <UserPlus className="h-5 w-5 text-gray-400" />
-                    </Button>
+                    {
+                        href && (
+                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
+                                <UserPlus className="h-5 w-5 text-gray-400" />
+                            </Button>
+                        )
+                    }
                 </div>
                 <DataTableViewOptions table={table} columnViews={columnViews} />
             </div>
