@@ -32,7 +32,7 @@ const Home: PasienPlusPage = () => {
                 </div>
             </div>
 
-            <PatientList pageSize={10} isPaginated={false} isDetailed={false} />
+            <PatientList />
         </>
     );
 }
