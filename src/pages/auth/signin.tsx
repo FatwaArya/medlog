@@ -8,6 +8,8 @@ import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 import { GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 export default function Login() {
   return (
@@ -37,18 +39,32 @@ export default function Login() {
           </div>
         </div>
         <div className="mt-10 grid grid-cols-1 gap-y-8">
-          <Button variant='outline' onClick={() => {
-            void signIn("google", { callbackUrl: "/dashboard/home" })
-          }}>
+          <div className="flex flex-col">
+            <Input type="email" placeholder="jono@example.com" disabled />
+            <Button
+              className="mt-3 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              variant="outline"
+              disabled
+            >
+              Masuk dengan email
+            </Button>
+          </div>
+          <Separator />
+          <Button
+            variant="outline"
+            // focusring
+            className="focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            onClick={() => {
+              void signIn("google", { callbackUrl: "/dashboard/home" });
+            }}
+          >
             <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google
           </Button>
         </div>
-
       </AuthLayout>
     </>
   );
 }
-
 
 // export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 //   const session = await getServerAuthSession(ctx);
