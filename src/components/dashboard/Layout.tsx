@@ -62,6 +62,7 @@ const AdminLayout = (props: PropsWithChildren) => {
   if (status === "loading") {
     return <div>Loading user info...</div>;
   }
+  console.log(data);
   return (
     <>
       {/* layout problem */}

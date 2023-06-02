@@ -68,6 +68,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { addDays } from "date-fns";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -120,11 +121,45 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 /** Reusable middleware that enforces users are subcribed before running the procedure. */
-const enforceUserIsSubscribed = t.middleware(({ ctx, next }) => {
+const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (!ctx.session.user.isSubscribed) {
+  if (!ctx.session.user.isSubscribed || ctx.session.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  // user is subscribed, check if subscription is still valid
+  const currentDateTime = new Date();
+  const userSubscriptions = await ctx.prisma.subscription.findMany({
+    where: {
+      subscriberId: ctx.session.user.id,
+      subscribedUntil: {
+        gte: currentDateTime,
+      },
+    },
+  });
+  if (!userSubscriptions || userSubscriptions.length === 0) {
+    //set user to not subscribed
+    await ctx.prisma.user.update({
+      where: {
+        id: ctx.session.user.id,
+      },
+      data: {
+        isSubscribed: false,
+      },
+    });
+    //set user's subscription to expired
+    await ctx.prisma.subscription.updateMany({
+      where: {
+        subscriberId: ctx.session.user.id,
+        subscribedUntil: {
+          gte: currentDateTime,
+        },
+      },
+      data: {
+        subscribedUntil: addDays(currentDateTime, -1),
+      },
+    });
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({

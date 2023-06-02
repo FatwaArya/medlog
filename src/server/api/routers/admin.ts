@@ -50,6 +50,21 @@ export const adminRouter = createTRPCRouter({
       }
 
       await ctx.prisma.$transaction(async (tx) => {
+        //if user is alredy subscribed, cant subscribe again
+        const user = await tx.user.findFirst({
+          where: {
+            id: input.id,
+          },
+          select: {
+            isSubscribed: true,
+          },
+        });
+        if (user?.isSubscribed) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "User is already subscribed",
+          });
+        }
         await tx.user.update({
           where: {
             id: input.id,
@@ -84,11 +99,21 @@ export const adminRouter = createTRPCRouter({
             isSubscribed: false,
           },
         });
-        await tx.subscription.create({
-          data: {
+        //user is only had one subscription at a time so update the last one and set it to expired
+        const subscription = await tx.subscription.findFirst({
+          where: {
             subscriberId: input.id,
-            adminId: ctx.session?.user.id,
-            status: "inactive",
+          },
+          orderBy: {
+            subscribedUntil: "desc",
+          },
+        });
+        await tx.subscription.update({
+          where: {
+            id: subscription?.id,
+          },
+          data: {
+            subscribedUntil: addDays(new Date(), -1),
           },
         });
       });
