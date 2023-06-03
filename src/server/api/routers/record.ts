@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedSubscribedProcedure } from "../trpc";
+import { createTRPCRouter, protectedSubscribedProcedure, publicProcedure } from "../trpc";
 
 export const recordRouter = createTRPCRouter({
   getStatRevenue: protectedSubscribedProcedure.query(async ({ ctx }) => {
