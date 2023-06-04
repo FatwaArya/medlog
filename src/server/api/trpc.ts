@@ -128,40 +128,40 @@ const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session.user.isSubscribed || ctx.session.user.role !== "admin") {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  // user is subscribed, check if subscription is still valid
-  const currentDateTime = new Date();
-  const userSubscriptions = await ctx.prisma.subscription.findMany({
-    where: {
-      subscriberId: ctx.session.user.id,
-      subscribedUntil: {
-        gte: currentDateTime,
-      },
-    },
-  });
-  if (!userSubscriptions || userSubscriptions.length === 0) {
-    //set user to not subscribed
-    await ctx.prisma.user.update({
-      where: {
-        id: ctx.session.user.id,
-      },
-      data: {
-        isSubscribed: false,
-      },
-    });
-    //set user's subscription to expired
-    await ctx.prisma.subscription.updateMany({
-      where: {
-        subscriberId: ctx.session.user.id,
-        subscribedUntil: {
-          gte: currentDateTime,
-        },
-      },
-      data: {
-        subscribedUntil: addDays(currentDateTime, -1),
-      },
-    });
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+  // // user is subscribed, check if subscription is still valid
+  // const currentDateTime = new Date();
+  // const userSubscriptions = await ctx.prisma.subscription.findMany({
+  //   where: {
+  //     subscriberId: ctx.session.user.id,
+  //     subscribedUntil: {
+  //       gte: currentDateTime,
+  //     },
+  //   },
+  // });
+  // if (!userSubscriptions || userSubscriptions.length === 0) {
+  //   //set user to not subscribed
+  //   await ctx.prisma.user.update({
+  //     where: {
+  //       id: ctx.session.user.id,
+  //     },
+  //     data: {
+  //       isSubscribed: false,
+  //     },
+  //   });
+  //   //set user's subscription to expired
+  //   await ctx.prisma.subscription.updateMany({
+  //     where: {
+  //       subscriberId: ctx.session.user.id,
+  //       subscribedUntil: {
+  //         gte: currentDateTime,
+  //       },
+  //     },
+  //     data: {
+  //       subscribedUntil: addDays(currentDateTime, -1),
+  //     },
+  //   });
+  //   throw new TRPCError({ code: "UNAUTHORIZED" });
+  // }
   return next({
     ctx: {
       // infers the `session` as non-nullable

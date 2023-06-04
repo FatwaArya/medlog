@@ -23,6 +23,7 @@ declare module "next-auth" {
       // ...other properties
       role: Role;
       isSubscribed: boolean;
+      isNewUser: boolean;
     } & DefaultSession["user"];
   }
 
@@ -30,6 +31,7 @@ declare module "next-auth" {
     // ...other properties
     role: Role;
     isSubscribed: boolean;
+    isNewUser: boolean;
   }
 }
 
@@ -45,6 +47,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = user.id;
         session.user.role = user.role;
         session.user.isSubscribed = user.isSubscribed;
+        session.user.isNewUser = user.isNewUser;
       }
       return session;
     },

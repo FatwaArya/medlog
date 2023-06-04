@@ -34,9 +34,8 @@ export interface ListProps {
   isDetailed?: boolean;
 }
 
-export default function PatientList(
-  // { isDetailed = true }: ListProps
-) {
+export default function PatientList() {
+// { isDetailed = true }: ListProps
   const { data: patientData, isLoading } =
     api.patient.getNewestPatients.useQuery();
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -72,7 +71,8 @@ export default function PatientList(
       cell: (info) => (
         <span className="capitalize">
           {!info.getValue() ? "tidak tersedia" : info.getValue()}
-        </span>),
+        </span>
+      ),
     }),
     columnHelper.accessor("createdAt", {
       header: ({ column }) => (
@@ -115,7 +115,6 @@ export default function PatientList(
     }),
   ];
 
-
   // const table = useReactTable({
   //     data: patientData || [],
   //     columns: patientColumns,
@@ -149,15 +148,15 @@ export default function PatientList(
     { title: "tanggal lahir" },
     { title: "no telepon" },
     { title: "kunjungan terakhir" },
-  ]
+  ];
 
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-lg outline outline-1 outline-slate-200">
+    <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <div className="">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
-              <h1 className="leading-6  scroll-m-20 text-2xl font-semibold tracking-tight text-[#3366FF]">
+              <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
                 Daftar Pasien
               </h1>
             </div>
@@ -173,11 +172,10 @@ export default function PatientList(
                             />
                         </div> */}
           </div>
-          <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
+          <div className="mt-2 flex flex-col px-4 sm:px-6 lg:px-8">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full divide-gray-300 align-middle">
                 {!isLoading && patientData ? (
-
                   <DataTable
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
@@ -187,7 +185,7 @@ export default function PatientList(
                     columnViews={columnViews}
                   />
                 ) : (
-                  <Skeleton className="w-full whitespace-nowrap h-12" />
+                  <Skeleton className="h-12 w-full whitespace-nowrap" />
                 )}
                 {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                                     <table className="min-w-full divide-y divide-gray-300 ">
