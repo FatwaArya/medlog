@@ -132,10 +132,9 @@ model User {
   emailVerified      DateTime?
   image              String?
   isSubscribed       Boolean        @default(false)
+  password           String?
   phone              String?
   role               Role           @default(user)
-  isNewUser          Boolean        @default(true)
-  customer_id        String?
   accounts           Account[]
   sessions           Session[]
   Patient            Patient[]
@@ -180,9 +179,4 @@ enum Gender {
 enum Role {
   user
   admin
-}
-
-enum Subscription_status {
-  active
-  inactive
 }

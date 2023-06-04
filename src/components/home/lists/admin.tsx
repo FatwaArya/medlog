@@ -43,6 +43,10 @@ const columnViews = [
   { title: "subscribed until" },
 ]
 
+export interface ListProps {
+  userId?: string;
+}
+
 export default function AdminList() {
   const utils = api.useContext();
   const { data: adminData, isLoading } = api.admin.getUserByRole.useQuery();
