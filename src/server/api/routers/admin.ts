@@ -21,6 +21,32 @@ export const adminRouter = createTRPCRouter({
 
     return users;
   }),
+  getAdminById: publicProcedure.input(
+      z.object({
+        userId: z.string(),
+      })
+  ).query(async ({ input, ctx }) => {
+    const admin = await ctx.prisma.user.findFirst({
+      where: {
+        id: input.userId,
+      },
+      include: {
+        Patient: true,
+        subscribedToAdmin: {
+          select: {
+            subscribedUntil: true
+          }
+        }
+      }
+    });
+    if(!admin){
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Admin not found"
+      })
+    }
+    return admin;
+  }),
   activateUser: adminProcedure
     .input(
       z.object({

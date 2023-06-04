@@ -91,7 +91,7 @@ export default function CheckupList({
         }),
         columnHelper.accessor("pay", {
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="jenis kelamin" />
+                <DataTableColumnHeader column={column} title="Biaya" />
               ),
               cell: (info) => {
                 return (
@@ -102,9 +102,7 @@ export default function CheckupList({
             },
         }),
         columnHelper.accessor("id", {
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="jenis kelamin" />
-              ),
+            header: "Aksi",
               cell: (info) => {
                 return (
                     <DropdownMenu>
