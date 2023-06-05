@@ -6,16 +6,15 @@ import { User } from "lucide-react";
 type AdminInfo = RouterOutputs["admin"]["getAdminById"];
 
 export const AdminDescription = (props: AdminInfo) => {
-    console.log(props);
     return (
         <>
             <div className="mb-4 overflow-hidden rounded-sm bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg font-medium leading-6 text-blue-600">
-                        Informasi Admin
+                        Informasi User
                     </h3>
                     <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                        Informasi dasar admin / pengguna.
+                        Informasi dasar user.
                     </p>
                 </div>
                 <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
@@ -62,6 +61,18 @@ export const AdminDescription = (props: AdminInfo) => {
                             <dd className="mt-1 items-center flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                 {!props?.subscribedToAdmin.length ? (
                                     <span>Belum langganan</span>
+                                ) : (
+                                    <span>Berlangganan</span>
+                                )}
+                            </dd>
+                        </div>
+                        <div className="sm:col-span-1">
+                            <dt className="text-sm font-medium text-gray-500">
+                                Berlangganan Hingga
+                            </dt>
+                            <dd className="mt-1 items-center flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                {!props?.subscribedToAdmin.length ? (
+                                    <span>-</span>
                                 ) : (
                                     <span>
                                         {dayjs(props?.subscribedToAdmin[0]?.subscribedUntil).format("DD MMMM YYYY")}
