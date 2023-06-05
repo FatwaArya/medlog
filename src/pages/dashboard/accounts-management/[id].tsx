@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "@/server/auth";
 import { AdminDescription } from "./detail";
+import { SubsRecordList } from "@/components/checkup/lists/subsRecord";
 
 const AdminDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
     const { data: admin, isLoading } = api.admin.getAdminById.useQuery({
@@ -49,6 +50,7 @@ const AdminDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
             </Head>
             <Breadcrumbs patientName={admin?.name as string} isPatientLast />
             <AdminDescription {...admin} />
+            <SubsRecordList userId={admin.id} />
         </>
     )
 };
