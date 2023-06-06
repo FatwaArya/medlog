@@ -182,6 +182,8 @@ export default function PatientList(
                     href="/dashboard/patients/checkup/new"
                     data={patientData}
                     columnViews={columnViews}
+                    filter="patient_name"
+                    filterTitle="nama"
                   />
                 ) : (
                   <Skeleton className="w-full whitespace-nowrap h-12" />
