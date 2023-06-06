@@ -31,12 +31,15 @@ import { Button } from "@/components/ui/button"
 
 import { DataTablePagination } from "@/components/ui/datatable/data-table-pagination"
 import { DataTableViewOptions } from "@/components/ui/datatable/data-table-viewOptions"
+import { DataTableToolbar } from "@/components/ui/datatable/data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     columnViews?: { title: string }[]
     data: TData[]
     href?: string
+    filter?: string
+    filterTitle?: string
 }
 
 declare module "@tanstack/table-core" {
@@ -62,7 +65,7 @@ export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) =>
 };
 
 export function DataTable<TData, TValue>(
-    { columns, data, href, columnViews }: DataTableProps<TData, TValue>
+    { columns, data, columnViews, filter, filterTitle }: DataTableProps<TData, TValue>
 ) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -94,65 +97,62 @@ export function DataTable<TData, TValue>(
     });
 
     return (
-        <>
-            <div className="flex items-center py-4 justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="relative mt-1 rounded-md shadow-sm">
-                        <DebouncedInput
-                            value={globalFilter ?? ""}
-                            onChange={(value) => setGlobalFilter(String(value))}
-                            className="w-full sm:w-64"
-                            placeholder="Search"
-                        />
-                    </div>
-                    {
-                        href && (
-                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
-                                <UserPlus className="h-5 w-5 text-gray-400" />
-                            </Button>
-                        )
-                    }
-                </div>
-                <DataTableViewOptions table={table} columnViews={columnViews} />
-            </div>
-            <div className="rounded-md border bg-white overflow-x-auto">
-                <Table className="w-full">
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header, index) => (
-                                    <TableHead key={index} className="py-2 sm:py-4">
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row, rowIndex) => (
-                                <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
-                                    {row.getVisibleCells().map((cell, cellIndex) => (
-                                        <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results to display.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-            <div className="pt-4 pb-2">
-                <DataTablePagination table={table} />
-            </div>
-        </>
+        <div className="space-y-4">
+      <DataTableToolbar table={table} isFacetedFilter columnViews={columnViews} filter={filter} filterTitle={filterTitle} />
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => {
+                return (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <DataTablePagination table={table} />
+    </div>
     )
 }
 
