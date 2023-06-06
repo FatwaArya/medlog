@@ -21,7 +21,7 @@ export const adminRouter = createTRPCRouter({
 
     return users;
   }),
-  getAdminById: publicProcedure.input(
+  getAdminById: adminProcedure.input(
       z.object({
         userId: z.string(),
       })
@@ -43,7 +43,7 @@ export const adminRouter = createTRPCRouter({
     }
     return admin;
   }),
-  getSubsRecord: publicProcedure.input(
+  getSubsRecord: adminProcedure.input(
     z.object({
       userId: z.string(),
     })
