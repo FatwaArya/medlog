@@ -81,7 +81,7 @@ export function SubsRecordList({ userId }: ListProps) {
                                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                                     {
                                         !isLoading && subsRecordData ? (
-                                        <DataTable columns={subsRecordColumn} data={subsRecordData} columnViews={columnViews} />
+                                        <DataTable columns={subsRecordColumn} data={subsRecordData} columnViews={columnViews} isFacetedFilter />
                                         ) : (
                                             <Skeleton className="h-12 w-full whitespace-nowrap" />
                                         )

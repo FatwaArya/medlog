@@ -40,6 +40,7 @@ interface DataTableProps<TData, TValue> {
     href?: string
     filter?: string
     filterTitle?: string
+    isFacetedFilter?: boolean
 }
 
 declare module "@tanstack/table-core" {
@@ -65,7 +66,7 @@ export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) =>
 };
 
 export function DataTable<TData, TValue>(
-    { columns, data, columnViews, filter, filterTitle }: DataTableProps<TData, TValue>
+    { columns, data, columnViews, filter, filterTitle, isFacetedFilter }: DataTableProps<TData, TValue>
 ) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -98,7 +99,7 @@ export function DataTable<TData, TValue>(
 
     return (
         <div className="space-y-4">
-      <DataTableToolbar table={table} isFacetedFilter columnViews={columnViews} filter={filter} filterTitle={filterTitle} />
+      <DataTableToolbar table={table} isFacetedFilter={isFacetedFilter} columnViews={columnViews} filter={filter} filterTitle={filterTitle} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
