@@ -94,7 +94,7 @@ export default function AdminList() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="email" />
       ),
-      cell: (info) => <span >{info.getValue()}</span>,
+      cell: (info) => <span>{info.getValue()}</span>,
     }),
     columnHelper.accessor("phone", {
       header: ({ column }) => (
@@ -227,7 +227,7 @@ export default function AdminList() {
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
                 <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
-                  Daftar Admin
+                  Daftar Pengguna
                 </h1>
               </div>
             </div>
