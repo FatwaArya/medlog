@@ -8,7 +8,7 @@ export const adminRouter = createTRPCRouter({
   getUserByRole: adminProcedure.query(async ({ ctx }) => {
     const users = await ctx.prisma.user.findMany({
       where: {
-        role: "user",
+        role: "admin",
       },
       include: {
         subscribedToAdmin: {
@@ -21,7 +21,7 @@ export const adminRouter = createTRPCRouter({
 
     return users;
   }),
-  getAdminById: publicProcedure.input(
+  getAdminById: adminProcedure.input(
       z.object({
         userId: z.string(),
       })
@@ -32,11 +32,7 @@ export const adminRouter = createTRPCRouter({
       },
       include: {
         Patient: true,
-        subscribedToAdmin: {
-          select: {
-            subscribedUntil: true
-          }
-        }
+        subscribedToAdmin: true
       }
     });
     if(!admin){
@@ -46,6 +42,18 @@ export const adminRouter = createTRPCRouter({
       })
     }
     return admin;
+  }),
+  getSubsRecord: adminProcedure.input(
+    z.object({
+      userId: z.string(),
+    })
+  ).query(async ({input, ctx}) => {
+    const subsRecord = ctx.prisma.subscription.findMany({
+      where: {
+        subscriberId: input.userId,
+      }
+    })
+    return subsRecord
   }),
   activateUser: adminProcedure
     .input(

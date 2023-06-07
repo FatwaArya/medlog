@@ -145,7 +145,7 @@ export default function CheckupList({
                                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                                     {
                                         !isLoading && CheckupData ? (
-                                        <DataTable columns={checkupColumns} data={CheckupData} columnViews={columnViews} ></DataTable>
+                                        <DataTable columns={checkupColumns} data={CheckupData} columnViews={columnViews} filter="patient_name" filterTitle="nama" />
                                         ) : (
                                             <Skeleton className="h-12 w-full whitespace-nowrap" />
                                         )
