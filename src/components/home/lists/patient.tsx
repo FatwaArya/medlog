@@ -35,7 +35,7 @@ export interface ListProps {
 }
 
 export default function PatientList() {
-// { isDetailed = true }: ListProps
+  // { isDetailed = true }: ListProps
   const { data: patientData, isLoading } =
     api.patient.getNewestPatients.useQuery();
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -153,8 +153,8 @@ export default function PatientList() {
   return (
     <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
-        <div className="">
-          <div className="sm:flex sm:items-center">
+        <div>
+          <div className="sm:flex sm:items-center ">
             <div className="sm:flex-auto">
               <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
                 Daftar Pasien
@@ -172,7 +172,7 @@ export default function PatientList() {
                             />
                         </div> */}
           </div>
-          <div className="mt-2 flex flex-col px-4 sm:px-6 lg:px-8">
+          <div className="mt-6 flex flex-col px-4 sm:px-6 lg:px-8">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full divide-gray-300 align-middle">
                 {!isLoading && patientData ? (
