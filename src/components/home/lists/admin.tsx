@@ -235,7 +235,7 @@ export default function AdminList() {
                 <div className="inline-block min-w-full divide-gray-300 align-middle">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                     {!isLoading && adminData ? (
-                      <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} />
+                      <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} filter="name" filterTitle="nama" />
                     ) : (
                       <Skeleton className="h-12 w-full whitespace-nowrap" />
                     )}
