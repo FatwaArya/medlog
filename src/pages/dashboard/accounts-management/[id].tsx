@@ -60,45 +60,44 @@ export async function getServerSideProps(
 ){
     const session = await getServerAuthSession(context);
 
-    if (!session) {
+    if(!session) {
+      return {
+          redirect: {
+            destination: "/auth/signin",
+            permanent: false,
+        },
+      };
+    }
+
+    const isAdmin = session?.user?.role === "admin" ? true : false;
+
+    if(!isAdmin){
         return {
           redirect: {
             destination: "/auth/signin",
             permanent: false,
-          },
-        };
-      }
-    
-      if (!session?.user?.isSubscribed) {
-        return {
-          redirect: {
-            destination: "/subscription",
-            permanent: false,
-          },
-        };
-      }
+        },
+      };
+    }
+
+    if(!session?.user?.isSubscribed) {
+      return {
+        redirect: {
+          destination: "/subscription",
+          permanent: false,
+        },
+      };
+    }
 
     const helpers = generateSSGHelper();
     const id = context.params?.id as string;
-
-    const reportExists = await helpers.admin.getAdminById.fetch({
-        userId: id,
-    });
-    if(reportExists) {
-        await helpers.admin.getAdminById.prefetch({ userId: id });
-    }else{
-        return {
-            props: {id},
-            notFound: true,
-        };
-    }
 
     return {
         props: {
           trpcState: helpers.dehydrate(),
           id,
         },
-    };
+      };
 }
 
 AdminDetail.getLayout = function getLayout(page){
