@@ -146,7 +146,7 @@ export default function CheckupList({ patientId }: ListProps) {
                       columns={checkupColumns}
                       data={CheckupData}
                       columnViews={columnViews}
-                    ></DataTable>
+                    />
                   ) : (
                     <Skeleton className="h-12 w-full whitespace-nowrap" />
                   )}

@@ -7,9 +7,6 @@ import { addDays } from "date-fns";
 export const adminRouter = createTRPCRouter({
   getUserByRole: adminProcedure.query(async ({ ctx }) => {
     const users = await ctx.prisma.user.findMany({
-      where: {
-        role: "admin",
-      },
       select: {
         id: true,
         name: true,
@@ -27,40 +24,53 @@ export const adminRouter = createTRPCRouter({
 
     return users;
   }),
-  getAdminById: adminProcedure.input(
+  getUserById: adminProcedure
+    .input(
       z.object({
         userId: z.string(),
       })
-  ).query(async ({ input, ctx }) => {
-    const admin = await ctx.prisma.user.findFirst({
-      where: {
-        id: input.userId,
-      },
-      include: {
-        Patient: true,
-        subscribedToAdmin: true
-      }
-    });
-    if(!admin){
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Admin not found"
+    )
+    .query(async ({ input, ctx }) => {
+      const admin = await ctx.prisma.user.findUnique({
+        where: {
+          id: input.userId,
+        },
+        include: {
+          //return true if user is subscribed to admin
+          subscribedToAdmin: {
+            select: {
+              subscribedUntil: true,
+            },
+          },
+        },
+      });
+
+      //count patient
+      const patient = await ctx.prisma.patient.count({
+        where: {
+          userId: input.userId,
+        },
+      });
+      //add patient count to admin
+      return {
+        ...admin,
+        patient,
+      };
+    }),
+  getSubsRecord: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
       })
-    }
-    return admin;
-  }),
-  getSubsRecord: adminProcedure.input(
-    z.object({
-      userId: z.string(),
-    })
-  ).query(async ({input, ctx}) => {
-    const subsRecord = ctx.prisma.subscription.findMany({
-      where: {
-        subscriberId: input.userId,
-      }
-    })
-    return subsRecord
-  }),
+    )
+    .query(async ({ input, ctx }) => {
+      const subsRecord = ctx.prisma.subscription.findMany({
+        where: {
+          subscriberId: input.userId,
+        },
+      });
+      return subsRecord;
+    }),
   activateUser: adminProcedure
     .input(
       z.object({

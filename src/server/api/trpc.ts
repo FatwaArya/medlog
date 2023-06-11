@@ -125,7 +125,7 @@ const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (!ctx.session.user.isSubscribed || ctx.session.user.role !== "admin") {
+  if (!ctx.session.user.isSubscribed) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   // // user is subscribed, check if subscription is still valid

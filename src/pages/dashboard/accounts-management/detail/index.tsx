@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 
-type AdminInfo = RouterOutputs["admin"]["getAdminById"];
+type AdminInfo = RouterOutputs["admin"]["getUserById"];
 
 export const AdminDescription = (props: AdminInfo) => {
     return (
@@ -85,7 +85,7 @@ export const AdminDescription = (props: AdminInfo) => {
                                 Total Pasien
                             </dt>
                             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                {props?.Patient.length} 
+                                {props.patient}
                             </dd>
                         </div>
                     </dl>

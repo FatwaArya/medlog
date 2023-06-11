@@ -132,9 +132,10 @@ model User {
   emailVerified      DateTime?
   image              String?
   isSubscribed       Boolean        @default(false)
-  password           String?
   phone              String?
   role               Role           @default(user)
+  customer_id        String?
+  isNewUser          Boolean        @default(true)
   accounts           Account[]
   sessions           Session[]
   Patient            Patient[]

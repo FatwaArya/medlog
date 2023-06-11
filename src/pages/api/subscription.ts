@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { type WebhookPayload } from "@/server/api/interface/subscriptionEvent";
+import { prisma } from "@/server/db";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -42,6 +43,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 // Handler functions for each webhook event type
 function handlePlanActivatedEvent(data: WebhookPayload["data"]) {
   // Handle recurring.plan.activated event
+
   console.log("Plan activated:", data);
   // Perform necessary actions based on the event data
 }

@@ -150,11 +150,10 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                     attachment.map((item, i) => (
                       <div
                         key={i}
-                        className={`${
-                          i === activeSlide
-                            ? "z-10 opacity-100"
-                            : "absolute z-0 opacity-0"
-                        } w-full max-w-sm rounded-sm border border-gray-200 p-2`}
+                        className={`${i === activeSlide
+                          ? "z-10 opacity-100"
+                          : "absolute z-0 opacity-0"
+                          } w-full max-w-sm rounded-sm border border-gray-200 p-2`}
                       >
                         <div className="relative">
                           <Image
