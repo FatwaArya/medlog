@@ -11,6 +11,8 @@ import {
   Calendar,
   CreditCard,
   Smile,
+  UserPlus,
+  Users,
 
 } from "lucide-react"
 
@@ -37,8 +39,9 @@ import {
 import { Loader } from "../auth/AuthGuard";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { DialogProps } from "@radix-ui/react-dialog";
+import { type DialogProps } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
+import { api } from "@/utils/api";
 
 
 const userNavigation = [
@@ -70,19 +73,12 @@ export default function Navbar({
           <Menu className="h-6 w-6" aria-hidden="true" />
         </button>
         <div className="flex flex-1 justify-between px-4">
-          <div className="flex flex-1">
+          <div className="flex flex-1 ">
             <div className="flex w-full md:ml-0 items-center" >
               <CommandDialogPasienPlus />
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <button
-              type="button"
-              className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <span className="sr-only">View notifications</span>
-              {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
-            </button>
 
             {/* Profile dropdown */}
 
@@ -140,10 +136,11 @@ export default function Navbar({
 export function CommandDialogPasienPlus({ ...props }: DialogProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "k" && e.metaKey) {
         setOpen((open) => !open)
       }
     }
@@ -157,7 +154,7 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-9  justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+          "relative h-9 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64 flex-grow "
         )}
         onClick={() => setOpen(true)}
         {...props}
@@ -173,26 +170,35 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Cari pasien atau tambah pasien..." className="outline-red-700" />
+        <CommandInput placeholder="Cari pasien atau tambah pasien..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <Calendar className="mr-2 h-4 w-4" />
-              <span>Calendar</span>
+            <CommandItem className="cursor-pointer" onSelect={() => router.push("/dashboard/patients/checkup/new")}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              <span>Tambah Pasien</span>
             </CommandItem>
-            <CommandItem>
-              <Smile className="mr-2 h-4 w-4" />
-              <span>Search Emoji</span>
-            </CommandItem>
-            <CommandItem>
-              <Calculator className="mr-2 h-4 w-4" />
-              <span>Calculator</span>
+            <CommandItem onSelect={() => router.push("/dashboard/patients")}
+              className="cursor-pointer"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              <span>Lihat semua pasien</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
+          <CommandGroup heading="Catatan Medis Pasien">
+            {
+              patientData?.slice(0, 5).map((patient) => (
+                <CommandItem
+                  onSelect={() => router.push(`/dashboard/patients/record/${patient.patient.id}`)}
+                  key={patient.patient.id}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>{patient.patient.name}</span>
+                </CommandItem>
+              ))
+            }
+
+            {/* <CommandItem>
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
               <CommandShortcut>⌘P</CommandShortcut>
@@ -206,7 +212,7 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
               <CommandShortcut>⌘S</CommandShortcut>
-            </CommandItem>
+            </CommandItem> */}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
