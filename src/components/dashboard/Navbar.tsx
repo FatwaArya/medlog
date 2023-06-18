@@ -37,11 +37,12 @@ import {
   CommandShortcut,
 } from "@/components/ui/command"
 import { Loader } from "../auth/AuthGuard";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { type DialogProps } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
+import { run } from "node:test";
 
 
 const userNavigation = [
@@ -149,6 +150,12 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
     return () => document.removeEventListener("keydown", down)
   }, [])
 
+  const runCommand = useCallback((command: () => unknown) => {
+    setOpen(false)
+    command()
+  }, [])
+
+
   return (
     <>
       <Button
@@ -174,11 +181,15 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            <CommandItem className="cursor-pointer" onSelect={() => router.push("/dashboard/patients/checkup/new")}>
+            <CommandItem className="cursor-pointer" onSelect={() => {
+              runCommand(() => router.push("/dashboard/patients/new"))
+            }}>
               <UserPlus className="mr-2 h-4 w-4" />
               <span>Tambah Pasien</span>
             </CommandItem>
-            <CommandItem onSelect={() => router.push("/dashboard/patients")}
+            <CommandItem onSelect={() => {
+              runCommand(() => router.push("/dashboard/patients"))
+            }}
               className="cursor-pointer"
             >
               <Users className="mr-2 h-4 w-4" />
@@ -190,7 +201,9 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
             {
               patientData?.slice(0, 5).map((patient) => (
                 <CommandItem
-                  onSelect={() => router.push(`/dashboard/patients/record/${patient.patient.id}`)}
+                  onSelect={() => {
+                    runCommand(() => router.push(`/dashboard/patients/${patient.patient.id}`))
+                  }}
                   key={patient.patient.id}>
                   <User className="mr-2 h-4 w-4" />
                   <span>{patient.patient.name}</span>
