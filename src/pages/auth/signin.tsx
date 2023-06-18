@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/Logo";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
-import { GetServerSidePropsContext } from "next/types";
-import { getServerAuthSession } from "@/server/auth";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 

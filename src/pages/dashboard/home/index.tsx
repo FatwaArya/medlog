@@ -1,6 +1,6 @@
 import { LineCharts } from "@/components/home/charts/charts";
 import PatientList from "@/components/home/lists/patient";
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 
 import Layout from "@/components/dashboard/Layout";
@@ -8,13 +8,8 @@ import { type PasienPlusPage } from "@/pages/_app";
 import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
-import { env } from "@/env.mjs";
-import { api } from "@/utils/api";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "@/server/auth";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 
 const Home: PasienPlusPage = () => {
     return (
