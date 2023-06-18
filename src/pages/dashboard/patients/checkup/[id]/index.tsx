@@ -1,14 +1,11 @@
 import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
-import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
 import { useState } from "react";
 import Head from "next/head";
 import type {
   GetServerSidePropsContext,
-  GetStaticPaths,
-  GetStaticPropsContext,
 } from "next/types";
 import type { RouterOutputs } from "@/utils/api";
 import { PatientDescription } from "./new";
@@ -23,10 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ImageOff } from "lucide-react";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "@/server/api/root";
 import { getServerAuthSession } from "@/server/auth";
-import superjson from "superjson";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
 

@@ -3,7 +3,7 @@ import PatientList from "@/components/home/lists/patient";
 import { type PasienPlusPage } from "@/pages/_app";
 import { getServerAuthSession } from "@/server/auth";
 import Head from "next/head";
-import { GetServerSidePropsContext } from "next/types";
+import { type GetServerSidePropsContext } from "next/types";
 import { type ReactElement } from "react";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 

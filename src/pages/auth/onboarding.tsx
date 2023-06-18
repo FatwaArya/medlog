@@ -1,8 +1,7 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,40 +11,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/utils/cn";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
 import { type GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { Loader } from "@/components/auth/AuthGuard";
 import { PatternFormat } from "react-number-format";
-import { id } from "date-fns/locale";
-import { RouterInputs, api } from "@/utils/api";
+import { type RouterInputs, api } from "@/utils/api";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import toast from "react-hot-toast";
@@ -141,7 +121,7 @@ export default function Onboarding() {
                   className={cn(
                     "bg-blue-500 text-white hover:bg-blue-600  ",
                     boarding.isLoading &&
-                      "bg-blue-600 hover:bg-blue-500 hover:text-slate-100 focus-visible:outline-blue-600 active:bg-blue-800 active:text-blue-100"
+                    "bg-blue-600 hover:bg-blue-500 hover:text-slate-100 focus-visible:outline-blue-600 active:bg-blue-800 active:text-blue-100"
                   )}
                   disabled={boarding.isLoading}
                 >

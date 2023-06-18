@@ -2,7 +2,7 @@ import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import Head from "next/head";
 import ReportList from "@/components/report/list/report";
-import { GetServerSidePropsContext } from "next/types";
+import { type GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 

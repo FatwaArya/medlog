@@ -1,15 +1,11 @@
 import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
 import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
-import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
 import {
-  GetServerSidePropsContext,
-  type GetStaticPaths,
-  type GetStaticPropsContext,
+  type GetServerSidePropsContext,
 } from "next";
 import Head from "next/head";
-import dayjs from "dayjs";
 import { Spinner } from "@/components/ui/loading-overlay";
 import CheckupList from "@/components/checkup/lists/checkup";
 import { PatientDescription } from "../checkup/[id]/new";

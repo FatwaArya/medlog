@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "@/server/auth";
 
 export const redAsterisk = <span className="text-red-500">*</span>;

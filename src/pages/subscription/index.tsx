@@ -1,8 +1,5 @@
 import { getServerAuthSession } from "@/server/auth";
-import type { PasienPlusPage } from "@/pages/_app";
 import { type GetServerSidePropsContext } from "next/types";
-import Layout from "@/components/dashboard/Layout";
-import { type ReactElement } from "react";
 
 const Subs = () => {
     return (

@@ -30,7 +30,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/utils/cn";
-import { GetServerSidePropsContext } from "next/types";
+import { type GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "@/server/auth";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 
@@ -227,7 +227,7 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 <title>Pasien Plus | Periksa Pasien {patient?.name}</title>
             </Head>
             <main>
-            <Breadcrumbs patientName={patient?.name} patientId={patient?.id} />
+                <Breadcrumbs patientName={patient?.name} patientId={patient?.id} />
                 <PatientDescription {...patient} />
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
