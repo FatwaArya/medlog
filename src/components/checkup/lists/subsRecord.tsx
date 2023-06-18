@@ -8,7 +8,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import dayjs from 'dayjs';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { statuses } from '@/pages/dashboard/accounts-management/data/data';
+import { statuses } from '@/components/accounts/data/data';
 import { sub } from 'date-fns';
 
 type SubsRecordColumn = RouterOutputs["admin"]["getSubsRecord"][number];

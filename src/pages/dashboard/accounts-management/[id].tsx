@@ -8,7 +8,7 @@ import { api } from "@/utils/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "@/server/auth";
-import { AdminDescription } from "./detail";
+import { AdminDescription } from "@/components/accounts/detail";
 import { SubsRecordList } from "@/components/checkup/lists/subsRecord";
 
 const AdminDetail: PasienPlusPage<{ id: string }> = ({ id }) => {

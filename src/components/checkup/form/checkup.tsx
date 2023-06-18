@@ -10,8 +10,8 @@ import CreatableSelect from 'react-select/creatable';
 import { api } from "@/utils/api";
 import { NumericFormat } from "react-number-format";
 import { Label } from "@/components/ui/label";
-import { OptionProps, components } from "react-select";
-import { Cross, X } from "lucide-react";
+import { type OptionProps, components } from "react-select";
+import { X } from "lucide-react";
 
 
 
@@ -21,7 +21,7 @@ export function CheckupForm() {
     const setPreviewCheckup = useCheckUpAttachmentStore((state) => state.setFileAndAttachment);
     const removeAttachment = useCheckUpAttachmentStore((state) => state.removeFileAndAttachment);
     const { mutate, isLoading } = api.medicine.create.useMutation()
-    const { mutate: deleteMedicine, isLoading: isDeletingMedicine } = api.medicine.delete.useMutation()
+    const { mutate: deleteMedicine } = api.medicine.delete.useMutation()
     const utils = api.useContext()
     const { data: medicineOptions } = api.medicine.gets.useQuery()
     const medicineOptionsId = medicineOptions?.map((medicine) => medicine.value) ?? []

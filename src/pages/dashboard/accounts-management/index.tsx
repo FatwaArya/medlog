@@ -1,9 +1,8 @@
 import Layout from "@/components/dashboard/Layout";
-import { PasienPlusPage } from "@/pages/_app";
+import { type PasienPlusPage } from "@/pages/_app";
 import { getServerAuthSession } from "@/server/auth";
-import { GetServerSidePropsContext } from "next";
-import { ReactElement } from "react";
-import { Camera } from 'lucide-react';
+import { type GetServerSidePropsContext } from "next";
+import { type ReactElement } from "react";
 import Head from "next/head";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import AdminList from "@/components/home/lists/admin";

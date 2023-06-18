@@ -1,5 +1,4 @@
 
-import { CalendarDatePicker } from "@/components/ui/datepicker/calendarDatePicker";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -10,7 +9,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { redAsterisk } from "@/pages/dashboard/patients/checkup/new";
-import { RouterInputs } from "@/utils/api";
+import { type RouterInputs } from "@/utils/api";
 import { Controller, useFormContext } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 type NewCheckupPatient =
