@@ -1,10 +1,22 @@
+import { Button } from "@/components/ui/button";
 import { getServerAuthSession } from "@/server/auth";
+import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 import { type GetServerSidePropsContext } from "next/types";
 
 const Subs = () => {
+    const { mutate } = api.subscription.subscribe.useMutation();
+    const { data, status: sessionStatus } = useSession();
+
     return (
         <>
+            {data?.user.email}
             <h1>Subs</h1>
+            <Button onClick={() => {
+                mutate({ plan: '1m' });
+            }}>
+                subscribe
+            </Button>
         </>
     )
 }

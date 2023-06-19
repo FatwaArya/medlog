@@ -25,6 +25,7 @@ const server = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   SPACES_KEY: z.string(),
   SPACES_SECRET: z.string(),
+  XENDIT_SERVER_KEY: z.string(),
 });
 
 /**
@@ -52,6 +53,7 @@ const processEnv = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   SPACES_KEY: process.env.SPACES_KEY,
   SPACES_SECRET: process.env.SPACES_SECRET,
+  XENDIT_SERVER_KEY: process.env.XENDIT_SERVER_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
