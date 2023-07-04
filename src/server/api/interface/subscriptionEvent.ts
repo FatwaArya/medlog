@@ -1,10 +1,10 @@
-export interface WebhookPayload {
-  created: string;
-  business_id: string;
-  event: WebhookEvent;
-  data: WebhookEventData;
-  api_version: string;
-}
+// export interface WebhookPayload {
+//   created: string;
+//   business_id: string;
+//   event: WebhookEvent;
+//   data: WebhookEventData;
+//   api_version: string;
+// }
 
 type WebhookEvent =
   | "recurring.plan.activated"
@@ -14,7 +14,8 @@ type WebhookEvent =
   | "recurring.cycle.retrying"
   | "recurring.cycle.failed";
 
-interface WebhookEventData {
+interface Plan {
+  schedule_timestamp: string;
   id: string;
   reference_id: string;
   customer_id: string;
@@ -63,7 +64,7 @@ interface NotificationConfig {
   recurring_created: ("WHATSAPP" | "EMAIL")[];
   recurring_succeeded: ("WHATSAPP" | "EMAIL")[];
   recurring_failed: ("WHATSAPP" | "EMAIL")[];
-  locale: "en";
+  locale: "id";
 }
 
 interface Item {
@@ -78,4 +79,49 @@ interface Action {
   url: string;
   url_type: "WEB";
   method: "GET";
+}
+
+export interface RecurringPaymentResponse {
+  id: string;
+  reference_id: string;
+  customer_id: string;
+  recurring_action: string;
+  recurring_cycle_count: number;
+  currency: string;
+  amount: number;
+  status: string;
+  created: string;
+  updated: string;
+  schedule_id: string;
+  schedule: {
+    reference_id: string;
+    interval: string;
+    interval_count: number;
+    created: string;
+    updated: string;
+    anchor_date: string;
+    retry_interval: string;
+    retry_interval_count: number;
+    total_retry: number;
+    failed_attempt_notifications: number[];
+  };
+  immediate_action_type: string;
+  notification_config: {
+    recurring_created: string[];
+    recurring_succeeded: string[];
+    recurring_failed: string[];
+    locale: string;
+  };
+  failed_cycle_action: string;
+  metadata: null;
+  description: null;
+  items: null;
+  actions: {
+    action: string;
+    url: string;
+    url_type: string;
+    method: string;
+  }[];
+  success_return_url: string;
+  failure_return_url: string;
 }

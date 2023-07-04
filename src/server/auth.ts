@@ -52,11 +52,11 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  events: {
-    signIn: ({ user, isNewUser }) => {
-      //if new user, create customer id u
-    },
-  },
+  // events: {
+  //   signIn: ({ user, isNewUser }) => {
+  //     //if new user, create customer id u
+  //   },
+  // },
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -75,7 +75,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/auth/signin",
-    // newUser: "/auth/onboarding",
+    newUser: "/auth/onboarding",
   },
 };
 

@@ -43,7 +43,7 @@ export default function Login() {
             // focusring
             className="focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             onClick={() => {
-              void signIn("google", { callbackUrl: "/dashboard/home" });
+              void signIn('google', { callbackUrl: "/dashboard/home" });
             }}
           >
             <FcGoogle className="mr-2 h-6 w-6" /> Masuk dengan Google

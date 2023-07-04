@@ -307,6 +307,15 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         };
     }
 
+    if (session?.user?.isNewUser) {
+        return {
+            redirect: {
+                destination: "/auth/onboarding",
+                permanent: false,
+            },
+        };
+    }
+
     if (session?.user?.isSubscribed === false) {
         return {
             redirect: {

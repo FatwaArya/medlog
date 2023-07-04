@@ -126,22 +126,21 @@ model Session {
 }
 
 model User {
-  id                 String         @id @default(cuid())
-  name               String?
-  email              String?        @unique
-  emailVerified      DateTime?
-  image              String?
-  isSubscribed       Boolean        @default(false)
-  phone              String?
-  role               Role           @default(user)
-  customer_id        String?
-  isNewUser          Boolean        @default(true)
-  accounts           Account[]
-  sessions           Session[]
-  Patient            Patient[]
-  Medicine           Medicine[]
-  subscribedToAdmin  Subscription[] @relation("SubscriberRelation")
-  adminOfSubscribers Subscription[] @relation("AdminRelation")
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  image         String?
+  isSubscribed  Boolean        @default(false)
+  phone         String?        @unique
+  role          Role           @default(user)
+  customer_id   String?
+  isNewUser     Boolean        @default(true)
+  accounts      Account[]
+  sessions      Session[]
+  Patient       Patient[]
+  Medicine      Medicine[]
+  Subscription  Subscription[]
 }
 
 model VerificationToken {
@@ -154,17 +153,14 @@ model VerificationToken {
 
 model Subscription {
   id              String             @id @default(cuid())
-  subscriberId    String
-  adminId         String?
+  userId          String
   status          SubscriptionStatus @default(inactive)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   subscribedUntil DateTime?
-  subscriber      User               @relation("SubscriberRelation", fields: [subscriberId], references: [id])
-  admin           User?              @relation("AdminRelation", fields: [adminId], references: [id])
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([subscriberId])
-  @@index([adminId])
+  @@index([userId])
 }
 
 enum SubscriptionStatus {

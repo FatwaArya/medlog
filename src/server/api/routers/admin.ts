@@ -14,7 +14,7 @@ export const adminRouter = createTRPCRouter({
         isSubscribed: true,
         image: true,
         phone: true,
-        subscribedToAdmin: {
+        Subscription: {
           select: {
             subscribedUntil: true,
           },
@@ -37,7 +37,10 @@ export const adminRouter = createTRPCRouter({
         },
         include: {
           //return true if user is subscribed to admin
-          subscribedToAdmin: {
+          Subscription: {
+            where: {
+              status: "active",
+            },
             select: {
               subscribedUntil: true,
             },
@@ -66,7 +69,7 @@ export const adminRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const subsRecord = ctx.prisma.subscription.findMany({
         where: {
-          subscriberId: input.userId,
+          userId: input.userId,
         },
       });
       return subsRecord;
@@ -119,8 +122,7 @@ export const adminRouter = createTRPCRouter({
         });
         await tx.subscription.create({
           data: {
-            subscriberId: input.id,
-            adminId: ctx.session?.user.id,
+            userId: input.id,
             status: "active",
             subscribedUntil: addDays(new Date(), addedDays),
           },
@@ -146,7 +148,7 @@ export const adminRouter = createTRPCRouter({
         //user is only had one subscription at a time so update the last one and set it to expired
         const subscription = await tx.subscription.findFirst({
           where: {
-            subscriberId: input.id,
+            userId: input.id,
           },
           orderBy: {
             subscribedUntil: "desc",

@@ -26,6 +26,7 @@ const server = z.object({
   SPACES_KEY: z.string(),
   SPACES_SECRET: z.string(),
   XENDIT_SERVER_KEY: z.string(),
+  XENDIT_CALLBACK_TOKEN: z.string(),
 });
 
 /**
@@ -54,6 +55,7 @@ const processEnv = {
   SPACES_KEY: process.env.SPACES_KEY,
   SPACES_SECRET: process.env.SPACES_SECRET,
   XENDIT_SERVER_KEY: process.env.XENDIT_SERVER_KEY,
+  XENDIT_CALLBACK_TOKEN: process.env.XENDIT_CALLBACK_TOKEN,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

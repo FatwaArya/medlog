@@ -116,18 +116,6 @@ export default function AdminList() {
         </span>
       ),
     }),
-    columnHelper.accessor('subscribedToAdmin', {
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="langganan hingga" />
-      ),
-      cell: (info) => (
-        <span className="capitalize">
-          {!info.getValue()[0]?.subscribedUntil
-            ? "Belum berlangganan"
-            : dayjs(info.getValue()[0]?.subscribedUntil).format("DD MMMM YYYY")}
-        </span>
-      ),
-    }),
     columnHelper.accessor("id", {
       header: "Aksi",
       cell: (info) => {
@@ -217,7 +205,6 @@ export default function AdminList() {
       },
     }),
   ]
-  console.log(adminData)
 
   return (
     <>

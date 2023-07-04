@@ -59,6 +59,15 @@ export async function getServerSideProps(
     };
   }
 
+  if (session?.user?.isNewUser) {
+    return {
+      redirect: {
+        destination: "/auth/onboarding",
+        permanent: false,
+      },
+    };
+  }
+
   if (!session?.user?.isSubscribed) {
     return {
       redirect: {

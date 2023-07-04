@@ -59,7 +59,7 @@ export const AdminDescription = (props: AdminInfo) => {
                                 Status Berlangganan
                             </dt>
                             <dd className="mt-1 items-center flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                {!props?.subscribedToAdmin?.length ? (
+                                {!props?.Subscription?.length ? (
                                     <span>Belum langganan</span>
                                 ) : (
                                     <span>Berlangganan</span>
@@ -71,11 +71,11 @@ export const AdminDescription = (props: AdminInfo) => {
                                 Berlangganan Hingga
                             </dt>
                             <dd className="mt-1 items-center flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                {!props?.subscribedToAdmin?.length ? (
+                                {!props?.Subscription?.length ? (
                                     <span>-</span>
                                 ) : (
                                     <span>
-                                        {dayjs(props?.subscribedToAdmin[0]?.subscribedUntil).format("DD MMMM YYYY")}
+                                        {dayjs(props?.Subscription[0]?.subscribedUntil).format("DD MMMM YYYY")}
                                     </span>
                                 )}
                             </dd>
