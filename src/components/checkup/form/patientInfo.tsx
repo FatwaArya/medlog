@@ -1,4 +1,5 @@
 
+import DOBPicker from "@/components/ui/datepicker/dateOfBirthDatePicker";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { redAsterisk } from "@/pages/dashboard/patients/checkup/new";
 import { type RouterInputs } from "@/utils/api";
+import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 type NewCheckupPatient =
@@ -101,15 +103,15 @@ export function PatientInfoForm() {
                                         >
                                             Tanggal lahir {redAsterisk}
                                         </label>
-                                        <Input
-                                            type="date"
-                                            id="date-of-birth"
-                                            autoComplete="date-of-birth"
-                                            className="mt-1 bg-white"
-                                            {...register("birthDate", {
+                                        <Controller
+                                            name="birthDate"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <DOBPicker dob={field.value} setDOB={field.onChange} className="mt-1 bg-white" />
+                                            )}
+                                            rules={{
                                                 required: true,
-                                                valueAsDate: true,
-                                            })}
+                                            }}
                                         />
                                         {errors.birthDate && <span className="text-red-500 text-sm">Tanggal lahir harus diisi</span>}
                                     </div>
@@ -134,8 +136,8 @@ export function PatientInfoForm() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectItem value="male">Male</SelectItem>
-                                                            <SelectItem value="female">Female</SelectItem>
+                                                            <SelectItem id="1" value="male">Male</SelectItem>
+                                                            <SelectItem id="2" value="female">Female</SelectItem>
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>

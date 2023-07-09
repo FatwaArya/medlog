@@ -31,7 +31,7 @@ export function DataTableToolbar<TData>({
     return (
         <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4">
-                <div className="flex flex-1 items-center space-x-2">
+                <div className="flex flex-1 items-center space-x-2 mt-1 ml-1">
                     {
                         filter && (
                             <Input
@@ -42,6 +42,13 @@ export function DataTableToolbar<TData>({
                                 }
                                 className="h-8 w-[150px] lg:w-[250px]"
                             />
+                        )
+                    }
+                    {
+                        href && (
+                            <Button variant='outline' className="rounded-md shadow-sm" href={href ?? "#"}>
+                                <UserPlus className="h-5 w-5 text-gray-400" />
+                            </Button>
                         )
                     }
                     {isFacetedFilter && (
@@ -64,13 +71,6 @@ export function DataTableToolbar<TData>({
                         </Button>
                     )}
                 </div>
-                {
-                    href && (
-                        <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
-                            <UserPlus className="h-5 w-5 text-gray-400" />
-                        </Button>
-                    )
-                }
             </div>
             <DataTableViewOptions columnViews={columnViews} table={table} />
         </div>

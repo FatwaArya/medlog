@@ -55,10 +55,18 @@ function Calendar({
           "aria-selected:bg-blue-600 aria-selected:text-primary-foreground hover:bg-blue-600 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
         day_range_end:
           "aria-selected:bg-blue-600 aria-selected:text-primary-foreground hover:bg-blue-600 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-
         ...classNames,
       }}
       components={{
+        Dropdown: ({ ...props }) => (
+          <div className="w-full">
+            <select
+              autoFocus
+              {...props}
+              className="w-full px-1 py-2 space-x-4 text-sm text-gray-800 transition-all duration-300 rounded-md outline-none bg-white border border-gray-300 hover:bg-gray-100 focus:bg-gray-100"
+            />
+          </div>
+        ),
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}

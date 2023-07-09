@@ -63,7 +63,7 @@ const NewCheckup = () => {
       name: "",
       phone: "",
       address: "",
-      birthDate: new Date(),
+      birthDate: undefined,
       complaint: "",
       diagnosis: "",
       note: "",
