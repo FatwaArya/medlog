@@ -6,10 +6,17 @@ import clsx from "clsx";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/landing/Container";
 import { Logo } from "@/components/landing/Logo";
+import { NewLogo } from "@/components/landing/NewLogo";
 import { NavLink } from "@/components/landing/NavLink";
 import { useSession } from "next-auth/react";
 
-function MobileNavLink({ href, children }: { href: string, children: React.ReactNode }) {
+function MobileNavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
     <Popover.Button as={Link} href={href} className="block w-full p-2">
       {children}
@@ -99,25 +106,37 @@ export function Header() {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Link href="#" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              <NewLogo className="h-7 w-auto" />
             </Link>
             <div className="hidden md:flex md:gap-x-6">
-              <NavLink href="#features">Features</NavLink>
-              <NavLink href="#testimonials">Testimonials</NavLink>
-              <NavLink href="#pricing">Pricing</NavLink>
+              <NavLink href="#features">Fitur</NavLink>
+              <NavLink href="#testimonials">Testimoni</NavLink>
+              <NavLink href="#pricing">Harga</NavLink>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
-            {/* if status is loading, disable button */
+            {
+              /* if status is loading, disable button */
               session ? (
-                <Button href="/dashboard/home" variant="outlineBlue" disabled={isLoading}>
-                  <span>Dashboard</span>
+                <Button
+                  href="/dashboard/home"
+                  variant="outlineBlue"
+                  disabled={isLoading}
+                >
+                  <span>Beranda</span>
                 </Button>
-              ) : (<Button href="/auth/signin" variant="solidBlue" disabled={isLoading}>
-                <span>
-                  Get started <span className="hidden lg:inline">today</span>
-                </span>
-              </Button>)}
+              ) : (
+                <Button
+                  href="/auth/signin"
+                  variant="solidBlue"
+                  disabled={isLoading}
+                >
+                  <span>
+                    Get started <span className="hidden lg:inline">today</span>
+                  </span>
+                </Button>
+              )
+            }
 
             <div className="-mr-1 md:hidden">
               <MobileNavigation />

@@ -12,7 +12,7 @@ const testimonials = [
   [
     {
       content:
-        "TaxPal is so easy to use I can’t help but wonder if it’s really doing the things the government expects me to do.",
+        "Aplikasi perawat online menghemat waktu dan tenaga saya. Dengan beberapa kali sentuhan di ponsel, saya bisa mendapatkan checkup dan rekomendasi perawatan medis yang tepat.",
       author: {
         name: "Sheryl Berge",
         role: "CEO at Lynch LLC",
@@ -21,7 +21,7 @@ const testimonials = [
     },
     {
       content:
-        "I’m trying to get a hold of someone in support, I’m in a lot of trouble right now and they are saying it has something to do with my books. Please get back to me right away.",
+        "Dengan aplikasi perawat online, saya merasa terawasi dengan baik. Perawat memberikan checkup online dan memberikan saran kesehatan yang berguna secara efisien.",
       author: {
         name: "Amy Hahn",
         role: "Director at Velocity Industries",
@@ -32,7 +32,7 @@ const testimonials = [
   [
     {
       content:
-        "The best part about TaxPal is every time I pay my employees, my bank balance doesn’t go down like it used to. Looking forward to spending this extra cash when I figure out why my card is being declined.",
+        "Aplikasi perawat online memberikan kemudahan akses ke perawatan medis yang komprehensif, dengan checkup online dan rekomendasi obat yang akurat.",
       author: {
         name: "Leland Kiehn",
         role: "Founder of Kiehn and Sons",
@@ -41,7 +41,7 @@ const testimonials = [
     },
     {
       content:
-        "There are so many things I had to do with my old software that I just don’t do at all with TaxPal. Suspicious but I can’t say I don’t love it.",
+        "Saya merasa aman dan terawasi dengan adanya aplikasi perawat online ini. Perawat memberikan checkup online serta rekomendasi vitamin yang tepat untuk menjaga kesehatan saya.",
       author: {
         name: "Erin Powlowski",
         role: "COO at Armstrong Inc",
@@ -52,7 +52,7 @@ const testimonials = [
   [
     {
       content:
-        "I used to have to remit tax to the EU and with TaxPal I somehow don’t have to do that anymore. Nervous to travel there now though.",
+        "Aplikasi perawat online membuat perawatan medis jadi lebih mudah. Dengan checkup online dan rekomendasi obat yang diberikan, saya merasa perawatan saya menjadi lebih efektif.",
       author: {
         name: "Peter Renolds",
         role: "Founder of West Inc",
@@ -61,7 +61,7 @@ const testimonials = [
     },
     {
       content:
-        "This is the fourth email I’ve sent to your support team. I am literally being held in jail for tax fraud. Please answer your damn emails, this is important.",
+        "Saya sangat terbantu dengan adanya aplikasi perawat online ini. Checkup online yang dilakukan perawat dan rekomendasi perawatan medis sangat efisien dan praktis.",
       author: {
         name: "Amy Hahn",
         role: "Director at Velocity Industries",
@@ -89,12 +89,12 @@ export function Testimonials() {
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            Loved by businesses worldwide.
+            Andalan para perawat online.
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Our software is so simple that people can’t help but fall in love
-            with it. Simplicity is easy when you just skip tons of
-            mission-critical features.
+            Aplikasi simpel yang dibuat khusus untuk memudahkan para perawat
+            online melakukan checkup maupun perawat dengan lebih simpel, mudah
+            dan murah.
           </p>
         </div>
         <ul
