@@ -12,7 +12,6 @@ interface PlanProps {
   featured?: boolean;
 }
 
-
 function SwirlyDoodle({ className }: { className?: string }) {
   return (
     <svg
@@ -56,7 +55,14 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-function Plan({ name, price, description, href, features, featured = false }: PlanProps) {
+function Plan({
+  name,
+  price,
+  description,
+  href,
+  features,
+  featured = false,
+}: PlanProps) {
   return (
     <section
       className={clsx(
@@ -97,7 +103,7 @@ function Plan({ name, price, description, href, features, featured = false }: Pl
         className="mt-8"
         aria-label={`Get started with the ${name} plan for ${price}`}
       >
-        Get started
+        Pilih Paket
       </Button>
     </section>
   );
@@ -115,20 +121,20 @@ export function Pricing() {
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             <span className="relative whitespace-nowrap">
               <SwirlyDoodle className="absolute left-0 top-1/2 h-[1em] w-full fill-blue-400" />
-              <span className="relative">Simple pricing,</span>
+              <span className="relative">Harga simple,</span>
             </span>{" "}
-            for everyone.
+            untuk semua.
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            It doesn’t matter what size your business is, our software won’t
-            work well for you.
+            PasienPlus menyediakan layanan lengkap untuk perawat online dan
+            memudahkannya dengan berbagai hal.
           </p>
         </div>
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
           <Plan
-            name="Starter"
-            price="$9"
-            description="Good for anyone who is self-employed and just getting started."
+            name="Pemula"
+            price="Rp 30.000"
+            description="Cocok untuk pemula yang ingin mencoba layanan aplikasi kami."
             href="/register"
             features={[
               "Send 10 quotes and invoices",
@@ -140,9 +146,9 @@ export function Pricing() {
           />
           <Plan
             featured
-            name="Small business"
-            price="$15"
-            description="Perfect for small / medium sized businesses."
+            name="Personal"
+            price="Rp 65.000"
+            description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
             href="/register"
             features={[
               "Send 25 quotes and invoices",
@@ -155,9 +161,9 @@ export function Pricing() {
             ]}
           />
           <Plan
-            name="Enterprise"
-            price="$39"
-            description="For even the biggest enterprise companies."
+            name="Bisnis"
+            price="Rp 135.000"
+            description="Untuk skala perawat online yang lebih besar."
             href="/register"
             features={[
               "Send unlimited quotes and invoices",

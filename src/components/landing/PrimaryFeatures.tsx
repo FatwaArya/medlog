@@ -5,35 +5,29 @@ import clsx from "clsx";
 
 import { Container } from "@/components/landing/Container";
 import backgroundImage from "@/images/background-features.jpg";
-import screenshotExpenses from "@/images/screenshots/expenses.png";
-import screenshotPayroll from "@/images/screenshots/payroll.png";
-import screenshotReporting from "@/images/screenshots/reporting.png";
+import screenshotDataPasien from "@/images/screenshots/DataPasien.png";
+import screenshotBeranda from "@/images/screenshots/Beranda.png";
+import screenshotLaporan from "@/images/screenshots/Laporan.png";
 import screenshotVatReturns from "@/images/screenshots/vat-returns.png";
 
 const features = [
   {
-    title: "Payroll",
+    title: "Statistik",
     description:
-      "Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.",
-    image: screenshotPayroll,
+      "Selalu pantau statistik daftar pasien yang ada, mulai dari kunjungan pasien, pendapatan dan lainnya.",
+    image: screenshotBeranda,
   },
   {
-    title: "Claim expenses",
+    title: "Data Pasien",
     description:
-      "All of your receipts organized into one place, as long as you don't mind typing in the data by hand.",
-    image: screenshotExpenses,
+      "Data pasien yang disediakan secara detail, segala informasi yang dibutuhkan untuk proses perawatan pasien.",
+    image: screenshotDataPasien,
   },
   {
-    title: "VAT handling",
+    title: "Laporan",
     description:
-      "We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.",
-    image: screenshotVatReturns,
-  },
-  {
-    title: "Reporting",
-    description:
-      "Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.",
-    image: screenshotReporting,
+      "Dengan mudah mencetak hasil perawatan ke sebuah dokumen PDF dan memastikan perawat bisa terus melacak hasil perawatan.",
+    image: screenshotLaporan,
   },
 ];
 
@@ -44,12 +38,11 @@ export function PrimaryFeatures() {
     const lgMediaQuery = window.matchMedia("(min-width: 1024px)");
     const handleLgMediaQueryChange = (event: MediaQueryListEvent) => {
       setTabOrientation(event.matches ? "vertical" : "horizontal");
-    }
+    };
     lgMediaQuery.addEventListener("change", handleLgMediaQueryChange);
     return () => {
       lgMediaQuery.removeEventListener("change", handleLgMediaQueryChange);
-    }
-
+    };
   }, []);
 
   return (
@@ -69,11 +62,11 @@ export function PrimaryFeatures() {
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">
-            Everything you need to run your books.
+            Segala yang anda butuhkan sebagai perawat online.
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-            Well everything you need if you aren’t that picky about minor
-            details like tax compliance.
+            Fitur yang membantu anda memaksimalkan proses checkup hingga mendata
+            pasien.
           </p>
         </div>
         <Tab.Group
@@ -98,7 +91,7 @@ export function PrimaryFeatures() {
                       <h3>
                         <Tab
                           className={clsx(
-                            "font-display text-lg [&:not(:focus-visible)]:focus:outline-none outline-none",
+                            "font-display text-lg outline-none [&:not(:focus-visible)]:focus:outline-none",
                             selectedIndex === featureIndex
                               ? "text-blue-600 lg:text-white"
                               : "text-blue-100 hover:text-white lg:text-white"

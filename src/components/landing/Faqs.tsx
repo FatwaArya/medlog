@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { Container } from "@/components/landing/Container";
 import backgroundImage from "@/images/background-faqs.jpg";
+import Link from "next/link";
 
 const faqs = [
   [
@@ -78,11 +79,17 @@ export function Faqs() {
             id="faq-title"
             className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl"
           >
-            Frequently asked questions
+            Seputar PasienPlus (?)
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            If you can’t find what you’re looking for, email our support team
-            and if you’re lucky someone will get back to you.
+            Jika anda tidak menemukan jawaban anda, anda bisa menghubungi{" "}
+            <Link
+              href="https://mail.google.com/"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              email
+            </Link>{" "}
+            kami. Nantinya pihak kami akan menjawab pertanyaan anda.
           </p>
         </div>
         <ul
