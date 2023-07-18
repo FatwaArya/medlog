@@ -376,7 +376,6 @@ export const patientRouter = createTRPCRouter({
       });
     }),
   getNewestPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
-    //select newest patients
     const result = await ctx.prisma.medicalRecord.findMany({
       where: {
         patient: {
@@ -398,7 +397,6 @@ export const patientRouter = createTRPCRouter({
       orderBy: {
         createdAt: "desc",
       },
-
       distinct: ["patientId"],
     });
     return result;

@@ -143,6 +143,7 @@ export default function PatientList() {
                     columnViews={columnViews}
                     filter="patient_name"
                     filterTitle="nama"
+                  // isPaginated={false}
                   />
                 ) : (
                   <Skeleton className="h-12 w-full whitespace-nowrap" />

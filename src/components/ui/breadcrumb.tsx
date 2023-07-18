@@ -57,7 +57,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     >
       <ol
         role="list"
-        className="flex space-x-4 rounded-md bg-white pl-2 pr-6 shadow"
+        className="flex space-x-4 rounded-md bg-white pl-2 pr-6 shadow outline outline-1 outline-slate-200"
       >
         <li className="flex flex-col">
           <div className="flex items-center ">
@@ -120,10 +120,9 @@ const Crumb: React.FC<CrumbProps> = ({
       <Link
         href={href}
         className={`ml-4 text-xs font-medium text-gray-400 hover:text-gray-700 sm:text-sm 
-          ${
-            isRecord || isCheckup
-              ? "pointer-events-none cursor-default text-gray-400"
-              : ""
+          ${isRecord || isCheckup
+            ? "pointer-events-none cursor-default text-gray-400"
+            : ""
           }`}
       >
         {text === "Home" ? (

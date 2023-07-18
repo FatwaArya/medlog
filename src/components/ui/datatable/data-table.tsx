@@ -41,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   filter?: string
   filterTitle?: string
   isFacetedFilter?: boolean
+  isPaginated?: boolean
 }
 
 declare module "@tanstack/table-core" {
@@ -66,7 +67,7 @@ export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) =>
 };
 
 export function DataTable<TData, TValue>(
-  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href }: DataTableProps<TData, TValue>
+  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href, isPaginated }: DataTableProps<TData, TValue>
 ) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -152,7 +153,9 @@ export function DataTable<TData, TValue>(
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      {isPaginated && (
+        <DataTablePagination table={table} />
+      )}
     </div>
   )
 }

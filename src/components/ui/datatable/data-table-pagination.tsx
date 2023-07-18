@@ -17,6 +17,7 @@ import {
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>
+    isPaginated?: boolean
 }
 
 export function DataTablePagination<TData>({
