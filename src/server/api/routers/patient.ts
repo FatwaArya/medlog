@@ -375,32 +375,40 @@ export const patientRouter = createTRPCRouter({
         }
       });
     }),
-  getNewestPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.prisma.medicalRecord.findMany({
-      where: {
-        patient: {
-          userId: ctx.session.user.id,
-        },
-      },
-      select: {
-        patient: {
-          select: {
-            id: true,
-            name: true,
-            birthDate: true,
-            gender: true,
-            phone: true,
+  getNewestPatients: protectedSubscribedProcedure
+    .input(
+      z.object({
+        limit: z.number().gte(1).lte(5).nullish().nullable(),
+        isLastVisit: z.boolean().nullish().nullable(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.prisma.medicalRecord.findMany({
+        where: {
+          patient: {
+            userId: ctx.session.user.id,
           },
         },
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      distinct: ["patientId"],
-    });
-    return result;
-  }),
+        select: {
+          patient: {
+            select: {
+              id: true,
+              name: true,
+              birthDate: true,
+              gender: true,
+              phone: true,
+            },
+          },
+          ...(input?.isLastVisit && { createdAt: true }),
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        distinct: ["patientId"],
+        ...(input?.limit && { take: input.limit }),
+      });
+      return result;
+    }),
   getStatPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const patientCount = await ctx.prisma.patient.count({
       where: {
@@ -591,5 +599,22 @@ export const patientRouter = createTRPCRouter({
         });
       }
       return patient;
+    }),
+  searchPatient: protectedSubscribedProcedure
+    .input(
+      z.object({
+        query: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const result = await ctx.prisma.patient.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          name: {
+            search: input.query,
+          },
+        },
+      });
+      return result;
     }),
 });

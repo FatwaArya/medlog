@@ -1,7 +1,7 @@
 "use client"
 
 import { Table } from "@tanstack/table-core";
-import { SearchIcon, X, UserPlus } from "lucide-react";
+import { SearchIcon, X, UserPlus, Scroll } from "lucide-react";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,10 +19,11 @@ interface DataTableToolbarProps<TData> {
     isFacetedFilter?: boolean
     columnViews?: { title: string }[]
     href?: string
+    isAddable?: boolean
 }
 
 export function DataTableToolbar<TData>({
-    table, filter, isFacetedFilter, columnViews, href, filterTitle
+    table, filter, isFacetedFilter, columnViews, href, filterTitle, isAddable
 }: DataTableToolbarProps<TData>) {
     const isFiltered =
         table.getPreFilteredRowModel().rows.length >
@@ -44,13 +45,7 @@ export function DataTableToolbar<TData>({
                             />
                         )
                     }
-                    {
-                        href && (
-                            <Button variant='outline' className="rounded-md shadow-sm" href={href ?? "#"}>
-                                <UserPlus className="h-5 w-5 text-gray-400" />
-                            </Button>
-                        )
-                    }
+
                     {isFacetedFilter && (
                         table.getColumn("status") && (
                             <DataTableFacetedFilter
@@ -72,7 +67,24 @@ export function DataTableToolbar<TData>({
                     )}
                 </div>
             </div>
-            <DataTableViewOptions columnViews={columnViews} table={table} />
+            <div className="flex">
+                {
+                    href && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="ml-auto hidden h-8 lg:flex mt-1 mr-1"
+                            href={href ?? "#"}
+                        >
+                            <Scroll className="mr-2 h-4 w-4" />
+                            Checkup Baru
+                        </Button>
+                    )
+                }
+                <DataTableViewOptions columnViews={columnViews} table={table} />
+
+            </div>
+
         </div>
     )
 }

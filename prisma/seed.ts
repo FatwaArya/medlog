@@ -1,24 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { Gender, PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Create 10 patients
-  // const patients = Array.from({ length: 10 }).map(() => ({
-  //   userId: "clg0h8vq90000rhvaurazppud",
-  //   name: faker.name.findName(),
-  //   NIK: faker.random.alphaNumeric(16),
-  //   phone: faker.phone.phoneNumber(),
-  //   address: faker.address.streetAddress(),
-  //   gender: faker.helpers.arrayElement(Object.values(Gender)),
-  //   birthDate: faker.date.past(50),
-  // createdAt: faker.date.past(1),
-  // updatedAt: faker.date.recent(),
-  // }));
+  const patients = Array.from({ length: 10 }).map(() => ({
+    userId: "cljfe8dck0000rhqt20bjv618",
+    name: faker.name.findName(),
+    phone: faker.phone.phoneNumber(),
+    address: faker.address.streetAddress(),
+    gender: faker.helpers.arrayElement(Object.values(Gender)),
+    birthDate: faker.date.past(50),
+    createdAt: faker.date.past(1),
+    updatedAt: faker.date.recent(),
+  }));
 
   // // Insert patients into the database
-  // await prisma.patient.createMany({ data: patients });
+  await prisma.patient.createMany({ data: patients });
   const createdPatients = await prisma.patient.findMany();
   const medicalRecords = [];
   for (const patient of createdPatients) {
@@ -26,7 +25,6 @@ async function main() {
       patientId: patient.id,
       complaint: faker.lorem.sentence(),
       diagnosis: faker.lorem.sentence(),
-      drugs: faker.lorem.sentence(),
       note: faker.lorem.sentence(),
       pay: faker.datatype.number({ min: 0, max: 1000000 }),
       //createdAt may 2023

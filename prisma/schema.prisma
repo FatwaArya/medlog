@@ -46,8 +46,11 @@ model Patient {
   updatedAt     DateTime        @updatedAt
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   MedicalRecord MedicalRecord[]
+  // @@fulltext([phone])
+  // @@fulltext([address])
 
   @@index([userId])
+  @@fulltext([name])
 }
 
 model MedicalRecord {

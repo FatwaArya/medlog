@@ -146,6 +146,8 @@ export default function CheckupList({ patientId }: ListProps) {
                       columns={checkupColumns}
                       data={CheckupData}
                       columnViews={columnViews}
+                      href={`/dashboard/patients/checkup/${patientId}/new`}
+                      isPaginated={true}
                     />
                   ) : (
                     <Skeleton className="h-12 w-full whitespace-nowrap" />

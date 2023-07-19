@@ -35,7 +35,7 @@ export interface ListProps {
 }
 
 export default function PatientList() {
-  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery();
+  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ isLastVisit: true });
 
   const patientColumns = [
     columnHelper.accessor("patient.name", {

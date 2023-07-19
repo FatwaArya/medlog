@@ -33,16 +33,21 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandLoading,
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
 import { Loader } from "../auth/AuthGuard";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { type DialogProps } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
-import { api } from "@/utils/api";
+import { RouterOutputs, api } from "@/utils/api";
 import { run } from "node:test";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useCommandState } from "cmdk";
+
+
 
 
 const userNavigation = [
@@ -134,10 +139,16 @@ export default function Navbar({
   );
 }
 
-export function CommandDialogPasienPlus({ ...props }: DialogProps) {
+type SearchPatientData = RouterOutputs["patient"]["searchPatient"][number]
+
+function CommandDialogPasienPlus({ ...props }: DialogProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery();
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 500)
+  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ limit: 5, isLastVisit: false });
+  const { data: searchPatientData, isLoading: isSearching } = api.patient.searchPatient.useQuery({ query: debouncedSearch })
+
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -161,7 +172,7 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64 flex-grow "
+          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow "
         )}
         onClick={() => setOpen(true)}
         {...props}
@@ -177,10 +188,11 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Cari pasien atau tambah pasien..." />
+        <CommandInput placeholder="Cari pasien atau tambah pasien..." onValueChange={(value) => { setSearch(value) }} value={search} />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
+          {isSearching && <CommandLoading>Mencari Pasien...</CommandLoading>}
+          <CommandGroup heading="Suggestins">
             <CommandItem className="cursor-pointer" onSelect={() => {
               runCommand(() => router.push("/dashboard/patients/new"))
             }}>
@@ -197,36 +209,35 @@ export function CommandDialogPasienPlus({ ...props }: DialogProps) {
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Catatan Medis Pasien">
+          <CommandGroup heading="Daftar Pasien">
             {
-              patientData?.slice(0, 5).map((patient) => (
+              patientData?.map(({ patient }) => (
                 <CommandItem
                   onSelect={() => {
-                    runCommand(() => router.push(`/dashboard/patients/${patient.patient.id}`))
+                    runCommand(() => router.push(`/dashboard/patients/record/${patient.id}`))
                   }}
-                  key={patient.patient.id}>
+                  key={patient.id}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>{patient.patient.name}</span>
+                  <span>{patient.name}</span>
                 </CommandItem>
               ))
             }
+            {
+              searchPatientData?.map((patient) => (
+                <CommandItem
+                  onSelect={() => {
+                    runCommand(() => router.push(`/dashboard/patients/record/${patient.id}`))
+                  }}
+                  key={patient.id}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>{patient.name}</span>
+                </CommandItem>
+              ))
 
-            {/* <CommandItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <CommandShortcut>⌘P</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <CreditCard className="mr-2 h-4 w-4" />
-              <span>Billing</span>
-              <CommandShortcut>⌘B</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-              <CommandShortcut>⌘S</CommandShortcut>
-            </CommandItem> */}
+            }
+            {isSearching}
           </CommandGroup>
+          <CommandSeparator />
         </CommandList>
       </CommandDialog>
     </>

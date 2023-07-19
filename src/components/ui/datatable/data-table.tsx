@@ -67,7 +67,7 @@ export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) =>
 };
 
 export function DataTable<TData, TValue>(
-  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href, isPaginated }: DataTableProps<TData, TValue>
+  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href, isPaginated, isAddable }: DataTableProps<TData, TValue>
 ) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])

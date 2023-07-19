@@ -119,3 +119,7 @@
     .noPrint{}
     .noScreen{display:none;}
 }
+
+[cmdk-loading]{
+  @apply py-6 text-center text-sm;
+}
