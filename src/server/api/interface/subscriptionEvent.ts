@@ -32,7 +32,7 @@ interface Plan {
   immediate_action_type: "FULL_AMOUNT";
   notification_config: NotificationConfig;
   failed_cycle_action: "STOP";
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   description: string;
   items: Item[];
   actions: Action[];
