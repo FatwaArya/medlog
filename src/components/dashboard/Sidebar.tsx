@@ -4,6 +4,7 @@ import { ChevronsLeft, type LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
+import { NewLogo } from "../landing/NewLogo";
 
 
 interface SidebarEntry {
@@ -49,11 +50,7 @@ export default function Sidebar({ entries, open, setOpen }: SidebarProps) {
                   exit={{ left: "-100%" }}
                 >
                   <div className="flex items-center px-4">
-                    <img
-                      className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                      alt="Workflow"
-                    />
+                    <NewLogo />
                     <Dialog.Close asChild>
                       <button
                         className="ml-auto text-slate-700"
@@ -101,11 +98,7 @@ export default function Sidebar({ entries, open, setOpen }: SidebarProps) {
         <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div className="flex flex-1 flex-col overflow-y-auto pb-4 pt-5">
             <div className="flex flex-shrink-0 items-center px-7">
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                alt="Workflow"
-              />
+              <NewLogo />
             </div>
             <nav className="mt-8 flex-1 space-y-2 bg-white">
               {entries.map((item) => (

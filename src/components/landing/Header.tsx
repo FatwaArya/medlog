@@ -132,7 +132,7 @@ export function Header() {
                   disabled={isLoading}
                 >
                   <span>
-                    Get started <span className="hidden lg:inline">today</span>
+                    Ayo Mulai <span className="hidden md:inline">Sekarang</span>
                   </span>
                 </Button>
               )

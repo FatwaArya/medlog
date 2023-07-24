@@ -19,9 +19,8 @@ export const subscriptionRouter = createTRPCRouter({
   subscribe: protectedProcedure
     .input(
       z.object({
-        //plans 1, 3, 6, 12
-        plan: z.enum(["1m", "3m", "6m"]),
-      })
+        plan: z.enum(["beginner", "personal", "professional"]),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       let redirectUrl: string | undefined;
@@ -61,29 +60,26 @@ export const subscriptionRouter = createTRPCRouter({
         let retryIntervalCount: number | undefined;
         let totalRetry: number | undefined;
         let failedAttemptNotifications: number[] | undefined;
+        let amount: number | undefined;
 
         // Set schedule properties based on the input plan
         switch (input.plan) {
-          case "1m":
-            // Monthly subscription
+          case "beginner":
             intervalCount = 1;
+            amount = 35000;
             anchorDate = new Date().toISOString();
             break;
-          case "3m":
-            // 3-month subscription
-            intervalCount = 3;
+          case "personal":
+            intervalCount = 1;
+            amount = 65000;
             anchorDate = new Date().toISOString();
             break;
-          case "6m":
-            // 6-month subscription
-            intervalCount = 6;
+          case "professional":
+            intervalCount = 1;
+            amount = 150000;
             anchorDate = new Date().toISOString();
             break;
-          // case "12m":
-          //   // 12-month subscription
-          //   intervalCount = 12;
-          //   anchorDate = new Date().toISOString();
-          //   break;
+
           default:
             // Invalid plan
             throw new TRPCError({
@@ -122,7 +118,7 @@ export const subscriptionRouter = createTRPCRouter({
             metadata: null,
             // success_return_url: "http://localhost:3000/dashboard/home",
             // failure_return_url: "http://localhost:3000/subscription",
-          }
+          },
         );
         redirectUrl = subscription.data.actions[0]?.url;
       });

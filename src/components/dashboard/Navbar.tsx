@@ -139,16 +139,15 @@ export default function Navbar({
   );
 }
 
-type SearchPatientData = RouterOutputs["patient"]["searchPatient"][number]
 
 function CommandDialogPasienPlus({ ...props }: DialogProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(search, 800)
   const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ limit: 5, isLastVisit: false });
   const { data: searchPatientData, isLoading: isSearching } = api.patient.searchPatient.useQuery({ query: debouncedSearch })
-
+  console.log(isSearching)
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -172,7 +171,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow "
+          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow"
         )}
         onClick={() => setOpen(true)}
         {...props}
@@ -184,15 +183,20 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
         <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-8 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <span className="text-xs">
             <span className="hidden sm:inline">Ctrl+</span>
-          </span>K
+          </span>
+          K
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Cari pasien atau tambah pasien..." onValueChange={(value) => { setSearch(value) }} value={search} />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {isSearching && <CommandLoading>Mencari Pasien...</CommandLoading>}
-          <CommandGroup heading="Suggestins">
+          {/* wait searching if searchPatientData return empty array the show no re */}
+          {isSearching
+            ? <CommandLoading>Mencari Pasien... </CommandLoading>
+            : searchPatientData?.length === 0 && <CommandEmpty>Tidak ada pasien yang ditemukan</CommandEmpty>
+          }
+
+          <CommandGroup heading="Suggestions">
             <CommandItem className="cursor-pointer" onSelect={() => {
               runCommand(() => router.push("/dashboard/patients/new"))
             }}>
@@ -216,6 +220,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
                   onSelect={() => {
                     runCommand(() => router.push(`/dashboard/patients/record/${patient.id}`))
                   }}
+                  value={patient.name}
                   key={patient.id}>
                   <User className="mr-2 h-4 w-4" />
                   <span>{patient.name}</span>
@@ -223,19 +228,18 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
               ))
             }
             {
-              searchPatientData?.map((patient) => (
+              searchPatientData && searchPatientData.map((patient) => (
                 <CommandItem
                   onSelect={() => {
                     runCommand(() => router.push(`/dashboard/patients/record/${patient.id}`))
                   }}
+                  value={patient.name}
                   key={patient.id}>
                   <User className="mr-2 h-4 w-4" />
                   <span>{patient.name}</span>
                 </CommandItem>
               ))
-
             }
-            {isSearching}
           </CommandGroup>
           <CommandSeparator />
         </CommandList>

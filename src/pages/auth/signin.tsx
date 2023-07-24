@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { NewLogo } from "@/components/landing/NewLogo";
 
 export default function Login() {
   return (
@@ -18,7 +19,7 @@ export default function Login() {
       <AuthLayout>
         <div className="flex flex-col ">
           <Link href="/" aria-label="Home">
-            <Logo className="h-10 w-auto" />
+            <NewLogo />
           </Link>
           <div className="mt-4">
             <h2 className="text-lg font-semibold text-gray-900">

@@ -7,12 +7,13 @@ interface PlanProps {
   name: string;
   price: string;
   description: string;
-  href: string;
+  href?: string;
   features: string[];
   featured?: boolean;
+  onClick?: () => void;
 }
 
-function SwirlyDoodle({ className }: { className?: string }) {
+export function SwirlyDoodle({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -55,13 +56,14 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-function Plan({
+export function Plan({
   name,
   price,
   description,
   href,
   features,
   featured = false,
+  onClick,
 }: PlanProps) {
   return (
     <section
@@ -101,6 +103,7 @@ function Plan({
         variant={featured ? "solidWhite" : "outlineWhite"}
         color="white"
         className="mt-8"
+        onClick={onClick}
         aria-label={`Get started with the ${name} plan for ${price}`}
       >
         Pilih Paket
@@ -133,44 +136,38 @@ export function Pricing() {
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
           <Plan
             name="Pemula"
-            price="Rp 30.000"
+            price="Rp 35.000/bln"
             description="Cocok untuk pemula yang ingin mencoba layanan aplikasi kami."
             href="/register"
             features={[
-              "Send 10 quotes and invoices",
-              "Connect up to 2 bank accounts",
-              "Track up to 15 expenses per month",
-              "Manual payroll support",
-              "Export up to 3 reports",
+              "Tambah 5 pasien baru per hari",
+              "Tambah 25 checkup baru per hari (tanpa gambar)",
+              "Ekspor Laporan ",
             ]}
           />
           <Plan
             featured
             name="Personal"
-            price="Rp 65.000"
+            price="Rp 65.000/bln"
             description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
             href="/register"
             features={[
-              "Send 25 quotes and invoices",
-              "Connect up to 5 bank accounts",
-              "Track up to 50 expenses per month",
-              "Automated payroll support",
-              "Export up to 12 reports",
-              "Bulk reconcile transactions",
-              "Track in multiple currencies",
+              "Tambah 35 pasien baru per hari",
+              "Tambah 100 checkup baru per hari",
+              "Ekspor data pasien",
             ]}
           />
           <Plan
-            name="Bisnis"
-            price="Rp 135.000"
+            name="Professional"
+            price="Rp 150.000/bln"
             description="Untuk skala perawat online yang lebih besar."
             href="/register"
             features={[
-              "Send unlimited quotes and invoices",
-              "Connect up to 15 bank accounts",
-              "Track up to 200 expenses per month",
-              "Automated payroll support",
-              "Export up to 25 reports, including TPS",
+              // tambah tak terbatas pasien
+              "Tambah tak terbatas pasien baru per hari",
+              "Tambah tak terbatas checkup baru per hari",
+              "Ekspor data pasien",
+              "Akses awal ke fitur baru"
             ]}
           />
         </div>

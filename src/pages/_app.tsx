@@ -18,6 +18,7 @@ import { Analytics } from '@vercel/analytics/react';
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import AdminLayout from "@/components/dashboard/Layout";
+import Head from "next/head";
 
 NProgress.configure({ showSpinner: false });
 
@@ -61,6 +62,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
   }, []);
 
   return (<>
+
+    <Head>
+      {/* Set icon website using components */}
+      <link rel="icon" href="/logo.svg" />
+    </Head>
+
     <style jsx global>{`
       html {
         font-family: ${inter.style.fontFamily};
