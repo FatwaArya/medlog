@@ -7,8 +7,8 @@ async function main() {
   // Create 10 patients
   const patients = Array.from({ length: 10 }).map(() => ({
     userId: "cljfe8dck0000rhqt20bjv618",
-    name: faker.name.findName(),
-    phone: faker.phone.phoneNumber(),
+    name: faker.name.fullName(),
+    phone: faker.phone.number(),
     address: faker.address.streetAddress(),
     gender: faker.helpers.arrayElement(Object.values(Gender)),
     birthDate: faker.date.past(50),

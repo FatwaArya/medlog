@@ -140,9 +140,9 @@ export default function CheckupList({ patientId }: ListProps) {
               <div className="inline-block min-w-full divide-gray-300 align-middle">
                 <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                   {!isLoading && CheckupData ? (
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     <DataTable
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
                       columns={checkupColumns}
                       data={CheckupData}
                       columnViews={columnViews}
