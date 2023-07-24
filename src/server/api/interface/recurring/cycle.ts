@@ -21,5 +21,5 @@ export interface IRecurringCycle {
   updated: string;
   currency: string;
   amount: number;
-  metadata: any | null;
+  metadata: unknown | null;
 }
