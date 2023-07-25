@@ -21,6 +21,7 @@ import probe from "probe-image-size";
 import localeData from "dayjs/plugin/localeData";
 import isBetween from "dayjs/plugin/isBetween";
 import { TRPCError } from "@trpc/server";
+import ratelimit from "../helpers/rateLimiter";
 
 dayjs.extend(localeData);
 dayjs.extend(isBetween);
@@ -46,7 +47,7 @@ export const patientRouter = createTRPCRouter({
           new PutObjectCommand({
             Bucket: "pasienplus",
             Key: key,
-          })
+          }),
         );
 
         urls.push({
@@ -80,7 +81,7 @@ export const patientRouter = createTRPCRouter({
             z.object({
               value: z.string(),
               label: z.string(),
-            })
+            }),
           )
           .nullish(),
         labNote: z.string(),
@@ -91,13 +92,41 @@ export const patientRouter = createTRPCRouter({
             z.object({
               key: z.string().min(1),
               ext: z.string().min(1),
-            })
+            }),
           )
           .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id;
+      const userPlan = ctx.session.user.plan;
+
+      switch (userPlan) {
+        case "beginner":
+          const { success } = await ratelimit.BPatient.limit(userId);
+          if (!success) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Limit pasien sudah tercapai",
+            });
+          }
+          break;
+        case "personal":
+          const { success: successPersonal } = await ratelimit.PPatient.limit(
+            userId,
+          );
+          if (!successPersonal) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Limit pasien sudah tercapai",
+            });
+          }
+          break;
+        case "professional":
+          break;
+      }
+
       const {
         name,
         phone,
@@ -176,21 +205,21 @@ export const patientRouter = createTRPCRouter({
                 CopySource: "pasienplus/" + upload.key,
                 Key: name,
                 ACL: "public-read",
-              })
+              }),
             );
 
             await s3Client.send(
               new DeleteObjectCommand({
                 Bucket: "pasienplus",
                 Key: upload.key,
-              })
+              }),
             );
 
             const object = await s3Client.send(
               new GetObjectCommand({
                 Bucket: "pasienplus",
                 Key: name,
-              })
+              }),
             );
 
             const fileType = await probe(object.Body as Readable);
@@ -241,7 +270,6 @@ export const patientRouter = createTRPCRouter({
    *
    */
   createMedicalRecord: protectedSubscribedProcedure
-
     .input(
       z.object({
         patientId: z.string(),
@@ -253,7 +281,7 @@ export const patientRouter = createTRPCRouter({
             z.object({
               value: z.string(),
               label: z.string(),
-            })
+            }),
           )
           .nullish(),
         labNote: z.string(),
@@ -265,13 +293,41 @@ export const patientRouter = createTRPCRouter({
             z.object({
               key: z.string().min(1),
               ext: z.string().min(1),
-            })
+            }),
           )
           .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id;
+      const userPlan = ctx.session.user.plan;
+
+      switch (userPlan) {
+        case "beginner":
+          const { success } = await ratelimit.BCheckup.limit(userId);
+          if (!success) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Limit pasien sudah tercapai",
+            });
+          }
+          break;
+        case "personal":
+          const { success: successPersonal } = await ratelimit.PCheckup.limit(
+            userId,
+          );
+          if (!successPersonal) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Limit pasien sudah tercapai",
+            });
+          }
+          break;
+        case "professional":
+          break;
+      }
+
       const {
         patientId,
         complaint,
@@ -318,21 +374,21 @@ export const patientRouter = createTRPCRouter({
                 CopySource: "pasienplus/" + upload.key,
                 Key: name,
                 ACL: "public-read",
-              })
+              }),
             );
 
             await s3Client.send(
               new DeleteObjectCommand({
                 Bucket: "pasienplus",
                 Key: upload.key,
-              })
+              }),
             );
 
             const object = await s3Client.send(
               new GetObjectCommand({
                 Bucket: "pasienplus",
                 Key: name,
-              })
+              }),
             );
             const fileType = await probe(object.Body as Readable);
 
@@ -380,7 +436,7 @@ export const patientRouter = createTRPCRouter({
       z.object({
         limit: z.number().gte(1).lte(5).nullish().nullable(),
         isLastVisit: z.boolean().nullish().nullable(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const result = await ctx.prisma.medicalRecord.findMany({
@@ -440,7 +496,7 @@ export const patientRouter = createTRPCRouter({
         .object({
           sortBy: z.enum(["month", "year", "all", "week"]).nullish(),
         })
-        .nullish()
+        .nullish(),
     )
     .query(async ({ input, ctx }) => {
       const visits = await ctx.prisma.medicalRecord.findMany({
@@ -483,7 +539,7 @@ export const patientRouter = createTRPCRouter({
               }
               return counts;
             },
-            { Male: 0, Female: 0 }
+            { Male: 0, Female: 0 },
           );
 
         return {
@@ -495,7 +551,7 @@ export const patientRouter = createTRPCRouter({
 
       const allTimeVisits = visits.reduce((acc: GenderCount[], cur) => {
         const existingCount = acc.find((count) =>
-          dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month")
+          dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month"),
         );
 
         if (existingCount) {
@@ -520,7 +576,7 @@ export const patientRouter = createTRPCRouter({
         const createdAt = dayjs(cur.createdAt);
         if (createdAt.isSame(currentYear, "year")) {
           const existingCount = acc.find(
-            (count) => count.date === createdAt.format("MMMM YYYY")
+            (count) => count.date === createdAt.format("MMMM YYYY"),
           );
           if (existingCount) {
             if (cur.patient.gender === "male") {
@@ -544,7 +600,7 @@ export const patientRouter = createTRPCRouter({
         const createdAt = dayjs(cur.createdAt);
         if (createdAt.isSame(currentMonthYear, "month")) {
           const existingCount = acc.find(
-            (count) => count.date === createdAt.format("DD MMM")
+            (count) => count.date === createdAt.format("DD MMM"),
           );
           if (existingCount) {
             if (cur.patient.gender === "male") {
@@ -582,7 +638,7 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         patientId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       //check if patient is owned by user
@@ -604,7 +660,7 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const result = await ctx.prisma.patient.findMany({

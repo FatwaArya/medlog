@@ -8,7 +8,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
-import type { Role } from "@prisma/client";
+import type { Role, SubscriptionPlan } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -24,6 +24,7 @@ declare module "next-auth" {
       role: Role;
       isSubscribed: boolean;
       isNewUser: boolean;
+      plan: SubscriptionPlan;
     } & DefaultSession["user"];
   }
 
@@ -32,6 +33,7 @@ declare module "next-auth" {
     role: Role;
     isSubscribed: boolean;
     isNewUser: boolean;
+    plan: SubscriptionPlan;
   }
 }
 
@@ -48,6 +50,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = user.role;
         session.user.isSubscribed = user.isSubscribed;
         session.user.isNewUser = user.isNewUser;
+        session.user.plan = user.plan;
       }
       return session;
     },

@@ -129,16 +129,17 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String?
-  email         String?        @unique
+  email         String?          @unique
   emailVerified DateTime?
   image         String?
-  isSubscribed  Boolean        @default(false)
-  phone         String?        @unique
-  role          Role           @default(user)
+  isSubscribed  Boolean          @default(false)
+  plan          SubscriptionPlan @default(noSubscription)
+  phone         String?          @unique
+  role          Role             @default(user)
   customer_id   String?
-  isNewUser     Boolean        @default(true)
+  isNewUser     Boolean          @default(true)
   accounts      Account[]
   sessions      Session[]
   Patient       Patient[]
@@ -158,7 +159,6 @@ model Subscription {
   id              String             @id @default(cuid())
   userId          String
   status          SubscriptionStatus @default(inactive)
-  plan            SubscriptionPlan   @default(noSubscription)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   subscribedUntil DateTime?

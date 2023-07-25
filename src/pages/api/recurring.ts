@@ -101,6 +101,7 @@ async function handlePlanActivatedEvent(data: IRecurringPlan) {
       },
       data: {
         isSubscribed: true,
+        plan: data.metadata.plan as "beginner" | "personal" | "professional",
       },
     });
     const subscribedUntil = calculateSubscribedUntil(data.schedule);
@@ -111,7 +112,6 @@ async function handlePlanActivatedEvent(data: IRecurringPlan) {
         status: "active",
         userId: data.reference_id,
         subscribedUntil: subscribedUntil,
-        plan: data.metadata.plan as "beginner" | "personal" | "professional",
       },
     });
   });
@@ -126,6 +126,7 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
       },
       data: {
         isSubscribed: false,
+        plan: "noSubscription",
       },
     });
     await tx.subscription.updateMany({
@@ -135,7 +136,6 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
       data: {
         status: "inactive",
         subscribedUntil: null,
-        plan: "noSubscription",
       },
     });
   });

@@ -40,6 +40,8 @@ specifiers:
   '@types/uuid': ^9.0.2
   '@typescript-eslint/eslint-plugin': ^6.1.0
   '@typescript-eslint/parser': ^6.1.0
+  '@upstash/ratelimit': ^0.4.3
+  '@upstash/redis': ^1.22.0
   '@vercel/analytics': ^1.0.1
   autoprefixer: ^10.4.14
   axios: ^1.4.0
@@ -117,6 +119,8 @@ dependencies:
   '@trpc/next': 10.34.0_nwdxavlypbnphlhght3cvb3ntq
   '@trpc/react-query': 10.34.0_gz4qcx26li3hkyaunqfr6neamy
   '@trpc/server': 10.34.0
+  '@upstash/ratelimit': 0.4.3
+  '@upstash/redis': 1.22.0
   '@vercel/analytics': 1.0.1
   axios: 1.4.0
   cal-sans: 1.0.1
@@ -3254,6 +3258,31 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: true
 
+  /@upstash/core-analytics/0.0.6:
+    resolution: {integrity: sha512-cpPSR0XJAJs4Ddz9nq3tINlPS5aLfWVCqhhtHnXt4p7qr5+/Znlt1Es736poB/9rnl1hAHrOsOvVj46NEXcVqA==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@upstash/redis': 1.22.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@upstash/ratelimit/0.4.3:
+    resolution: {integrity: sha512-Dsp9Mw09Flg28JRklKgFiCXqr3bqv8bbG0kgpUYoHjcgPPolFFyaYOj/I2HExvYLZiogl77NUavBoNvMOK0zUQ==}
+    dependencies:
+      '@upstash/core-analytics': 0.0.6
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@upstash/redis/1.22.0:
+    resolution: {integrity: sha512-sXoJDoEqqik0HbrNE7yRWckOySEFsoBxfRdCgOqkc0w6py19ZZG50SpGkDDEUXSnBqP8VgGYXhWAiBpqxrt5oA==}
+    dependencies:
+      isomorphic-fetch: 3.0.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@vercel/analytics/1.0.1:
     resolution: {integrity: sha512-Ux0c9qUfkcPqng3vrR0GTrlQdqNJ2JREn/2ydrVuKwM3RtMfF2mWX31Ijqo1opSjNAq6rK76PwtANw6kl6TAow==}
     dev: false
@@ -5143,6 +5172,15 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
+
+  /isomorphic-fetch/3.0.0:
+    resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
+    dependencies:
+      node-fetch: 2.6.12
+      whatwg-fetch: 3.6.16
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /jiti/1.19.1:
     resolution: {integrity: sha512-oVhqoRDaBXf7sjkll95LHVS6Myyyb1zaunVwk4Z0+WPSW4gjS0pl01zYKHScTuyEhQsFxV5L4DR5r+YqSyqyyg==}
