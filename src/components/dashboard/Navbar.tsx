@@ -198,7 +198,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
 
           <CommandGroup heading="Suggestions">
             <CommandItem className="cursor-pointer" onSelect={() => {
-              runCommand(() => router.push("/dashboard/patients/new"))
+              runCommand(() => router.push("/dashboard/patients/checkup/new"))
             }}>
               <UserPlus className="mr-2 h-4 w-4" />
               <span>Tambah Pasien</span>
