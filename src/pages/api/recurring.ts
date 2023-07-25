@@ -30,7 +30,7 @@ function calculateSubscribedUntil(schedule: Schedule): string {
       break;
     case "YEAR":
       subscribedUntil.setFullYear(
-        subscribedUntil.getFullYear() + intervalCount
+        subscribedUntil.getFullYear() + intervalCount,
       );
       break;
     default:
@@ -44,7 +44,7 @@ function calculateSubscribedUntil(schedule: Schedule): string {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     //check if the request is from Xendit
@@ -94,7 +94,6 @@ export default async function handler(
 
 // Handler functions for each webhook event type
 async function handlePlanActivatedEvent(data: IRecurringPlan) {
-  console.log("Plan activated 2");
   await prisma.$transaction(async (tx) => {
     await tx.user.update({
       where: {
@@ -112,6 +111,7 @@ async function handlePlanActivatedEvent(data: IRecurringPlan) {
         status: "active",
         userId: data.reference_id,
         subscribedUntil: subscribedUntil,
+        plan: data.metadata.plan as "beginner" | "personal" | "professional",
       },
     });
   });
@@ -135,6 +135,7 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
       data: {
         status: "inactive",
         subscribedUntil: null,
+        plan: "noSubscription",
       },
     });
   });

@@ -158,6 +158,7 @@ model Subscription {
   id              String             @id @default(cuid())
   userId          String
   status          SubscriptionStatus @default(inactive)
+  plan            SubscriptionPlan   @default(noSubscription)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   subscribedUntil DateTime?
@@ -169,6 +170,13 @@ model Subscription {
 enum SubscriptionStatus {
   active
   inactive
+}
+
+enum SubscriptionPlan {
+  noSubscription
+  beginner
+  personal
+  professional
 }
 
 enum Gender {

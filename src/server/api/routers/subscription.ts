@@ -115,7 +115,9 @@ export const subscriptionRouter = createTRPCRouter({
               recurring_failed: ["WHATSAPP"],
             },
             failed_cycle_action: "STOP",
-            metadata: null,
+            metadata: {
+              plan: input.plan,
+            },
             // success_return_url: "http://localhost:3000/dashboard/home",
             // failure_return_url: "http://localhost:3000/subscription",
           },
