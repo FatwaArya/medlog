@@ -64,7 +64,6 @@ export const patientRouter = createTRPCRouter({
    *
    */
   createNewPatient: protectedSubscribedProcedure
-
     .input(
       z.object({
         name: z.string(),
@@ -111,6 +110,7 @@ export const patientRouter = createTRPCRouter({
               message: "Limit pasien sudah tercapai",
             });
           }
+          console.log("hit");
           break;
         case "personal":
           const { success: successPersonal } = await ratelimit.PPatient.limit(
@@ -122,6 +122,8 @@ export const patientRouter = createTRPCRouter({
               message: "Limit pasien sudah tercapai",
             });
           }
+          console.log("hit");
+
           break;
         case "professional":
           break;
