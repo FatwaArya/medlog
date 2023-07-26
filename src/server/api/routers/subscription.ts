@@ -118,8 +118,16 @@ export const subscriptionRouter = createTRPCRouter({
             metadata: {
               plan: input.plan,
             },
-            // success_return_url: "http://localhost:3000/dashboard/home",
-            // failure_return_url: "http://localhost:3000/subscription",
+            // if success, redirect to /dashboard/home page based on deployment env
+            success_redirect_url:
+              process.env.NODE_ENV === "production"
+                ? `https://${process.env.VERCEL_URL}/dashboard/home`
+                : "http://localhost:3000/dashboard/home",
+            // if failed, redirect to /dashboard/failed page based on deployment env
+            failure_redirect_url:
+              process.env.NODE_ENV === "production"
+                ? `https://${process.env.VERCEL_URL}/dashboard/home`
+                : "http://localhost:3000/dashboard/failed",
           },
         );
         redirectUrl = subscription.data.actions[0]?.url;

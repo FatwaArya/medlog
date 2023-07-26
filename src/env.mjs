@@ -29,6 +29,7 @@ const server = z.object({
   XENDIT_CALLBACK_TOKEN: z.string(),
   UPSTASH_REDIS_REST_URL: z.string().url(),
   UPSTASH_REDIS_REST_TOKEN: z.string(),
+  CANNY_PRIVATE_TOKEN: z.string(),
 });
 
 /**
@@ -36,6 +37,7 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
+  NEXT_PUBLIC_BOARDTOKEN: z.string(),
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
 });
 
@@ -60,6 +62,8 @@ const processEnv = {
   XENDIT_CALLBACK_TOKEN: process.env.XENDIT_CALLBACK_TOKEN,
   UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+  NEXT_PUBLIC_BOARDTOKEN: process.env.NEXT_PUBLIC_BOARDTOKEN,
+  CANNY_PRIVATE_TOKEN: process.env.CANNY_PRIVATE_TOKEN,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

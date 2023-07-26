@@ -5,7 +5,7 @@ import { type PropsWithChildren, useEffect, useState } from "react";
 
 import Sidebar from "@/components/dashboard/Sidebar";
 
-import { Home, Users, Download, Shield } from "lucide-react";
+import { Home, Users, Download, Shield, MessageSquarePlus } from "lucide-react";
 
 import Navbar from "./Navbar";
 import ContentArea from "./ContentArea";
@@ -33,6 +33,13 @@ const AdminLayout = (props: PropsWithChildren) => {
       name: "Laporan",
       href: "/dashboard/report",
       icon: Download,
+      current: false,
+      hide: false,
+    },
+    {
+      name: "Kritik & Saran",
+      href: "/dashboard/feedback",
+      icon: MessageSquarePlus,
       current: false,
       hide: false,
     },

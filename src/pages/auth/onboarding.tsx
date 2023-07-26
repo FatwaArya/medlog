@@ -117,6 +117,8 @@ export default function Onboarding() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end">
+
+
                 <Button
                   className={cn(
                     "bg-blue-500 text-white hover:bg-blue-600  ",

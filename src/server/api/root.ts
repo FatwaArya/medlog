@@ -5,6 +5,7 @@ import { medicineRouter } from "./routers/medicine";
 import { adminRouter } from "./routers/admin";
 import { userRouter } from "./routers/user";
 import { subscriptionRouter } from "./routers/subscription";
+import { cannyRouter } from "./routers/canny";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   admin: adminRouter,
   user: userRouter,
   subscription: subscriptionRouter,
+  canny: cannyRouter,
 });
 
 // export type definition of API
