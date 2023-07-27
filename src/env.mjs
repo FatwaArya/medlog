@@ -38,6 +38,7 @@ const server = z.object({
  */
 const client = z.object({
   NEXT_PUBLIC_BOARDTOKEN: z.string(),
+  NEXT_PUBLIC_APPID: z.string(),
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
 });
 
@@ -64,6 +65,7 @@ const processEnv = {
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   NEXT_PUBLIC_BOARDTOKEN: process.env.NEXT_PUBLIC_BOARDTOKEN,
   CANNY_PRIVATE_TOKEN: process.env.CANNY_PRIVATE_TOKEN,
+  NEXT_PUBLIC_APPID: process.env.NEXT_PUBLIC_APPID,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

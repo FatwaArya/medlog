@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
@@ -13,6 +14,8 @@ import {
   Smile,
   UserPlus,
   Users,
+  Megaphone,
+  BellIcon,
 
 } from "lucide-react"
 
@@ -46,6 +49,8 @@ import { RouterOutputs, api } from "@/utils/api";
 import { run } from "node:test";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useCommandState } from "cmdk";
+import Script from "next/script";
+import { env } from "@/env.mjs";
 
 
 
@@ -62,80 +67,161 @@ export default function Navbar({
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
   const { data: session, status } = useSession();
+  const { data: ssoToken } = api.canny.cannyUserToken.useQuery();
+  useEffect(() => {
+
+    (function (w, d, i, s) {
+      // @ts-ignore
+      function l() {
+        // @ts-ignore
+        if (!d.getElementById(i)) {
+          // @ts-ignore
+          const f = d.getElementsByTagName(s)[0],
+            e = d.createElement(s);
+          // @ts-ignore
+          e.type = "text/javascript";
+          // @ts-ignore
+          e.async = !0;
+          // @ts-ignore
+          e.src = "https://canny.io/sdk.js";
+          // @ts-ignore
+          f.parentNode.insertBefore(e, f);
+        }
+      }
+      // @ts-ignore
+      if ("function" != typeof w.Canny) {
+        // @ts-ignore
+        const c = function () {
+          // @ts-ignore
+          // eslint-disable-next-line prefer-rest-params
+          c.q.push(arguments);
+        };
+        // @ts-ignore
+        c.q = [];
+        // @ts-ignore
+        w.Canny = c;
+        // @ts-ignore
+        "complete" === d.readyState
+          ? l()
+          // @ts-ignore
+          : w.attachEvent
+            // @ts-ignore
+            ? w.attachEvent("onload", l)
+            : w.addEventListener("load", l, !1);
+      }
+    })(window, document, "canny-jssdk", "script");
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    Canny('initChangelog', {
+      appID: env.NEXT_PUBLIC_APPID,
+      ssoToken,
+      position: 'bottom',
+      align: 'right',
+      theme: 'light', // options: light [default], dark, auto
+    });
+
+    return () => {
+      // @ts-ignore
+      Canny('closeChangelog');
+    }
+
+  }, [ssoToken])
+
+
 
   if (status === "loading") {
     return <Loader />;
   }
 
+
   return (
-    <header className="flex flex-1 flex-col md:pl-64">
-      <div className="sticky top-0 flex h-16 flex-shrink-0 bg-white shadow">
-        <button
-          type="button"
-          className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <span className="sr-only">Open sidebar</span>
-          <Menu className="h-6 w-6" aria-hidden="true" />
-        </button>
-        <div className="flex flex-1 justify-between px-4">
-          <div className="flex flex-1 ">
-            <div className="flex w-full md:ml-0 items-center" >
-              <CommandDialogPasienPlus />
+    <>
+      {/* <Script id="changelog" strategy="lazyOnload" onReady={() => {
+        Canny('initChangelog', {
+          appID: env.NEXT_PUBLIC_APPID,
+          position: 'bottom',
+          align: 'right',
+          theme: 'light', // options: light [default], dark, auto
+        });
+      }}>
+        {`!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");`}
+      </Script> */}
+      <header className="flex flex-1 flex-col md:pl-64">
+        <div className="sticky top-0 flex h-16 flex-shrink-0 bg-white shadow">
+          <button
+            type="button"
+            className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <Menu className="h-6 w-6" aria-hidden="true" />
+          </button>
+          <div className="flex flex-1 justify-between px-4">
+            <div className="flex">
+              <div className="flex w-full md:ml-0 items-center" >
+                <CommandDialogPasienPlus />
+              </div>
+            </div>
+
+            <div className="ml-4 flex items-center md:ml-6">
+              <Button
+                data-canny-changelog
+                variant={"ghost"}
+              >
+                <span className="sr-only">View notifications</span>
+                <Megaphone className="h-6 w-6" aria-hidden="true" />
+              </Button>
+              {/* Profile dropdown */}
+              <DropdownMenu>
+                <div className="relative ml-3">
+                  <DropdownMenuTrigger
+                    className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    asChild
+                  >
+                    <div>
+                      <span className="sr-only">Open user menu</span>
+                      <Avatar>
+                        <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
+                        <AvatarFallback>{
+                          session?.user.name?.split(" ").map((name) => name[0]).join("")
+                        }</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      {userNavigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className={cn(
+                            "block  text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          )}
+                          onClick={() => {
+                            if (item.name === "Logout") {
+                              signOut({ callbackUrl: "/" })
+                            }
+                          }}
+                        >
+                          <DropdownMenuItem key={item.name}>
+
+                            <item.icon className="mr-2 h-4 w-4" />
+                            <span>{item.name}</span>
+
+                          </DropdownMenuItem>  </Link>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </div>
+              </DropdownMenu>
             </div>
           </div>
-          <div className="ml-4 flex items-center md:ml-6">
-
-            {/* Profile dropdown */}
-
-            <DropdownMenu>
-              <div className="relative ml-3">
-                <DropdownMenuTrigger
-                  className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  asChild
-                >
-                  <div>
-                    <span className="sr-only">Open user menu</span>
-                    <Avatar>
-                      <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
-                      <AvatarFallback>{
-                        session?.user.name?.split(" ").map((name) => name[0]).join("")
-                      }</AvatarFallback>
-                    </Avatar>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    {userNavigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={cn(
-                          "block  text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        )}
-                        onClick={() => {
-                          if (item.name === "Logout") {
-                            signOut({ callbackUrl: "/" })
-                          }
-                        }}
-                      >
-                        <DropdownMenuItem key={item.name}>
-
-                          <item.icon className="mr-2 h-4 w-4" />
-                          <span>{item.name}</span>
-
-                        </DropdownMenuItem>  </Link>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </div>
-            </DropdownMenu>
-          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 
@@ -171,7 +257,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow"
+          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow-0 "
         )}
         onClick={() => setOpen(true)}
         {...props}

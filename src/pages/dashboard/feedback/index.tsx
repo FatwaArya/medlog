@@ -11,7 +11,6 @@ import { type GetServerSidePropsContext } from "next/types";
 import React, { type ReactElement, useEffect } from "react";
 
 const Feedback: PasienPlusPage = () => {
-    const [loading, setLoading] = React.useState(true);
     const { data: ssoToken } = api.canny.cannyUserToken.useQuery();
 
     useEffect(() => {
@@ -65,14 +64,8 @@ const Feedback: PasienPlusPage = () => {
             basePath: "/dashboard/feedback",
             ssoToken: ssoToken, // See step 3,
             theme: "light", // options: light [default], dark, auto
-            // onLoadCallback: () => {
-            //     setLoading(false);
-            // }
         });
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
     }, [ssoToken]);
 
     return (
@@ -82,17 +75,12 @@ const Feedback: PasienPlusPage = () => {
             </Head>
             <Breadcrumbs />
             <div>
-                {loading ? (
-                    <Loader />
-                ) : (
-                    <>
-                        <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
-                            <div className="px-4 py-5 sm:p-6">
-                                <div data-canny />
-                            </div>
-                        </div>
-                    </>
-                )}
+                <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
+                    <div className="px-4 py-5 sm:p-6">
+                        <div data-canny />
+                    </div>
+                </div>
+
             </div>
         </>
     );

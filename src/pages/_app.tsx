@@ -19,6 +19,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import AdminLayout from "@/components/dashboard/Layout";
 import Head from "next/head";
+import { env } from "@/env.mjs";
 
 NProgress.configure({ showSpinner: false });
 
@@ -74,6 +75,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       }
     `}</style>
 
+
     <SessionProvider session={session}>
       <Toaster />
       {
@@ -87,7 +89,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
           )
       }
     </SessionProvider>
-
     <Analytics />
   </>
   );

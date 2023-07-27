@@ -24,7 +24,7 @@ export const medicineRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const medicine = await ctx.prisma.medicine.create({
@@ -40,7 +40,7 @@ export const medicineRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const medicine = await ctx.prisma.medicine.update({
@@ -57,7 +57,7 @@ export const medicineRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const medicine = await ctx.prisma.medicine.delete({
@@ -71,16 +71,15 @@ export const medicineRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.array(z.string()),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const medicine = await ctx.prisma.medicine.findMany({
+      const medicine = await ctx.boostedPrisma.medicine.findMany({
         where: {
           id: {
             in: input.id,
           },
         },
-
         include: {
           MedicineDetail: {
             select: {
