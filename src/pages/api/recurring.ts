@@ -141,10 +141,20 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
   });
 }
 
-function handleCycleSucceededEvent(data: IRecurringCycle) {
+async function handleCycleSucceededEvent(data: IRecurringCycle) {
   // Handle recurring.cycle.succeeded event
   console.log("Cycle succeeded 3");
-  // Perform necessary actions based on the event data
+  await prisma.$transaction(async (tx) => {
+    await tx.subscription.update({
+      where: {
+        id: data.plan_id,
+      },
+      data: {
+        status: "active",
+        subscribedUntil: data.scheduled_timestamp,
+      },
+    });
+  });
 }
 
 async function handleCycleCreatedEvent(data: IRecurringCycle) {

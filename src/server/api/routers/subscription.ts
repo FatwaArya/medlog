@@ -10,6 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { instance } from "@/server/axios";
 import { type RecurringPaymentResponse } from "../interface/subscriptionEvent";
 import { type AxiosResponse } from "axios";
+import { getBaseUrl } from "@/utils/api";
 
 type RecurringResponse = AxiosResponse<RecurringPaymentResponse>;
 
@@ -88,58 +89,56 @@ export const subscriptionRouter = createTRPCRouter({
             });
         }
         // create subscription
-        const subscription: RecurringResponse = await instance.post(
-          "/recurring/plans",
-          {
-            reference_id: user.id,
-            customer_id: user.customer_id,
-            recurring_action: "PAYMENT",
-            currency: "IDR",
-            amount: 13579,
-            schedule: {
+        try {
+          const subscription: RecurringResponse = await instance.post(
+            "/recurring/plans",
+            {
               reference_id: user.id,
-              interval,
-              interval_count: intervalCount,
-              total_recurrence: totalRecurrence,
-              anchor_date: anchorDate,
-              retry_interval: retryInterval,
-              retry_interval_count: retryIntervalCount,
-              total_retry: totalRetry,
-              failed_attempt_notifications: failedAttemptNotifications,
+              customer_id: user.customer_id,
+              recurring_action: "PAYMENT",
+              currency: "IDR",
+              amount: 13579,
+              schedule: {
+                reference_id: user.id,
+                interval,
+                interval_count: intervalCount,
+                total_recurrence: totalRecurrence,
+                anchor_date: anchorDate,
+                retry_interval: retryInterval,
+                retry_interval_count: retryIntervalCount,
+                total_retry: totalRetry,
+                failed_attempt_notifications: failedAttemptNotifications,
+              },
+              immediate_action_type: "FULL_AMOUNT",
+              notification_config: {
+                locale: "id",
+                recurring_created: ["WHATSAPP"],
+                recurring_succeeded: ["WHATSAPP"],
+                recurring_failed: ["WHATSAPP"],
+              },
+              failed_cycle_action: "STOP",
+              metadata: {
+                plan: input.plan,
+              },
+              //check if vercel url is available if yess put success url and failure url
+              ...(process.env.VERCEL_URL && {
+                success_redirect_url: `${getBaseUrl()}/dashboard/home`,
+                // failure_redirect_url: `${getBaseUrl()}/failure`,
+              }),
             },
-            immediate_action_type: "FULL_AMOUNT",
-            notification_config: {
-              locale: "id",
-              recurring_created: ["WHATSAPP"],
-              recurring_succeeded: ["WHATSAPP"],
-              recurring_failed: ["WHATSAPP"],
-            },
-            failed_cycle_action: "STOP",
-            metadata: {
-              plan: input.plan,
-            },
-            // if success, redirect to /dashboard/home page based on deployment env
-            success_redirect_url:
-              process.env.NODE_ENV === "production"
-                ? `https://${process.env.VERCEL_URL}/dashboard/home`
-                : "http://localhost:3000/dashboard/home",
-            // if failed, redirect to /dashboard/failed page based on deployment env
-            failure_redirect_url:
-              process.env.NODE_ENV === "production"
-                ? `https://${process.env.VERCEL_URL}/dashboard/home`
-                : "http://localhost:3000/dashboard/failed",
-          },
-        );
-        redirectUrl = subscription.data.actions[0]?.url;
+          );
+          redirectUrl = subscription.data.actions[0]?.url;
+
+          if (!redirectUrl) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Failed to create subscription",
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
       });
-
-      if (!redirectUrl) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Failed to create subscription",
-        });
-      }
-
       return redirectUrl;
     }),
 });
