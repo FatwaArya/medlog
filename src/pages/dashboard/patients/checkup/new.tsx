@@ -183,7 +183,7 @@ const NewCheckup = () => {
       <Head>
         <title>Pasien Plus | Register New Patient</title>
       </Head>
-      <Breadcrumbs />
+      {/* <Breadcrumbs /> */}
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="space-y-6">

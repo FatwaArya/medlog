@@ -73,7 +73,7 @@ const Feedback: PasienPlusPage = () => {
             <Head>
                 <title>Pasien Plus | Kritik & Saran</title>
             </Head>
-            <Breadcrumbs />
+            {/* <Breadcrumbs /> */}
             <div>
                 <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6">

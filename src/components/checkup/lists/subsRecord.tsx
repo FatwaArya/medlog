@@ -1,6 +1,6 @@
 import React from 'react'
 import { type RouterOutputs, api } from '@/utils/api';
-import { type ListProps } from '@/components/home/lists/admin';
+import { type ListProps } from '@/components/home/lists/user';
 
 import { DataTable } from '@/components/ui/datatable/data-table';
 import { DataTableColumnHeader } from '@/components/ui/datatable/data-table-column-header';

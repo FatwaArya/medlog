@@ -16,7 +16,7 @@ const Report: PasienPlusPage = () => {
                     Pasien Plus | Laporan
                 </title>
             </Head>
-            <Breadcrumbs />
+            {/* <Breadcrumbs /> */}
             <ReportList />
 
         </>

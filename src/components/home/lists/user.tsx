@@ -47,7 +47,7 @@ export interface ListProps {
   userId?: string;
 }
 
-export default function AdminList() {
+export default function UserList() {
   const utils = api.useContext();
   const { data: adminData, isLoading } = api.admin.getUserByRole.useQuery();
   const activateUser = api.admin.activateUser.useMutation({

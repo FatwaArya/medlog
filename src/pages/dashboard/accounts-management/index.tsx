@@ -5,7 +5,7 @@ import { type GetServerSidePropsContext } from "next";
 import { type ReactElement } from "react";
 import Head from "next/head";
 import Breadcrumbs from "@/components/ui/breadcrumb";
-import AdminList from "@/components/home/lists/admin";
+import UserList from "@/components/home/lists/user";
 
 
 const accountsManagement: PasienPlusPage = () => {
@@ -14,8 +14,8 @@ const accountsManagement: PasienPlusPage = () => {
             <Head>
                 <title>Pasien Plus | Data Admin</title>
             </Head>
-            <Breadcrumbs />
-            <AdminList />
+            {/* <Breadcrumbs /> */}
+            <UserList />
         </>
     )
 };

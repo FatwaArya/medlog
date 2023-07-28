@@ -38,7 +38,7 @@ const PatientRecord: PasienPlusPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>Pasien Plus | {patient?.name ?? "Patient not found"}</title>
       </Head>
-      <Breadcrumbs patientName={patient?.name} isPatientLast />
+      {/* <Breadcrumbs patientName={patient?.name} isPatientLast /> */}
       <PatientDescription {...patient} />
       <CheckupList patientId={id} />
     </>

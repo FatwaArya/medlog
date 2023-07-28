@@ -13,7 +13,7 @@ const Patients: PasienPlusPage = () => (
         <Head>
             <title>Pasien Plus | Data Pasien</title>
         </Head>
-        <Breadcrumbs />
+        {/* <Breadcrumbs /> */}
         <PatientList />
     </>
 )
