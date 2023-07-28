@@ -122,7 +122,7 @@ export const subscriptionRouter = createTRPCRouter({
               },
               //check if vercel url is available if yess put success url and failure url
               ...(process.env.VERCEL_URL && {
-                success_redirect_url: `${getBaseUrl()}/dashboard/home`,
+                success_return_url: `${getBaseUrl()}/dashboard/home`,
                 // failure_redirect_url: `${getBaseUrl()}/failure`,
               }),
             },
