@@ -24,13 +24,6 @@ const config = {
   experimental: {
     appDir: false,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  swcMinify: true,
 };
 
 export default withAxiom(config);
