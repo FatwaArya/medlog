@@ -136,7 +136,10 @@ export const subscriptionRouter = createTRPCRouter({
             });
           }
         } catch (error) {
-          console.log(error);
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Failed to create subscription",
+          });
         }
       });
       return redirectUrl;
