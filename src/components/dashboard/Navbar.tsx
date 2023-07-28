@@ -137,16 +137,6 @@ export default function Navbar({
 
   return (
     <>
-      {/* <Script id="changelog" strategy="lazyOnload" onReady={() => {
-        Canny('initChangelog', {
-          appID: env.NEXT_PUBLIC_APPID,
-          position: 'bottom',
-          align: 'right',
-          theme: 'light', // options: light [default], dark, auto
-        });
-      }}>
-        {`!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");`}
-      </Script> */}
       <header className="flex flex-1 flex-col md:pl-64">
         <div className="sticky top-0 flex h-16 flex-shrink-0 bg-white shadow">
           <button
@@ -158,13 +148,15 @@ export default function Navbar({
             <Menu className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex flex-1 justify-between px-4">
-            <div className="flex">
-              <div className="flex w-full md:ml-0 items-center" >
-                <CommandDialogPasienPlus />
+            <div className="flex flex-1">
+              <div className="relative w-full">
+                <div className="flex justify-center">
+                  <CommandDialogPasienPlus />
+                </div>
               </div>
             </div>
 
-            <div className="ml-4 flex items-center md:ml-6">
+            <div className=" flex items-center md:ml-6">
               <Button
                 data-canny-changelog
                 variant={"ghost"}
@@ -257,13 +249,14 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-12 w-screen justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-4 0 lg:w-64 flex-grow-0 "
+          // "relative  justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-4 md:w-4 0 lg:w-64 h-12 w-full"
+          "h-12 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground mt-2 relative"
         )}
         onClick={() => setOpen(true)}
         {...props}
       >
         <span className="hidden lg:inline-flex">
-          Tambah Pasien atau lihat data pasien disini
+          Cari pasien atau tambah pasien...
         </span>
         <span className="inline-flex lg:hidden">Search...</span>
         <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-8 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">

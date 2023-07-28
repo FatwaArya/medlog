@@ -138,7 +138,7 @@ export function Pricing() {
             name="Pemula"
             price="Rp 35.000/bln"
             description="Cocok untuk pemula yang ingin mencoba layanan aplikasi kami."
-            href="/register"
+            href="//auth/signin"
             features={[
               "Tambah 5 pasien baru per hari",
               "Tambah 25 checkup baru per hari (tanpa gambar)",
@@ -150,7 +150,7 @@ export function Pricing() {
             name="Personal"
             price="Rp 65.000/bln"
             description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
-            href="/register"
+            href="/auth/signin"
             features={[
               "Tambah 35 pasien baru per hari",
               "Tambah 100 checkup baru per hari",
@@ -161,7 +161,7 @@ export function Pricing() {
             name="Professional"
             price="Rp 150.000/bln"
             description="Untuk skala perawat online yang lebih besar."
-            href="/register"
+            href="/auth/signin"
             features={[
               // tambah tak terbatas pasien
               "Tambah tak terbatas pasien baru per hari",
