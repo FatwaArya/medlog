@@ -151,7 +151,7 @@ async function handleCycleSucceededEvent(data: IRecurringCycle) {
       },
       data: {
         status: "active",
-        subscribedUntil: data.schceduled_timestamp,
+        subscribedUntil: data.scheduled_timestamp,
       },
     });
   });
