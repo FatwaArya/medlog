@@ -45,7 +45,11 @@ export function Footer() {
           <p className="mt-6 text-sm text-slate-500 sm:mt-0">
             Copyright &copy; {new Date().getFullYear()} PasienPlus. All rights
             reserved.
+
+            <br />
+            Jl. Ciliwung no. 125a, Blitar, Jawa Timur, Indonesia
           </p>
+
         </div>
       </Container>
     </footer>
