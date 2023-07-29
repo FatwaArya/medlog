@@ -4,7 +4,7 @@ import { Container } from "@/components/landing/Container";
 import { Logo } from "@/components/landing/Logo";
 import { NewLogo } from "@/components/landing/NewLogo";
 import { NavLink } from "@/components/landing/NavLink";
-import { Instagram } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -41,6 +41,16 @@ export function Footer() {
             >
               <Instagram className="h-6 w-6 text-slate-500 group-hover:text-slate-700" />
             </Link>
+            {/* whatsapp */}
+            <Link
+              href="https://wa.me/6282141017065"
+              className="group"
+              aria-label="PasienPlus on Whatsapp"
+            >
+              <Mail className="h-6 w-6 text-slate-500 group-hover:text-slate-700" />
+            </Link>
+
+
           </div>
           <p className="mt-6 text-sm text-slate-500 sm:mt-0">
             Copyright &copy; {new Date().getFullYear()} PasienPlus. All rights
