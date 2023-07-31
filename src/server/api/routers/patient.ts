@@ -458,6 +458,7 @@ export const patientRouter = createTRPCRouter({
             },
           },
           ...(input?.isLastVisit && { createdAt: true }),
+          updatedAt: true,
         },
         orderBy: {
           createdAt: "desc",

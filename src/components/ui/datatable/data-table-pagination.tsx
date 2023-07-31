@@ -27,7 +27,7 @@ export function DataTablePagination<TData>({
     const pageSizeArr = [10, 20, 30, 40, 50];
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-end px-2">
+        <div className="flex flex-col sm:flex-row items-center justify-end px-2 pb-10">
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center mb-1">
                     <p className="text-sm font-medium pr-2">Rows per page</p>

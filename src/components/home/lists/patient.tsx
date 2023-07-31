@@ -74,7 +74,7 @@ export default function PatientList() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="kunjungan terakhir" />
       ),
-      cell: (info) => <span>{dayjs(info.getValue()).fromNow()}</span>,
+      cell: (info) => <span>{dayjs(info.getValue()).fromNow()}</span>
     }),
     columnHelper.accessor("patient.id", {
       header: "Aksi",
@@ -143,7 +143,7 @@ export default function PatientList() {
                     columnViews={columnViews}
                     filter="patient_name"
                     filterTitle="nama"
-                  // isPaginated={false}
+                    isPaginated={true}
                   />
                 ) : (
                   <Skeleton className="h-12 w-full whitespace-nowrap" />
