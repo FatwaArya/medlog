@@ -27,6 +27,7 @@ import { SearchIcon, UserPlus } from "lucide-react"
 import { useState, useEffect } from "react"
 
 import { Input } from "@/components/ui/input"
+import { DebouncedInput } from "@/components/home/lists/patient"
 import { Button } from "@/components/ui/button"
 
 import { DataTablePagination } from "@/components/ui/datatable/data-table-pagination"
@@ -94,109 +95,67 @@ export function DataTable<TData, TValue>(
       columnFilters,
       columnVisibility,
       rowSelection,
-      globalFilter,
-    }
+      globalFilter
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: fuzzyFilter
   });
 
   return (
-    <div className="space-y-4">
-      <DataTableToolbar table={table} isFacetedFilter={isFacetedFilter} columnViews={columnViews} filter={filter} filterTitle={filterTitle} href={href} />
-      <div className="rounded-md border mx-1">
-        <Table>
+    <>
+      <div className="flex items-center py-4 justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative mt-1 rounded-md shadow-sm">
+            <DebouncedInput
+              value={globalFilter ?? ""}
+              onChange={(value) => setGlobalFilter(String(value))}
+              className="font-lg border-block border p-2"
+              placeholder="Search"
+            />
+          </div>
+          <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
+            <UserPlus className="h-5 w-5 text-gray-400" />
+          </Button>
+        </div>
+        <DataTableViewOptions table={table} />
+      </div>
+      <div className="rounded-md border bg-white overflow-x-auto">
+        <Table className="w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header, index) => (
+                  <TableHead key={index} className="py-2 sm:py-4">
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
-                return (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                )
-              })
+              table.getRowModel().rows.map((row, rowIndex) => (
+                <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
+                  {row.getVisibleCells().map((cell, cellIndex) => (
+                    <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No results to display.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      {isPaginated && (
+      <div className="pt-4 pb-2">
         <DataTablePagination table={table} />
-      )}
-    </div>
-  )
-}
-
-// A debounced input react component
-export function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 200,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return (
-    <>
-      <div className="relative rounded-md shadow-sm">
-        <Input
-          {...props}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-        </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { api, type RouterOutputs } from "@/utils/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import {
   MoreHorizontal,
   User,
@@ -12,8 +13,6 @@ import Link from "next/link";
 
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
-
-import { createColumnHelper } from "@tanstack/react-table";
 
 import {
   DropdownMenu,
@@ -68,8 +67,28 @@ export default function UserList() {
     return admin?.isSubscribed;
   };
 
-  const adminColumns = [
-    columnHelper.accessor("image", {
+  const adminColumn: ColumnDef<AdminColumn>[] = [
+    {
+      accessorKey: "id",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "image",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Profil" />
       ),
@@ -83,66 +102,63 @@ export default function UserList() {
       ),
       enableSorting: false,
       enableHiding: false,
-    }),
-    columnHelper.accessor("name", {
+    },
+    {
+      accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("email", {
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="email" />
-      ),
-      cell: (info) => <span>{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("phone", {
+      cell: (info) => <span className="capitalize">{info.getValue() as ReactNode}</span>,
+    },
+    {
+      accessorKey: "phone",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
       cell: (info) => (
         <span className="capitalize">
-          {!info.getValue() ? "tidak tersedia" : info.getValue()}
+          {!info.getValue() ? "tidak tersedia" : info.getValue() as ReactNode}
         </span>
       ),
-    }),
-    columnHelper.accessor("isSubscribed", {
+    },
+    {
+      accessorKey: "isSubscribed",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="langganan" />
       ),
       cell: (info) => (
         <span className="capitalize">
-          {info.getValue() ? "Langganan" : "Tidak Langganan"}
+          {info.getValue() ? "Langganan" : "Tidak Langganan" as ReactNode}
         </span>
       ),
-    }),
-    columnHelper.accessor("id", {
+    },
+    {
+      accessorKey: "id",
       header: "Aksi",
-      cell: (info) => {
-        return (
-          <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {isSubscribed(info.getValue()) ? (
-                  <DropdownMenuItem
-                    onClick={() => {
-                      void deactivateUser.mutate({ id: info.getValue() });
-                    }}
-                  >
-                    <UserX className="mr-2 h-4 w-4" />
-                    <span>Deactive</span>
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
+      cell: (info) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={
+                isSubscribed(info.getValue() as string)
+                  ? () => deactivateUser.mutate({ id: info.getValue() as string })
+                  : () => activateUser.mutate({ id: info.getValue() as string })
+              }
+            >
+              {isSubscribed(info.getValue() as string) ? (
+                <button className="flex">
+                  <UserX className="mr-2 h-4 w-4" />
+                  <span>Deactive</span>
+                </button>
+              ) : (
+                    <button className="flex">
                       <User className="mr-2 h-4 w-4" />
                       <span>Activate</span>
                     </DropdownMenuSubTrigger>
@@ -185,26 +201,24 @@ export default function UserList() {
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
                 )}
-                <DropdownMenuItem>
-                  <MoreHorizontal className="mr-2 h-4 w-4" />
-                  <Link
-                    href={`/dashboard/accounts-management/${info.getValue()}`}
-                  >
-                    Details
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <CircleSlashed className="mr-2 h-4 w-4" />
-                  Ban User
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        );
-      },
-    }),
-  ]
+            <DropdownMenuItem>
+              <MoreHorizontal className="mr-2 h-4 w-4" />
+              <Link
+                href={`/dashboard/accounts-management/${info.getValue()}`}
+              >
+                Details
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <CircleSlashed className="mr-2 h-4 w-4" />
+              Ban User
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    }
+  ];
 
   return (
     <>
@@ -223,9 +237,7 @@ export default function UserList() {
                 <div className="inline-block min-w-full divide-gray-300 align-middle">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                     {!isLoading && adminData ? (
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore
-                      <DataTable columns={adminColumns} data={adminData} columnViews={columnViews} />
+                      <DataTable columns={adminColumn} data={adminData} />
                     ) : (
                       <Skeleton className="h-12 w-full whitespace-nowrap" />
                     )}
