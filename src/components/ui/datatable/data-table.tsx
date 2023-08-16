@@ -27,6 +27,7 @@ import { SearchIcon, UserPlus } from "lucide-react"
 import { useState } from "react"
 
 import { Input } from "@/components/ui/input"
+import { DebouncedInput } from "@/components/home/lists/patient"
 import { Button } from "@/components/ui/button"
 
 import { DataTablePagination } from "@/components/ui/datatable/data-table-pagination"
@@ -67,6 +68,7 @@ export function DataTable<TData, TValue>(
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
+    const [globalFilter, setGlobalFilter] = useState("");
 
     const table = useReactTable({
         data: data || [],
@@ -86,8 +88,11 @@ export function DataTable<TData, TValue>(
             sorting,
             columnFilters,
             columnVisibility,
-            rowSelection
-        }
+            rowSelection,
+            globalFilter
+        },
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter
     });
 
     return (
@@ -95,15 +100,12 @@ export function DataTable<TData, TValue>(
             <div className="flex items-center py-4 justify-between">
                 <div className="flex items-center gap-4">
                     <div className="relative mt-1 rounded-md shadow-sm">
-                        <Input
-                            placeholder="Search..."
-                            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
-                            className="w-full sm:w-64"
+                        <DebouncedInput
+                            value={globalFilter ?? ""}
+                            onChange={(value) => setGlobalFilter(String(value))}
+                            className="font-lg border-block border p-2"
+                            placeholder="Search"
                         />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                            <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </div>
                     </div>
                     <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
                         <UserPlus className="h-5 w-5 text-gray-400" />

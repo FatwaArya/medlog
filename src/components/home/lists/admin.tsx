@@ -1,8 +1,9 @@
-import React from "react";
+import React, {type ReactNode} from "react";
 import { api, type RouterOutputs } from "@/utils/api";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import {
   MoreHorizontal,
   ArrowUpDown,
@@ -15,8 +16,6 @@ import Link from "next/link";
 
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
-
-import { createColumnHelper } from "@tanstack/react-table";
 
 import {
   DropdownMenu,
@@ -54,8 +53,9 @@ export default function AdminList() {
     return admin?.isSubscribed;
   };
 
-  const adminColumns = [
-    columnHelper.accessor("id", {
+  const adminColumn:ColumnDef<AdminColumn>[] = [
+    {
+      accessorKey: "id",
       header: ({ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
@@ -72,8 +72,9 @@ export default function AdminList() {
       ),
       enableSorting: false,
       enableHiding: false,
-    }),
-    columnHelper.accessor("image", {
+    },
+    {
+      accessorKey: "image",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Profil" />
       ),
@@ -87,50 +88,43 @@ export default function AdminList() {
       ),
       enableSorting: false,
       enableHiding: false,
-    }),
-
-    columnHelper.accessor("name", {
+    },
+    {
+      accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("email", {
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="email" />
-      ),
-      cell: (info) => <span>{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("phone", {
+      cell: (info) => <span className="capitalize">{info.getValue() as ReactNode}</span>,
+    },
+    {
+      accessorKey: "phone",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
       cell: (info) => (
         <span className="capitalize">
-          {!info.getValue() ? "tidak tersedia" : info.getValue()}
+          {!info.getValue() ? "tidak tersedia" : info.getValue() as ReactNode}
         </span>
       ),
-    }),
-    columnHelper.accessor("isSubscribed", {
+    },
+    {
+      accessorKey: "isSubscribed",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="status" />
       ),
       cell: (info) => (
         <span className="capitalize">
-          {info.getValue() ? "Langganan" : "Tidak Langganan"}
+          {info.getValue() ? "Langganan" : "Tidak Langganan" as ReactNode}
         </span>
       ),
-    }),
-
-    columnHelper.accessor("id", {
+    },
+    {
+      accessorKey: "id",
       header: "Aksi",
-      cell: (info) => {
-        return (
-          <>
-            <DropdownMenu>
+      cell: (info) => (
+        <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -139,12 +133,12 @@ export default function AdminList() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={
-                    isSubscribed(info.getValue())
-                      ? () => deactivateUser.mutate({ id: info.getValue() })
-                      : () => activateUser.mutate({ id: info.getValue() })
+                    isSubscribed(info.getValue() as string)
+                      ? () => deactivateUser.mutate({ id: info.getValue() as string })
+                      : () => activateUser.mutate({ id: info.getValue() as string })
                   }
                 >
-                  {isSubscribed(info.getValue()) ? (
+                  {isSubscribed(info.getValue() as string) ? (
                     <button className="flex">
                       <UserX className="mr-2 h-4 w-4" />
                       <span>Deactive</span>
@@ -171,10 +165,8 @@ export default function AdminList() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </>
-        );
-      },
-    }),
+      ),
+    }
   ];
 
   return (
@@ -194,7 +186,7 @@ export default function AdminList() {
                 <div className="inline-block min-w-full divide-gray-300 align-middle">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
                     {!isLoading && adminData ? (
-                      <DataTable columns={adminColumns} data={adminData} />
+                      <DataTable columns={adminColumn} data={adminData} />
                     ) : (
                       <Skeleton className="h-12 w-full whitespace-nowrap" />
                     )}

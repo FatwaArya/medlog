@@ -1,11 +1,12 @@
 import { Input } from "@/components/ui/input";
+import type { ReactNode } from "react";
 import { Activity, Search } from "lucide-react";
 import { api, type RouterOutputs } from "@/utils/api";
-import dayjs from "dayjs";
+import dayjs, {type Dayjs} from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
-import { createColumnHelper } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -86,8 +87,9 @@ export default function PatientList({ isDetailed = true }: ListProps) {
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const patientColumns = [
-    columnHelper.accessor("patient.id", {
+  const patientColumn:ColumnDef<PatientColumn>[] = [
+    {
+      accessorKey: "patient.id",
       header: ({ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
@@ -104,127 +106,102 @@ export default function PatientList({ isDetailed = true }: ListProps) {
       ),
       enableSorting: false,
       enableHiding: false,
-    }),
-    columnHelper.accessor("patient.name", {
+    },
+    {
+      accessorKey: "patient.name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="nama pasien" />
       ),
-      cell: (info) => <span>{info.getValue()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.gender", {
+      cell: (info) => <span>{info.getValue() as ReactNode}</span>
+    },
+    {
+      accessorKey: "patient.gender",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="jenis kelamin" />
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("patient.birthDate", {
+      cell: (info) => <span className="capitalize">{info.getValue() as ReactNode}</span>
+    },
+    {
+      accessorKey: "patient.birthDate",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="tanggal lahir" />
       ),
-      cell: (info) => (
-        <span className="capitalize">
-          {dayjs(info.getValue()).format("DD MMM YYYY")}
-        </span>
-      ),
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.phone", {
+      cell: (info) => <span className="capitalize">{dayjs(info.getValue() as Dayjs).format("DD MMM YYYY")}</span>
+    },
+    {
+      accessorKey: "patient.phone",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="no telepon" />
       ),
       cell: (info) => (
         <span className="capitalize">
-          {!info.getValue() ? "tidak tersedia" : info.getValue()}
+          {!info.getValue() ? "tidak tersedia" : info.getValue() as ReactNode}
         </span>
       ),
-    }),
-    columnHelper.accessor("createdAt", {
+    },
+    {
+      accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="kunjungan terakhir" />
       ),
-      cell: (info) => <span>{dayjs(info.getValue()).fromNow()}</span>,
-      // filterFn: fuzzyFilter,
-      // sortingFn: fuzzySort,
-    }),
-    columnHelper.accessor("patient.id", {
+      cell: (info) => <span>{dayjs(info.getValue() as Dayjs).fromNow()}</span>,
+    },
+    {
+      accessorKey: "patient.id",
       header: "Aksi",
-      cell: (info) => {
-        console.log(info.getValue());
-        return (
-          <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Buka menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Activity className="mr-2 h-4 w-4" />
-                  <Link
-                    href={`/dashboard/patients/checkup/${info.getValue()}/new`}
-                  >
-                    Periksa
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MoreHorizontal className="mr-2 h-4 w-4" />
-                  <Link href={`/dashboard/patients/record/${info.getValue()}`}>
-                    Detail
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        );
-      },
-    }),
-  ];
+      cell: (info) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Activity className="mr-2 h-4 w-4" />
+              <Link
+                href={`/dashboard/patients/checkup/${info.getValue()}/new`}
+              >
+                Periksa
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <MoreHorizontal className="mr-2 h-4 w-4" />
+              <Link href={`/dashboard/patients/record/${info.getValue()}`}>
+                Detail
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    }
+  ]
 
   return (
-    <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
-      <div className="px-4 py-5 sm:p-6">
-        <div className="">
-          <div className="sm:flex sm:items-center">
-            <div className="sm:flex-auto">
-              <h1 className="scroll-m-20  text-2xl font-semibold leading-6 tracking-tight text-[#3366FF]">
-                Daftar Pasien
-              </h1>
-            </div>
-            {/* <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row justify-center items-center gap-2">
-                            <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href="/dashboard/patients/checkup/new">
-                                <UserPlus className="h-5 w-5 text-gray-400" />
-                            </Button>
-                            <DebouncedInput
-                                value={globalFilter ?? ""}
-                                onChange={(value) => setGlobalFilter(String(value))}
-                                className="font-lg border-block border p-2"
-                                placeholder="Search"
-                            />
-                        </div> */}
-          </div>
-          <div className="mt-8 flex flex-col px-4 sm:px-6 lg:px-8">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="inline-block min-w-full divide-gray-300 align-middle">
-                {!isLoading && patientData ? (
-                  <DataTable
-                    columns={patientColumns}
-                    data={patientData}
-                    href="/dashboard/patients/checkup/new"
-                  />
-                ) : (
-                  <Skeleton className="h-12 w-full whitespace-nowrap" />
-                )}
-              </div>
-            </div>
+    <div className="py-10 sm:container md:mx-auto">
+      <div className="flex flex-col gap-4 rounded-sm bg-white p-4 shadow outline outline-1 outline-slate-200">
+        <div className="mb-4 w-full items-center justify-between md:flex">
+          <div className="mb-3 flex flex-col gap-1 md:mb-0">
+            <h2 className="text-xl font-semibold text-blue-500">
+              Daftar Pasien
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-slate-500">
+              Menampilkan semua daftar pasien.
+            </p>
           </div>
         </div>
+
+        {!isLoading && patientData ? (
+            <DataTable columns={patientColumn} data={patientData} />
+        ) : (
+          <div className="flex w-full flex-col gap-4">
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
+          </div>
+        )}
       </div>
     </div>
   );

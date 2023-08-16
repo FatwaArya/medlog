@@ -31,7 +31,8 @@ export function DataTablePagination<TData>({
                 {table.getFilteredSelectedRowModel().rows.length} of {" "}
                 {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex sm:flex-row flex-col items-center space-x-6 lg:space-x-8">
+                <div className="flex flex-row items-center sm:mb-0 mb-4">
                 <div className="flex items-center">
                     <p className="text-sm font-medium pr-2">Rows per page</p>
                     <Select
@@ -55,6 +56,7 @@ export function DataTablePagination<TData>({
                 <div className="flex w-[100px] items-center justify-center text-sm font-medium">
                     Page {table.getState().pagination.pageIndex + 1} of {" "}
                     {table.getPageCount()}
+                </div>
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
