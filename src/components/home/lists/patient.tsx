@@ -10,7 +10,6 @@ import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   DropdownMenu,
@@ -23,11 +22,55 @@ import {
 
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-column-header";
+import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
 type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
 
-import { MoreHorizontal } from "lucide-react";
+import {
+  type RankingInfo,
+  rankItem,
+  compareItems,
+} from "@tanstack/match-sorter-utils";
+import { Spinner } from "@/components/ui/loading-overlay";
+import { UserPlus, MoreHorizontal } from "lucide-react";
+
+// declare module "@tanstack/table-core" {
+//     interface FilterFns {
+//         fuzzy: FilterFn<unknown>;
+//     }
+//     interface FilterMeta {
+//         itemRank: RankingInfo;
+//     }
+// }
+
+// export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+//     // Rank the item
+//     const itemRank = rankItem(row.getValue(columnId), value);
+
+//     // Store the itemRank info
+//     addMeta({
+//         itemRank,
+//     });
+
+//     // Return if the item should be filtered in/out
+//     return itemRank.passed;
+// };
+
+// export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
+//     let dir = 0;
+
+//     // Only sort by rank if the column has ranking information
+//     if (rowA.columnFiltersMeta[columnId]) {
+//         dir = compareItems(
+//             rowA.columnFiltersMeta[columnId]?.itemRank!,
+//             rowB.columnFiltersMeta[columnId]?.itemRank!
+//         );
+//     }
+
+//     // Provide an alphanumeric fallback for when the item ranks are equal
+//     return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
+// };
 
 const columnHelper = createColumnHelper<PatientColumn>();
 
@@ -38,8 +81,11 @@ export interface ListProps {
   isDetailed?: boolean;
 }
 
-export default function PatientList() {
-  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ isLastVisit: true });
+export default function PatientList({ isDetailed = true }: ListProps) {
+  const { data: patientData, isLoading } =
+    api.patient.getNewestPatients.useQuery();
+  // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const patientColumn: ColumnDef<PatientColumn>[] = [
     {
@@ -158,5 +204,46 @@ export default function PatientList() {
         )}
       </div>
     </div>
+  );
+}
+
+// A debounced input react component
+export function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: {
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounce?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  return (
+    <>
+      <div className="relative mt-1 rounded-md shadow-sm">
+        <Input
+          {...props}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        </div>
+      </div>
+    </>
   );
 }
