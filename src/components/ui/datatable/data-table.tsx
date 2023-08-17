@@ -103,58 +103,45 @@ export function DataTable<TData, TValue>(
 
   return (
     <>
-      <div className="flex items-center py-4 justify-between">
-        <div className="flex items-center gap-4">
-          <div className="relative mt-1 rounded-md shadow-sm">
-            <DebouncedInput
-              value={globalFilter ?? ""}
-              onChange={(value) => setGlobalFilter(String(value))}
-              className="font-lg border-block border p-2"
-              placeholder="Search"
-            />
-          </div>
-          <Button variant='outline' className="relative mt-1 rounded-md shadow-sm" href={href ?? "#"}>
-            <UserPlus className="h-5 w-5 text-gray-400" />
-          </Button>
-        </div>
-        <DataTableViewOptions table={table} />
-      </div>
-      <div className="rounded-md border bg-white overflow-x-auto">
-        <Table className="w-full">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <TableHead key={index} className="py-2 sm:py-4">
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, rowIndex) => (
-                <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell, cellIndex) => (
-                    <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+      <div className="space-y-4">
+        <DataTableToolbar table={table} isFacetedFilter={isFacetedFilter} columnViews={columnViews} filter={filter} filterTitle={filterTitle} href={href} />
+        <div className="rounded-md border bg-white overflow-x-auto">
+          <Table className="w-full">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header, index) => (
+                    <TableHead key={index} className="py-2 sm:py-4">
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results to display.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="pt-4 pb-2">
-        <DataTablePagination table={table} />
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row, rowIndex) => (
+                  <TableRow key={rowIndex} data-state={row.getIsSelected() && "selected"}>
+                    {row.getVisibleCells().map((cell, cellIndex) => (
+                      <TableCell key={cellIndex} className="whitespace-nowrap px-3 py-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No results to display.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="pt-4 pb-2">
+          <DataTablePagination table={table} />
+        </div>
       </div>
     </>
   )

@@ -82,10 +82,8 @@ export interface ListProps {
 }
 
 export default function PatientList({ isDetailed = true }: ListProps) {
-  const { data: patientData, isLoading } =
-    api.patient.getNewestPatients.useQuery();
+  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ isLastVisit: true })
   // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
 
   const patientColumn: ColumnDef<PatientColumn>[] = [
     {
@@ -180,8 +178,8 @@ export default function PatientList({ isDetailed = true }: ListProps) {
   ]
 
   return (
-    <div className="py-10 sm:container md:mx-auto">
-      <div className="flex flex-col gap-4 rounded-sm bg-white p-4 shadow outline outline-1 outline-slate-200">
+    <div className="flex flex-col gap-4 rounded-sm bg-white p-4 shadow outline outline-1 outline-slate-200">
+      <div className="px-2 py-5 sm:p-6">
         <div className="mb-4 w-full items-center justify-between md:flex">
           <div className="mb-3 flex flex-col gap-1 md:mb-0">
             <h2 className="text-xl font-semibold text-blue-500">
@@ -194,7 +192,10 @@ export default function PatientList({ isDetailed = true }: ListProps) {
         </div>
 
         {!isLoading && patientData ? (
-          <DataTable columns={patientColumn} data={patientData} />
+          <DataTable columns={patientColumn} data={patientData} href="/dashboard/patients/checkup/new"
+            filter="patient_name"
+            filterTitle="nama"
+            isPaginated={true} />
         ) : (
           <div className="flex w-full flex-col gap-4">
             <Skeleton className="h-10 w-full rounded-md" />

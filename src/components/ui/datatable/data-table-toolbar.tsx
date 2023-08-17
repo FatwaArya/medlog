@@ -45,6 +45,19 @@ export function DataTableToolbar<TData>({
                             />
                         )
                     }
+                    {
+                        href && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-auto hidden h-8 lg:flex mt-1 mr-1"
+                                href={href ?? "#"}
+                            >
+                                <Scroll className="mr-2 h-4 w-4" />
+                                Checkup
+                            </Button>
+                        )
+                    }
 
                     {isFacetedFilter && (
                         table.getColumn("status") && (
@@ -68,19 +81,6 @@ export function DataTableToolbar<TData>({
                 </div>
             </div>
             <div className="flex">
-                {
-                    href && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="ml-auto hidden h-8 lg:flex mt-1 mr-1"
-                            href={href ?? "#"}
-                        >
-                            <Scroll className="mr-2 h-4 w-4" />
-                            Checkup Baru
-                        </Button>
-                    )
-                }
                 <DataTableViewOptions columnViews={columnViews} table={table} />
 
             </div>
