@@ -78,6 +78,8 @@ export function DataTable<TData, TValue>(
 
   const table = useReactTable({
     data: data || [],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
