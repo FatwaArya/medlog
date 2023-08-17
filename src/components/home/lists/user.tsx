@@ -29,6 +29,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type AdminColumn = RouterOutputs["admin"]["getUserByRole"][number];
 
@@ -132,92 +133,92 @@ export default function UserList() {
         </span>
       ),
     },
-    {
-      accessorKey: "id",
-      header: "Aksi",
-      cell: (info) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={
-                isSubscribed(info.getValue() as string)
-                  ? () => deactivateUser.mutate({ id: info.getValue() as string })
-                  : () => activateUser.mutate({ id: info.getValue() as string })
-              }
-            >
-              {isSubscribed(info.getValue() as string) ? (
-                <button className="flex">
-                  <UserX className="mr-2 h-4 w-4" />
-                  <span>Deactive</span>
-                </button>
-              ) : (
-                    <button className="flex">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Activate</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        {/* header */}
-                        <DropdownMenuLabel>Plans</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            void activateUser.mutate({
-                              id: info.getValue(),
-                              plan: "1m",
-                            });
-                          }}
-                        >
-                          1 Month
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            void activateUser.mutate({
-                              id: info.getValue(),
-                              plan: "3m",
-                            });
-                          }}
-                        >
-                          3 Month
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            void activateUser.mutate({
-                              id: info.getValue(),
-                              plan: "6m",
-                            });
-                          }}
-                        >
-                          6 Month
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                )}
-            <DropdownMenuItem>
-              <MoreHorizontal className="mr-2 h-4 w-4" />
-              <Link
-                href={`/dashboard/accounts-management/${info.getValue()}`}
-              >
-                Details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <CircleSlashed className="mr-2 h-4 w-4" />
-              Ban User
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }
+    // {
+    //   accessorKey: "id",
+    //   header: "Aksi",
+    //   cell: (info) => (
+    //     <DropdownMenu>
+    //       <DropdownMenuTrigger asChild>
+    //         <Button variant="ghost" className="h-8 w-8 p-0">
+    //           <MoreHorizontal className="h-4 w-4" />
+    //         </Button>
+    //       </DropdownMenuTrigger>
+    //       <DropdownMenuContent align="end">
+    //         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //         <DropdownMenuSeparator />
+    //         <DropdownMenuItem
+    //           onClick={
+    //             isSubscribed(info.getValue() as string)
+    //               ? () => deactivateUser.mutate({ id: info.getValue() as string })
+    //               : () => activateUser.mutate({ id: info.getValue() as string })
+    //           }
+    //         >
+    //           {isSubscribed(info.getValue() as string) ? (
+    //             <button className="flex">
+    //               <UserX className="mr-2 h-4 w-4" />
+    //               <span>Deactive</span>
+    //             </button>
+    //           ) : (
+    //                 <button className="flex">
+    //                   <User className="mr-2 h-4 w-4" />
+    //                   <span>Activate</span>
+    //                 </DropdownMenuSubTrigger>
+    //                 <DropdownMenuPortal>
+    //                   <DropdownMenuSubContent>
+    //                     {/* header */}
+    //                     <DropdownMenuLabel>Plans</DropdownMenuLabel>
+    //                     <DropdownMenuSeparator />
+    //                     <DropdownMenuItem
+    //                       onClick={() => {
+    //                         void activateUser.mutate({
+    //                           id: info.getValue(),
+    //                           plan: "1m",
+    //                         });
+    //                       }}
+    //                     >
+    //                       1 Month
+    //                     </DropdownMenuItem>
+    //                     <DropdownMenuItem
+    //                       onClick={() => {
+    //                         void activateUser.mutate({
+    //                           id: info.getValue(),
+    //                           plan: "3m",
+    //                         });
+    //                       }}
+    //                     >
+    //                       3 Month
+    //                     </DropdownMenuItem>
+    //                     <DropdownMenuItem
+    //                       onClick={() => {
+    //                         void activateUser.mutate({
+    //                           id: info.getValue(),
+    //                           plan: "6m",
+    //                         });
+    //                       }}
+    //                     >
+    //                       6 Month
+    //                     </DropdownMenuItem>
+    //                   </DropdownMenuSubContent>
+    //                 </DropdownMenuPortal>
+    //               </DropdownMenuSub>
+    //             )}
+    //         <DropdownMenuItem>
+    //           <MoreHorizontal className="mr-2 h-4 w-4" />
+    //           <Link
+    //             href={`/dashboard/accounts-management/${info.getValue()}`}
+    //           >
+    //             Details
+    //           </Link>
+    //         </DropdownMenuItem>
+    //         <DropdownMenuSeparator />
+    //         <DropdownMenuItem>
+    //           <CircleSlashed className="mr-2 h-4 w-4" />
+    //           Ban User
+    //         </DropdownMenuItem>
+    //       </DropdownMenuContent>
+    //     </DropdownMenu>
+    //   ),
+    // }
   ];
 
   return (
