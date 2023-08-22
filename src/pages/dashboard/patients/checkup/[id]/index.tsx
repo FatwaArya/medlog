@@ -20,9 +20,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ImageOff } from "lucide-react";
-import { getServerAuthSession } from "@/server/auth";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
+import { getAuth } from "@clerk/nextjs/dist/types/server-helpers.server";
+import { clerkClient } from "@clerk/nextjs";
 
 type PatientInfo = NonNullable<
   RouterOutputs["record"]["getRecordById"]
@@ -228,28 +229,21 @@ export default CheckupDetail;
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>
 ) {
-  const session = await getServerAuthSession(context);
+  const { userId } = getAuth(context.req);
+  const user = userId ? await clerkClient.users.getUser(userId) : undefined;
 
-  if (!session) {
+
+  if (!user) {
     return {
       redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
-
-  if (session?.user?.isNewUser) {
-    return {
-      redirect: {
-        destination: "/auth/onboarding",
+        destination: "/auth/sign-in",
         permanent: false,
       },
     };
   }
 
 
-  if (!session?.user?.isSubscribed) {
+  if (user?.publicMetadata.isSubscribed) {
     return {
       redirect: {
         destination: "/subscription",
@@ -278,42 +272,6 @@ export async function getServerSideProps(
     },
   };
 }
-
-// export async function getStaticProps(
-//     context: GetStaticPropsContext<{ id: string }>,
-// ) {
-
-//     const ssg = generateSSGHelper();
-//     const id = context.params?.id as string;
-
-//     await ssg.record.getRecordById.prefetch({ id });
-
-//     return {
-//         props: {
-//             trpcState: ssg.dehydrate(),
-//             id,
-//         },
-//         revalidate: 1,
-//     };
-// }
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//     const paths = await prisma.medicalRecord.findMany({
-//         select: {
-//             id: true,
-//         },
-//     });
-
-//     return {
-//         paths: paths.map((path) => ({
-//             params: {
-//                 id: path.id,
-//             },
-//         })),
-
-//         fallback: 'blocking',
-//     };
-// };
 
 CheckupDetail.authRequired = true;
 

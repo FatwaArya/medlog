@@ -8,28 +8,28 @@ import { appRouter } from "@/server/api/root";
 export default createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
-  responseMeta(opts) {
-    const { ctx, paths, errors, type } = opts;
-    const allPublic =
-      paths &&
-      paths.every(
-        (path) => path.includes("patient") || path.includes("record"),
-      );
-    // checking that no procedures errored
-    const allOk = errors.length === 0;
-    // checking we're doing a query request
-    const isQuery = type === "query";
-    if (ctx?.session && allPublic && allOk && isQuery) {
-      // cache request for 1 day + revalidate once every second
-      const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
-      return {
-        headers: {
-          "cache-control": `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
-        },
-      };
-    }
-    return {};
-  },
+  // responseMeta(opts) {
+  //   const { ctx, paths, errors, type } = opts;
+  //   const allPublic =
+  //     paths &&
+  //     paths.every(
+  //       (path) => path.includes("patient") || path.includes("record"),
+  //     );
+  //   // checking that no procedures errored
+  //   const allOk = errors.length === 0;
+  //   // checking we're doing a query request
+  //   const isQuery = type === "query";
+  //   if (ctx?.auth.user && allPublic && allOk && isQuery) {
+  //     // cache request for 1 day + revalidate once every second
+  //     const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+  //     return {
+  //       headers: {
+  //         "cache-control": `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+  //       },
+  //     };
+  //   }
+  //   return {};
+  // },
   onError:
     env.NODE_ENV === "development"
       ? ({ path, error }) => {

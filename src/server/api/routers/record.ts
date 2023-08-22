@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedSubscribedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedSubscribedProcedure } from "../trpc";
 
 export const recordRouter = createTRPCRouter({
   getStatRevenue: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const result = await ctx.prisma.medicalRecord.aggregate({
       where: {
         patient: {
-          userId: ctx.session.user.id,
+          userId: ctx.user?.id,
         },
       },
       _sum: {
@@ -27,7 +27,7 @@ export const recordRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const record = await ctx.prisma.medicalRecord.findUnique({
@@ -54,14 +54,14 @@ export const recordRouter = createTRPCRouter({
     .input(
       z.object({
         patientId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const records = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
             id: input.patientId,
-            userId: ctx.session.user.id,
+            userId: ctx.user?.id,
           },
         },
         include: {
@@ -88,13 +88,13 @@ export const recordRouter = createTRPCRouter({
       z.object({
         from: z.date(),
         to: z.date(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const reports = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.session.user.id,
+            userId: ctx.user?.id,
           },
           createdAt: {
             gte: input.from,

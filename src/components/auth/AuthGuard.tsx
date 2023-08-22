@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -34,19 +34,21 @@ export function Loader() {
 }
 
 const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
-  const { data, status: sessionStatus } = useSession();
+  const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (sessionStatus === "unauthenticated") {
-      void router.push("/auth/signin");
+    if (isLoaded && !isSignedIn) {
+      router.push("/auth/sign-in");
     }
+  }
+    , [isLoaded, isSignedIn, router]);
 
-  }, [data?.user?.isSubscribed, sessionStatus]);
-
-  if (["loading", "unauthenticated"].includes(sessionStatus)) {
+  if (!isLoaded) {
     return <Loader />;
   }
+
+
 
 
   return <>{children}</>;

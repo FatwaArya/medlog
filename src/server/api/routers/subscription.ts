@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  protectedSubscribedProcedure,
-  publicProcedure,
-} from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server";
 import { instance } from "@/server/axios";
@@ -29,7 +24,7 @@ export const subscriptionRouter = createTRPCRouter({
         // check if user have already subscribed
         const user = await tx.user.findFirst({
           where: {
-            id: ctx.session.user.id,
+            id: ctx?.user?.id,
           },
           select: {
             id: true,

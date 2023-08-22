@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Loader } from "@/components/auth/AuthGuard";
 import Layout from "@/components/dashboard/Layout";
-import Breadcrumbs from "@/components/ui/breadcrumb";
 import { env } from "@/env.mjs";
 import { type PasienPlusPage } from "@/pages/_app";
-import { getServerAuthSession } from "@/server/auth";
 import { api } from "@/utils/api";
 import Head from "next/head";
-import { type GetServerSidePropsContext } from "next/types";
 import React, { type ReactElement, useEffect } from "react";
 
 const Feedback: PasienPlusPage = () => {
@@ -73,7 +69,6 @@ const Feedback: PasienPlusPage = () => {
             <Head>
                 <title>Pasien Plus | Kritik & Saran</title>
             </Head>
-            {/* <Breadcrumbs /> */}
             <div>
                 <div className="overflow-hidden bg-white shadow outline outline-1 outline-slate-200 sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6">
@@ -92,39 +87,5 @@ Feedback.getLayout = function getLayout(page: ReactElement) {
 
 Feedback.authRequired = true;
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getServerAuthSession(ctx);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/auth/signin",
-                permanent: false,
-            },
-        };
-    }
-
-    if (session?.user?.isNewUser === true) {
-        return {
-            redirect: {
-                destination: "/auth/onboarding",
-                permanent: false,
-            },
-        };
-    }
-
-    if (session?.user?.isSubscribed === false) {
-        return {
-            redirect: {
-                destination: "/subscription",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: { session },
-    };
-}
 
 export default Feedback;

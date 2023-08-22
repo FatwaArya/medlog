@@ -14,7 +14,6 @@ import {
   useLabsAttachmentStore,
 } from "@/store/previewAttachment";
 import { LabForm } from "@/components/checkup/form/lab";
-import Breadcrumbs from "@/components/ui/breadcrumb";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +25,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@/server/auth";
 
 export const redAsterisk = <span className="text-red-500">*</span>;
 
@@ -242,39 +239,5 @@ NewCheckup.getLayout = function getLayout(page: ReactElement) {
 
 NewCheckup.authRequired = true;
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(ctx);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
-
-  if (session?.user?.isNewUser) {
-    return {
-      redirect: {
-        destination: "/auth/onboarding",
-        permanent: false,
-      },
-    };
-  }
-
-  if (session?.user?.isSubscribed === false) {
-    return {
-      redirect: {
-        destination: "/subscription",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
-}
 
 export default NewCheckup;

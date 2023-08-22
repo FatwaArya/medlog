@@ -1,5 +1,4 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { type PropsWithChildren, useEffect, useState } from "react";
 
@@ -9,9 +8,9 @@ import { Home, Users, Download, Shield, MessageSquarePlus } from "lucide-react";
 
 import Navbar from "./Navbar";
 import ContentArea from "./ContentArea";
+import { useUser } from "@clerk/nextjs";
 
 const AdminLayout = (props: PropsWithChildren) => {
-  const { data, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [navigation, setNavigation] = useState([
@@ -43,13 +42,13 @@ const AdminLayout = (props: PropsWithChildren) => {
       current: false,
       hide: false,
     },
-    {
-      name: "Atur Pengguna",
-      href: "/dashboard/accounts-management",
-      icon: Shield,
-      current: false,
-      hide: data?.user.role !== "admin",
-    },
+    // {
+    //   name: "Atur Pengguna",
+    //   href: "/dashboard/accounts-management",
+    //   icon: Shield,
+    //   current: false,
+    //   hide: user?.publicMetadata
+    // },
   ]);
 
   const { pathname } = useRouter();
@@ -66,10 +65,6 @@ const AdminLayout = (props: PropsWithChildren) => {
     }
   }, [pathname]);
 
-  if (status === "loading") {
-    return <div>Loading user info...</div>;
-  }
-  console.log(data);
   return (
     <>
       {/* layout problem */}

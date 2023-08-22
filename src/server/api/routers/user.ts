@@ -1,6 +1,7 @@
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { unknown, z } from "zod";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { instance } from "@/server/axios";
+import { TRPCError } from "@trpc/server";
 
 function formatPhoneNumber(phoneNumber: string) {
   if (phoneNumber.startsWith("0")) {
@@ -14,32 +15,38 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         phone: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const formattedPhoneNumber = formatPhoneNumber(input.phone);
 
       await ctx.prisma.$transaction(async (tx) => {
-        const customer = await instance.post("/customers", {
-          reference_id: ctx.session.user.id,
-          individual_detail: {
-            given_names: ctx.session.user.name,
-          },
-          email: ctx.session.user.email,
-          type: "INDIVIDUAL",
-          mobile_number: formattedPhoneNumber,
-        });
-
-        await tx.user.update({
-          where: {
-            id: ctx.session.user.id,
-          },
-          data: {
-            phone: input.phone,
-            isNewUser: false,
-            customer_id: customer.data.id,
-          },
-        });
+        try {
+          const customer = await instance.post("/customers", {
+            reference_id: ctx.user?.id,
+            individual_detail: {
+              given_names: ctx.user?.firstName,
+            },
+            email: ctx.user?.primaryEmailAddressId,
+            type: "INDIVIDUAL",
+            mobile_number: formattedPhoneNumber,
+          });
+          await tx.user.update({
+            where: {
+              id: ctx.user?.id,
+            },
+            data: {
+              phone: input.phone,
+              isNewUser: false,
+              customer_id: customer.data.id,
+            },
+          });
+        } catch (error) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: error.response.data.message as unknown as string,
+          });
+        }
       });
     }),
 });

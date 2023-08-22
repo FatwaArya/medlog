@@ -1,9 +1,8 @@
 import { Container } from "@/components/landing/Container";
 import { Plan, SwirlyDoodle } from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/button";
-import { getServerAuthSession } from "@/server/auth";
 import { api } from "@/utils/api";
-import { useSession } from "next-auth/react";
+import { getAuth, buildClerkProps, clerkClient } from "@clerk/nextjs/server";
 import { useRouter } from "next/router";
 import { type GetServerSidePropsContext } from "next/types";
 import { useEffect } from "react";
@@ -12,6 +11,7 @@ import toast from "react-hot-toast";
 const Subs = () => {
     const router = useRouter();
     const { mutate, data: redirect, error } = api.subscription.subscribe.useMutation();
+
 
     useEffect(() => {
         if (error) {
@@ -22,7 +22,6 @@ const Subs = () => {
         }
 
     }, [error, redirect, router])
-
 
     return (
         <>
@@ -119,40 +118,32 @@ const Subs = () => {
 
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getServerAuthSession(ctx);
+    const { userId } = getAuth(ctx.req);
+    const user = userId ? await clerkClient.users.getUser(userId) : undefined;
 
-    if (!session) {
+
+    if (!userId || !user) {
         return {
             redirect: {
-                destination: '/auth/signin',
-                permanent: false,
-            },
-        }
-    }
-
-    if (session?.user?.isNewUser) {
-        return {
-            redirect: {
-                destination: "/auth/onboarding",
+                destination: "/auth/sign-in?redirect_url=" + ctx.resolvedUrl,
                 permanent: false,
             },
         };
     }
 
-    // if (session?.user.isSubscribed === true) {
-    //     return {
-    //         redirect: {
-    //             destination: '/dashboard/home',
-    //             permanent: false,
-    //         },
-    //     }
-    // }
+
+    if (user.publicMetadata.isSubscribed && user.publicMetadata.plan !== 'noSubscription') {
+        return {
+            redirect: {
+                destination: '/dashboard/home',
+                permanent: false,
+            },
+        }
+    }
 
     return {
-        props: {
-            session,
-        },
-    }
+        props: { ...buildClerkProps(ctx.req, { user }) }
+    };
 }
 
 export default Subs;

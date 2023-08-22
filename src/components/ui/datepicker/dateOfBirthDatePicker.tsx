@@ -10,6 +10,8 @@ import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { buttonVariants } from '@/components/ui/button';
+import { id } from 'date-fns/locale'
+
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
@@ -61,7 +63,9 @@ export function DOBPicker({ dob, setDOB, className }: { dob: Date | undefined; s
                             ></path>
                         </svg>
 
-                        {dob ? format(dob, 'PPP') : <span>Pilih Tanggal Lahir</span>}
+                        {dob ? format(dob, 'PPP', {
+                            locale: id
+                        }) : <span>Pilih Tanggal Lahir</span>}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0  text-gray-800 bg-white border border-gray-200">

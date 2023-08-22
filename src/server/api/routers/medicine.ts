@@ -8,7 +8,7 @@ export const medicineRouter = createTRPCRouter({
   gets: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const medicines = await ctx.prisma.medicine.findMany({
       where: {
-        userId: ctx.session?.user.id,
+        userId: ctx.user?.id,
       },
       select: {
         id: true,
@@ -30,7 +30,7 @@ export const medicineRouter = createTRPCRouter({
       const medicine = await ctx.prisma.medicine.create({
         data: {
           name: input.name,
-          userId: ctx.session.user.id,
+          userId: ctx.user?.id as string,
         },
       });
       return medicine;

@@ -2,7 +2,6 @@
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { signOut, useSession } from "next-auth/react";
 import {
   LogOut,
   Menu,
@@ -51,6 +50,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useCommandState } from "cmdk";
 import Script from "next/script";
 import { env } from "@/env.mjs";
+import { UserButton, useClerk, useUser } from "@clerk/nextjs";
 
 
 
@@ -66,7 +66,9 @@ export default function Navbar({
 }: {
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
-  const { data: session, status } = useSession();
+  const { isSignedIn, user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+
   const { data: ssoToken } = api.canny.cannyUserToken.useQuery();
   useEffect(() => {
 
@@ -128,12 +130,9 @@ export default function Navbar({
 
   }, [ssoToken])
 
-
-
-  if (status === "loading") {
+  if (!isLoaded) {
     return <Loader />;
   }
-
 
   return (
     <>
@@ -165,7 +164,8 @@ export default function Navbar({
                 <Megaphone className="h-6 w-6" aria-hidden="true" />
               </Button>
               {/* Profile dropdown */}
-              <DropdownMenu>
+              <UserButton />
+              {/* <DropdownMenu>
                 <div className="relative ml-3">
                   <DropdownMenuTrigger
                     className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -174,15 +174,15 @@ export default function Navbar({
                     <div>
                       <span className="sr-only">Open user menu</span>
                       <Avatar>
-                        <AvatarImage src={session?.user.image as string} className="h-8 w-8 rounded-full" />
+                        <AvatarImage src={user?.imageUrl} className="h-8 w-8 rounded-full" />
                         <AvatarFallback>{
-                          session?.user.name?.split(" ").map((name) => name[0]).join("")
+                          user?.fullName
                         }</AvatarFallback>
                       </Avatar>
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
+                    <DropdownMenuLabel>{user?.firstName}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       {userNavigation.map((item) => (
@@ -194,7 +194,7 @@ export default function Navbar({
                           )}
                           onClick={() => {
                             if (item.name === "Logout") {
-                              signOut({ callbackUrl: "/" })
+                              void signOut();
                             }
                           }}
                         >
@@ -208,7 +208,7 @@ export default function Navbar({
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </div>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </div>
           </div>
         </div>

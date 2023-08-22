@@ -15,13 +15,18 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type Session } from "next-auth";
+import {
+  getAuth,
+  clerkClient,
+  type SignedInAuthObject,
+  type SignedOutAuthObject,
+  User,
+} from "@clerk/nextjs/server";
 
-import { getServerAuthSession } from "@/server/auth";
 import { boostedPrisma, prisma } from "@/server/db";
 
 type CreateContextOptions = {
-  session: Session | null;
+  user: User | null;
 };
 
 /**
@@ -34,9 +39,9 @@ type CreateContextOptions = {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+const createInnerTRPCContext = ({ user }: CreateContextOptions) => {
   return {
-    session: opts.session,
+    user,
     prisma,
     boostedPrisma,
   };
@@ -49,13 +54,18 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
+  async function getUser() {
+    const { userId } = getAuth(opts.req);
 
-  // Get the session from the server using the getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+    const user = userId ? await clerkClient.users.getUser(userId) : null;
+
+    return user;
+  }
+
+  const user = await getUser();
 
   return createInnerTRPCContext({
-    session,
+    user: user,
   });
 };
 
@@ -110,47 +120,48 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
   return next({
     ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      user: ctx.user,
     },
   });
 });
 
 /** Reusable middleware that enforces users are subcribed before running the procedure. */
 const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  const { user } = ctx;
+
+  if (!user) {
+    console.log("user not found");
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });
   }
-  if (!ctx.session.user.isSubscribed) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!user.publicMetadata.isSubscribed) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });
   }
-  if (ctx.session.user.plan === "noSubscription") {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+
   return next({
     ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      user: ctx.user,
     },
   });
 });
 
 const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  const { user } = ctx;
+
+  if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (ctx.session.user.role !== "admin") {
+  if (user.publicMetadata.role !== "admin") {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
-      // infers the session as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      user: ctx.user,
     },
   });
 });

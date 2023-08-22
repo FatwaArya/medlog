@@ -30,6 +30,7 @@ const server = z.object({
   UPSTASH_REDIS_REST_URL: z.string().url(),
   UPSTASH_REDIS_REST_TOKEN: z.string(),
   CANNY_PRIVATE_TOKEN: z.string(),
+  CLERK_SECRET_KEY: z.string(),
 });
 
 /**
@@ -39,6 +40,7 @@ const server = z.object({
 const client = z.object({
   NEXT_PUBLIC_BOARDTOKEN: z.string(),
   NEXT_PUBLIC_APPID: z.string(),
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
 });
 
@@ -66,6 +68,9 @@ const processEnv = {
   NEXT_PUBLIC_BOARDTOKEN: process.env.NEXT_PUBLIC_BOARDTOKEN,
   CANNY_PRIVATE_TOKEN: process.env.CANNY_PRIVATE_TOKEN,
   NEXT_PUBLIC_APPID: process.env.NEXT_PUBLIC_APPID,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

@@ -1,13 +1,10 @@
 import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
-import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import Head from "next/head";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { api } from "@/utils/api";
 import { Skeleton } from "@/components/ui/skeleton";
-import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@/server/auth";
 import { AdminDescription } from "@/components/accounts/detail";
 import { SubsRecordList } from "@/components/checkup/lists/subsRecord";
 
@@ -56,56 +53,7 @@ const AdminDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
     )
 };
 
-export async function getServerSideProps(
-    context: GetServerSidePropsContext<{ id: string }>
-) {
-    const session = await getServerAuthSession(context);
 
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/auth/signin",
-                permanent: false,
-            },
-        };
-    }
-
-    if (session?.user?.role === "user") {
-        return {
-            redirect: {
-                destination: "/dashboard/home",
-                permanent: false,
-            },
-        };
-    }
-
-
-    const helpers = generateSSGHelper();
-    const id = context.params?.id as string;
-
-    // const reportExists = await helpers.admin.getUserById.fetch({
-    //     userId: id,
-    // })
-
-    // if (reportExists) {
-    //     await helpers.admin.getUserById.prefetch(
-    //         { userId: id },
-    //     )
-    // } else {
-    //     return {
-    //         props: { id },
-    //         notFound: true,
-    //     };
-    // }
-
-
-    return {
-        props: {
-            trpcState: helpers.dehydrate(),
-            id,
-        },
-    };
-}
 
 AdminDetail.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>

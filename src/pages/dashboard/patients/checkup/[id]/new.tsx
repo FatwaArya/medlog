@@ -30,8 +30,6 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/utils/cn";
-import { type GetServerSidePropsContext } from "next/types";
-import { getServerAuthSession } from "@/server/auth";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 
 export type CheckupExistingPatient =
@@ -295,42 +293,7 @@ ContinueCheckup.getLayout = function getLayout(page: ReactElement) {
 ContinueCheckup.authRequired = true;
 
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getServerAuthSession(ctx);
 
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/auth/signin",
-                permanent: false,
-            },
-        };
-    }
-
-    if (session?.user?.isNewUser) {
-        return {
-            redirect: {
-                destination: "/auth/onboarding",
-                permanent: false,
-            },
-        };
-    }
-
-    if (session?.user?.isSubscribed === false) {
-        return {
-            redirect: {
-                destination: "/subscription",
-                permanent: false,
-            },
-        };
-    }
-
-
-
-    return {
-        props: { session },
-    };
-}
 
 export default ContinueCheckup;
 

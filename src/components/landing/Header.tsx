@@ -8,7 +8,7 @@ import { Container } from "@/components/landing/Container";
 import { Logo } from "@/components/landing/Logo";
 import { NewLogo } from "@/components/landing/NewLogo";
 import { NavLink } from "@/components/landing/NavLink";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@clerk/nextjs";
 
 function MobileNavLink({
   href,
@@ -97,8 +97,8 @@ function MobileNavigation() {
 }
 
 export function Header() {
-  const { data: session, status } = useSession();
-  const isLoading = status === "loading";
+  const { isSignedIn, sessionId, userId, isLoaded } = useAuth()
+
 
   return (
     <header className="py-10">
@@ -117,19 +117,19 @@ export function Header() {
           <div className="flex items-center gap-x-5 md:gap-x-8">
             {
               /* if status is loading, disable button */
-              session ? (
+              isSignedIn ? (
                 <Button
                   href="/dashboard/home"
                   variant="outlineBlue"
-                  disabled={isLoading}
+                  disabled={!isLoaded}
                 >
                   <span>Beranda</span>
                 </Button>
               ) : (
                 <Button
-                  href="/auth/signin"
+                  href="/auth/sign-up"
                   variant="solidBlue"
-                  disabled={isLoading}
+                  disabled={!isLoaded}
                 >
                   <span>
                     Ayo Mulai <span className="hidden md:inline">Sekarang</span>

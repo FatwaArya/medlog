@@ -28,7 +28,7 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const admin = await ctx.prisma.user.findUnique({
@@ -64,7 +64,7 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const subsRecord = ctx.prisma.subscription.findMany({
@@ -79,7 +79,7 @@ export const adminRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         plan: z.enum(["1m", "3m", "6m"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       let addedDays = 0;
@@ -133,7 +133,7 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.$transaction(async (tx) => {

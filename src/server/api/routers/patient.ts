@@ -98,10 +98,16 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
-      const userPlan = ctx.session.user.plan;
+      const userId = ctx.user?.id as string;
+      const userPlan = ctx.user?.publicMetadata.plan;
 
       switch (userPlan) {
+        case "noSubscription":
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Anda belum berlangganan",
+          });
+          break;
         case "beginner":
           const { success } = await ratelimit.BPatient.limit(userId);
           if (!success) {
@@ -171,7 +177,7 @@ export const patientRouter = createTRPCRouter({
             gender,
             address,
             birthDate,
-            userId: ctx.session.user.id,
+            userId: ctx.user?.id as string,
           },
         });
 
@@ -302,10 +308,16 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
-      const userPlan = ctx.session.user.plan;
+      const userId = ctx.user?.id as string;
+      const userPlan = ctx.user?.publicMetadata.plan;
 
       switch (userPlan) {
+        case "noSubscription":
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Anda belum berlangganan",
+          });
+          break;
         case "beginner":
           const { success } = await ratelimit.BCheckup.limit(userId);
           if (!success) {
@@ -433,7 +445,7 @@ export const patientRouter = createTRPCRouter({
         }
       });
     }),
-  getNewestPatients: protectedSubscribedProcedure
+  getNewestPatients: publicProcedure
     .input(
       z.object({
         limit: z.number().gte(1).lte(5).nullish().nullable(),
@@ -444,7 +456,7 @@ export const patientRouter = createTRPCRouter({
       const result = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.session.user.id,
+            userId: ctx.user?.id,
           },
         },
         select: {
@@ -471,13 +483,13 @@ export const patientRouter = createTRPCRouter({
   getStatPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
     const patientCount = await ctx.prisma.patient.count({
       where: {
-        userId: ctx.session.user.id,
+        userId: ctx.user?.id,
       },
     });
     const lastVisit = await ctx.prisma.medicalRecord.findFirst({
       where: {
         patient: {
-          userId: ctx.session.user.id,
+          userId: ctx.user?.id,
         },
       },
       select: {
@@ -505,7 +517,7 @@ export const patientRouter = createTRPCRouter({
       const visits = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.session.user.id,
+            userId: ctx.user?.id,
           },
         },
         select: {
@@ -637,7 +649,6 @@ export const patientRouter = createTRPCRouter({
       }
     }),
   getPatientById: publicProcedure
-
     .input(
       z.object({
         patientId: z.string(),
@@ -648,7 +659,7 @@ export const patientRouter = createTRPCRouter({
       const patient = await ctx.prisma.patient.findFirst({
         where: {
           id: input.patientId,
-          userId: ctx.session?.user.id,
+          userId: ctx.user?.id as string,
         },
       });
       if (!patient) {
@@ -668,7 +679,7 @@ export const patientRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const result = await ctx.prisma.patient.findMany({
         where: {
-          userId: ctx.session.user.id,
+          userId: ctx.user?.id,
           name: {
             search: input.query,
           },

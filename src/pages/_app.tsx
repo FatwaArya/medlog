@@ -1,6 +1,4 @@
 import { type AppType } from "next/app";
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { Inter } from 'next/font/google';
 export { reportWebVitals } from 'next-axiom';
 
@@ -12,14 +10,15 @@ import type { AppProps } from 'next/app'
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css"
-import AuthGuard from "@/components/auth/AuthGuard";
-import { Toaster } from "react-hot-toast";
 import { Analytics } from '@vercel/analytics/react';
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import AdminLayout from "@/components/dashboard/Layout";
 import Head from "next/head";
-import { env } from "@/env.mjs";
+import { ClerkLoaded, ClerkLoading, ClerkProvider, RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useRouter } from "next/router";
+import { Toaster } from "react-hot-toast";
+import { Loader } from "@/components/auth/AuthGuard";
+
 
 NProgress.configure({ showSpinner: false });
 
@@ -38,13 +37,21 @@ type PasienPlusProps = AppProps & {
   Component: PasienPlusPage
 }
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const publicPages = ["/auth/sign-in/[[...index]]", "/auth/sign-up/[[...index]]", "/"];
+
+
+const MyApp: AppType = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
   router
 }: PasienPlusProps) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const authRequired = Component.authRequired ?? false;
+
+  const { pathname } = useRouter();
+
+  // Check if the current route matches a public page
+  const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
     const handleRouteStart = () => NProgress.start();
@@ -74,21 +81,27 @@ const MyApp: AppType<{ session: Session | null }> = ({
         font-family: ${inter.style.fontFamily};
       }
     `}</style>
+    <Toaster />
+    <ClerkProvider {...pageProps}>
+      <ClerkLoading>
+        <Loader />
+      </ClerkLoading>
+      <ClerkLoaded>
+        {isPublicPage ? (
+          <Component {...pageProps} />
+        ) : (
+          <>
+            <SignedIn>
+              {getLayout(<Component {...pageProps} />)}
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        )}
+      </ClerkLoaded>
+    </ClerkProvider >
 
-
-    <SessionProvider session={session}>
-      <Toaster />
-      {
-        authRequired ? (
-          <AuthGuard>
-            {getLayout(<Component {...pageProps} />)}
-          </AuthGuard>
-        )
-          : (
-            getLayout(<Component {...pageProps} />)
-          )
-      }
-    </SessionProvider>
     <Analytics />
   </>
   );
