@@ -22,8 +22,9 @@ import {
 import { ImageOff } from "lucide-react";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
-import { getAuth } from "@clerk/nextjs/dist/types/server-helpers.server";
+
 import { clerkClient } from "@clerk/nextjs";
+import { getAuth } from "@clerk/nextjs/dist/types/server";
 
 type PatientInfo = NonNullable<
   RouterOutputs["record"]["getRecordById"]
