@@ -44,6 +44,8 @@ export const userRouter = createTRPCRouter({
         } catch (error) {
           throw new TRPCError({
             code: "BAD_REQUEST",
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
             message: error.response.data.message as unknown as string,
           });
         }
