@@ -132,7 +132,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 
 
-    if (user.publicMetadata.isSubscribed && user.publicMetadata.plan !== 'noSubscription') {
+    if (user.publicMetadata.isSubscribed === true && user.publicMetadata.plan !== 'noSubscription') {
         return {
             redirect: {
                 destination: '/dashboard/home',

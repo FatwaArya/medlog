@@ -445,7 +445,7 @@ export const patientRouter = createTRPCRouter({
         }
       });
     }),
-  getNewestPatients: publicProcedure
+  getNewestPatients: protectedSubscribedProcedure
     .input(
       z.object({
         limit: z.number().gte(1).lte(5).nullish().nullable(),

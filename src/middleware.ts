@@ -1,4 +1,5 @@
 import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
+import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 // This example protects all routes including api/trpc routes
@@ -7,13 +8,15 @@ import { NextResponse } from "next/server";
 export default authMiddleware({
   publicRoutes: ["/", "/auth/sign-in", "/auth/sign-up", "/api/new-user"],
   afterAuth(auth, req) {
-    // handle users who aren't authenticated
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
     }
+    console.log("1");
+    console.log(auth.user?.id);
+    console.log("2");
 
     if (
-      !auth.user?.publicMetadata.isSubscribed &&
+      auth.user?.publicMetadata.isSubscribed === false &&
       auth.user?.publicMetadata.plan === "noSubscription"
     ) {
       const subscribtionUrl = new URL("/subscription", req.url);
@@ -23,5 +26,5 @@ export default authMiddleware({
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/(api|trpc)(.*)"],
 };
