@@ -7,15 +7,28 @@ import { type PasienPlusPage } from "@/pages/_app";
 import { RevenueStats } from "@/components/home/stats/revenue";
 import { PatientStats } from "@/components/home/stats/patient";
 import Head from "next/head";
+import { useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 
 const Home: PasienPlusPage = () => {
+    const { user } = useUser();
+
+    console.log(user)
+
+    const updateUser = async () => {
+        user?.reload();
+    };
+
     return (
         <>
             <Head>
                 <title>Pasien Plus | Dashboard</title>
             </Head>
             <div className="">
+                <Button onClick={updateUser}>
+                    click
+                </Button>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <LineCharts />
                     <div className="grid grid-rows-1 md:grid-rows-2 gap-4 col-span-2 md:col-span-1">

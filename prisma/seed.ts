@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   // Create 10 patients
   const patients = Array.from({ length: 10 }).map(() => ({
-    userId: "cljfe8dck0000rhqt20bjv618",
+    userId: "user_2UNNakK6Hfp7vMhOE2Ma1i99MdU",
     name: faker.name.fullName(),
     phone: faker.phone.number(),
     address: faker.address.streetAddress(),

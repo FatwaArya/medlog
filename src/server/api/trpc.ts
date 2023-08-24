@@ -136,8 +136,7 @@ const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
   const { user } = ctx;
 
   if (!user) {
-    console.log("user not found");
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not logged In" });
   }
   if (!user.publicMetadata.isSubscribed) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });

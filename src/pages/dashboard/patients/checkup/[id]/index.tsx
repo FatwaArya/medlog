@@ -22,7 +22,7 @@ import {
 import { ImageOff } from "lucide-react";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
-import { getAuth } from "@clerk/nextjs/server";
+import { User, getAuth } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs";
 
 
@@ -227,52 +227,52 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
 
 export default CheckupDetail;
 
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>
-) {
-  const { userId } = getAuth(context.req);
-  const user = userId ? await clerkClient.users.getUser(userId) : undefined;
+// export async function getServerSideProps(
+//   context: GetServerSidePropsContext<{ id: string }>
+// ) {
+//   const { userId } = getAuth(context.req);
+//   const user = userId ? await clerkClient.users.getUser(userId) : undefined;
 
 
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth/sign-in",
-        permanent: false,
-      },
-    };
-  }
+//   if (!user) {
+//     return {
+//       redirect: {
+//         destination: "/auth/sign-in",
+//         permanent: false,
+//       },
+//     };
+//   }
 
 
-  if (user?.publicMetadata.isSubscribed) {
-    return {
-      redirect: {
-        destination: "/subscription",
-        permanent: false,
-      },
-    };
-  }
+//   if (user?.publicMetadata.isSubscribed) {
+//     return {
+//       redirect: {
+//         destination: "/subscription",
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  const helpers = generateSSGHelper();
-  const id = context.params?.id as string;
+//   const helpers = generateSSGHelper(user as User);
+//   const id = context.params?.id as string;
 
-  const reportExists = await helpers.record.getRecordById.fetch({ id });
-  if (reportExists) {
-    await helpers.record.getRecordById.prefetch({ id });
-  } else {
-    return {
-      props: { id },
-      notFound: true,
-    };
-  }
+//   const reportExists = await helpers.record.getRecordById.fetch({ id });
+//   if (reportExists) {
+//     await helpers.record.getRecordById.prefetch({ id });
+//   } else {
+//     return {
+//       props: { id },
+//       notFound: true,
+//     };
+//   }
 
-  return {
-    props: {
-      trpcState: helpers.dehydrate(),
-      id,
-    },
-  };
-}
+//   return {
+//     props: {
+//       trpcState: helpers.dehydrate(),
+//       id,
+//     },
+//   };
+// }
 
 CheckupDetail.authRequired = true;
 

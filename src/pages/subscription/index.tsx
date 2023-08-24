@@ -117,33 +117,33 @@ const Subs = () => {
 
 
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const { userId } = getAuth(ctx.req);
-    const user = userId ? await clerkClient.users.getUser(userId) : undefined;
+// export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+//     const { userId } = getAuth(ctx.req);
+//     const user = userId ? await clerkClient.users.getUser(userId) : undefined;
 
 
-    if (!userId || !user) {
-        return {
-            redirect: {
-                destination: "/auth/sign-in?redirect_url=" + ctx.resolvedUrl,
-                permanent: false,
-            },
-        };
-    }
+//     if (!userId || !user) {
+//         return {
+//             redirect: {
+//                 destination: "/auth/sign-in?redirect_url=" + ctx.resolvedUrl,
+//                 permanent: false,
+//             },
+//         };
+//     }
 
 
-    if (user.publicMetadata.isSubscribed === true && user.publicMetadata.plan !== 'noSubscription') {
-        return {
-            redirect: {
-                destination: '/dashboard/home',
-                permanent: false,
-            },
-        }
-    }
+//     if (user.publicMetadata.isSubscribed === true && user.publicMetadata.plan !== 'noSubscription') {
+//         return {
+//             redirect: {
+//                 destination: '/dashboard/home',
+//                 permanent: false,
+//             },
+//         }
+//     }
 
-    return {
-        props: { ...buildClerkProps(ctx.req, { user }) }
-    };
-}
+//     return {
+//         props: { ...buildClerkProps(ctx.req, { user }) }
+//     };
+// }
 
 export default Subs;

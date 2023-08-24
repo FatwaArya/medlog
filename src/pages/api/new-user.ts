@@ -1,6 +1,5 @@
 import { instance } from "@/server/axios";
 import { clerkClient } from "@clerk/nextjs";
-import { type User } from "@clerk/nextjs/dist/types/server";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import type { WebhookRequiredHeaders } from "svix";
 import type { UserJSON, WebhookEvent } from "@clerk/nextjs/server";

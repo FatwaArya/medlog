@@ -164,7 +164,7 @@ export default function Navbar({
                 <Megaphone className="h-6 w-6" aria-hidden="true" />
               </Button>
               {/* Profile dropdown */}
-              <UserButton />
+              <UserButton afterSignOutUrl="/" />
               {/* <DropdownMenu>
                 <div className="relative ml-3">
                   <DropdownMenuTrigger

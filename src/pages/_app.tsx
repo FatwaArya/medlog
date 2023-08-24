@@ -50,7 +50,6 @@ const MyApp: AppType = ({
 
   const { pathname } = useRouter();
 
-  // Check if the current route matches a public page
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
@@ -87,18 +86,18 @@ const MyApp: AppType = ({
         <Loader />
       </ClerkLoading>
       <ClerkLoaded>
-        {isPublicPage ? (
+        {/* {isPublicPage ? (
           <Component {...pageProps} />
         ) : (
-          <>
-            <SignedIn>
-              {getLayout(<Component {...pageProps} />)}
-            </SignedIn>
-            <SignedOut>
+          <> */}
+        {/* <SignedIn> */}
+        {getLayout(<Component {...pageProps} />)}
+        {/* </SignedIn> */}
+        {/* <SignedOut>
               <RedirectToSignIn />
-            </SignedOut>
-          </>
-        )}
+            </SignedOut> */}
+        {/* </>
+        )} */}
       </ClerkLoaded>
     </ClerkProvider >
 

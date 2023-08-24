@@ -158,16 +158,18 @@ export default function PatientList({ isDetailed = true }: ListProps) {
             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Activity className="mr-2 h-4 w-4" />
               <Link
                 href={`/dashboard/patients/checkup/${info.getValue()}/new`}
+                className="flex items-center"
               >
+                <Activity className="mr-2 h-4 w-4" />
+
                 Periksa
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <MoreHorizontal className="mr-2 h-4 w-4" />
-              <Link href={`/dashboard/patients/record/${info.getValue()}`}>
+              <Link href={`/dashboard/patients/record/${info.getValue()}`} className="flex items-center">
+                <MoreHorizontal className="mr-2 h-4 w-4" />
                 Detail
               </Link>
             </DropdownMenuItem>
@@ -195,7 +197,9 @@ export default function PatientList({ isDetailed = true }: ListProps) {
           <DataTable columns={patientColumn} data={patientData} href="/dashboard/patients/checkup/new"
             filter="patient_name"
             filterTitle="nama"
-            isPaginated={true} />
+            isPaginated={true}
+
+          />
         ) : (
           <div className="flex w-full flex-col gap-4">
             <Skeleton className="h-10 w-full rounded-md" />

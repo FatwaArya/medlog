@@ -1,27 +1,35 @@
 import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
-import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/nextjs/middleware for more information about configuring your middleware
 export default authMiddleware({
-  publicRoutes: ["/", "/auth/sign-in", "/auth/sign-up", "/api/new-user"],
+  publicRoutes: [
+    "/",
+    "/auth/sign-in",
+    "/auth/sign-up",
+    "/api/new-user",
+    "/api/recurring",
+  ],
   afterAuth(auth, req) {
+    console.log(auth);
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
     }
-    console.log("1");
-    console.log(auth.user?.id);
-    console.log("2");
 
     if (
-      auth.user?.publicMetadata.isSubscribed === false &&
-      auth.user?.publicMetadata.plan === "noSubscription"
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      !auth.sessionClaims?.publicMetadata.isSubscribed &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      auth.sessionClaims?.publicMetadata.plan === "noSubscription" &&
+      req.nextUrl.pathname !== "/subscription"
     ) {
       const subscribtionUrl = new URL("/subscription", req.url);
+      console.log(subscribtionUrl);
       return NextResponse.redirect(subscribtionUrl);
     }
+
+    return NextResponse.next();
   },
 });
 

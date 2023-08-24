@@ -3,13 +3,14 @@ import {
   type RecurringPlanPayload,
   type RecurringCyclePayload,
 } from "@/server/api/interface/recurring";
+import { clerkClient } from "@clerk/nextjs";
 
 import { prisma } from "@/server/db";
 import {
   type IRecurringPlan,
   type Schedule,
 } from "@/server/api/interface/recurring/plan";
-import { IRecurringCycle } from "@/server/api/interface/recurring/cycle";
+import { type IRecurringCycle } from "@/server/api/interface/recurring/cycle";
 import { env } from "@/env.mjs";
 
 function calculateSubscribedUntil(schedule: Schedule): string {
@@ -95,11 +96,8 @@ export default async function handler(
 // Handler functions for each webhook event type
 async function handlePlanActivatedEvent(data: IRecurringPlan) {
   await prisma.$transaction(async (tx) => {
-    await tx.user.update({
-      where: {
-        id: data.reference_id,
-      },
-      data: {
+    await clerkClient.users.updateUserMetadata(data.reference_id, {
+      publicMetadata: {
         isSubscribed: true,
         plan: data.metadata.plan as "beginner" | "personal" | "professional",
       },
@@ -120,11 +118,8 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
   // Handle recurring.plan.inactivated event
   // Perform necessary actions based on the event data
   await prisma.$transaction(async (tx) => {
-    await tx.user.update({
-      where: {
-        id: data.reference_id,
-      },
-      data: {
+    await clerkClient.users.updateUserMetadata(data.reference_id, {
+      publicMetadata: {
         isSubscribed: false,
         plan: "noSubscription",
       },
