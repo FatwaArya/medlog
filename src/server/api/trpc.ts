@@ -26,7 +26,9 @@ import {
 import { boostedPrisma, prisma } from "@/server/db";
 
 type CreateContextOptions = {
-  user: User | null;
+  auth: SignedInAuthObject | SignedOutAuthObject;
+  isSubscribed: SignedInAuthObject["sessionClaims"]["isSubscribed"];
+  plan: SignedInAuthObject["sessionClaims"]["plan"];
 };
 
 /**
@@ -39,9 +41,15 @@ type CreateContextOptions = {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = ({ user }: CreateContextOptions) => {
+const createInnerTRPCContext = ({
+  auth,
+  isSubscribed,
+  plan,
+}: CreateContextOptions) => {
   return {
-    user,
+    userId: auth.userId,
+    isSubscribed,
+    plan,
     prisma,
     boostedPrisma,
   };
@@ -54,18 +62,13 @@ const createInnerTRPCContext = ({ user }: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  async function getUser() {
-    const { userId } = getAuth(opts.req);
-
-    const user = userId ? await clerkClient.users.getUser(userId) : null;
-
-    return user;
-  }
-
-  const user = await getUser();
+  const auth = getAuth(opts.req);
+  console.log("from createTRPCContext", auth);
 
   return createInnerTRPCContext({
-    user: user,
+    auth,
+    isSubscribed: auth.sessionClaims?.isSubscribed,
+    plan: auth.sessionClaims?.plan,
   });
 };
 
@@ -78,7 +81,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { unknown, ZodError } from "zod";
 import { addDays } from "date-fns";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -120,47 +123,51 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.user) {
+  const { userId } = ctx;
+
+  if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
-      user: ctx.user,
+      userId,
     },
   });
 });
 
 /** Reusable middleware that enforces users are subcribed before running the procedure. */
 const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
-  const { user } = ctx;
+  const { userId, isSubscribed, plan } = ctx;
 
-  if (!user) {
+  if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not logged In" });
   }
-  if (!user.publicMetadata.isSubscribed) {
+  if (!isSubscribed) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });
   }
 
   return next({
     ctx: {
-      user: ctx.user,
+      userId,
+      isSubscribed,
+      plan,
     },
   });
 });
 
 const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  const { user } = ctx;
+  const { userId } = ctx;
 
-  if (!user) {
+  if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (user.publicMetadata.role !== "admin") {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+  // if (metadata.role !== "admin") {
+  //   throw new TRPCError({ code: "UNAUTHORIZED" });
+  // }
   return next({
     ctx: {
-      user: ctx.user,
+      userId,
     },
   });
 });

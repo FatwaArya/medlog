@@ -6,6 +6,7 @@ import { instance } from "@/server/axios";
 import { type RecurringPaymentResponse } from "../interface/subscriptionEvent";
 import { type AxiosResponse } from "axios";
 import { getBaseUrl } from "@/utils/api";
+import { clerkClient } from "@clerk/nextjs";
 
 type RecurringResponse = AxiosResponse<RecurringPaymentResponse>;
 
@@ -20,16 +21,17 @@ export const subscriptionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       let redirectUrl: string | undefined;
-      const { user } = ctx;
+      const { userId, isSubscribed } = ctx;
+      const user = await clerkClient.users.getUser(userId);
 
-      if (!user) {
+      if (!userId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User not found",
         });
       }
 
-      if (user?.publicMetadata.isSubscribed) {
+      if (isSubscribed) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User is already subscribed",
@@ -76,13 +78,13 @@ export const subscriptionRouter = createTRPCRouter({
         const subscription: RecurringResponse = await instance.post(
           "/recurring/plans",
           {
-            reference_id: user.id,
+            reference_id: userId,
             customer_id: user.privateMetadata.customer_id,
             recurring_action: "PAYMENT",
             currency: "IDR",
             amount: 13579,
             schedule: {
-              reference_id: user.id,
+              reference_id: userId,
               interval,
               interval_count: intervalCount,
               total_recurrence: totalRecurrence,

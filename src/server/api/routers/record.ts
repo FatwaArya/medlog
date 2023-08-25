@@ -3,10 +3,12 @@ import { createTRPCRouter, protectedSubscribedProcedure } from "../trpc";
 
 export const recordRouter = createTRPCRouter({
   getStatRevenue: protectedSubscribedProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx;
+
     const result = await ctx.prisma.medicalRecord.aggregate({
       where: {
         patient: {
-          userId: ctx.user?.id,
+          userId: userId,
         },
       },
       _sum: {
@@ -56,12 +58,15 @@ export const recordRouter = createTRPCRouter({
         patientId: z.string(),
       }),
     )
+
     .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
       const records = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
             id: input.patientId,
-            userId: ctx.user?.id,
+            userId: userId,
           },
         },
         include: {
@@ -91,10 +96,12 @@ export const recordRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
       const reports = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.user?.id,
+            userId: userId,
           },
           createdAt: {
             gte: input.from,

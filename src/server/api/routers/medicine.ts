@@ -6,9 +6,11 @@ import { z } from "zod";
 
 export const medicineRouter = createTRPCRouter({
   gets: protectedSubscribedProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx;
+
     const medicines = await ctx.prisma.medicine.findMany({
       where: {
-        userId: ctx.user?.id,
+        userId,
       },
       select: {
         id: true,
@@ -27,10 +29,12 @@ export const medicineRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
       const medicine = await ctx.prisma.medicine.create({
         data: {
           name: input.name,
-          userId: ctx.user?.id as string,
+          userId,
         },
       });
       return medicine;

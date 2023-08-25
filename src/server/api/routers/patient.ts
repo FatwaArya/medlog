@@ -98,8 +98,9 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.user?.id as string;
-      const userPlan = ctx.user?.publicMetadata.plan;
+      const { userId, plan } = ctx;
+
+      const userPlan = plan;
 
       switch (userPlan) {
         case "noSubscription":
@@ -119,9 +120,8 @@ export const patientRouter = createTRPCRouter({
           console.log("hit");
           break;
         case "personal":
-          const { success: successPersonal } = await ratelimit.PPatient.limit(
-            userId,
-          );
+          const { success: successPersonal } =
+            await ratelimit.PPatient.limit(userId);
           if (!successPersonal) {
             throw new TRPCError({
               code: "BAD_REQUEST",
@@ -152,8 +152,6 @@ export const patientRouter = createTRPCRouter({
         // labFiles,
         labNote,
       } = input;
-      //merge files and labFiles
-      // const allFiles = files?.concat(labFiles ?? []);
 
       await ctx.prisma.$transaction(async (tx) => {
         const isNumberUnique = await tx.patient.findFirst({
@@ -177,7 +175,7 @@ export const patientRouter = createTRPCRouter({
             gender,
             address,
             birthDate,
-            userId: ctx.user?.id as string,
+            userId,
           },
         });
 
@@ -308,8 +306,9 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.user?.id as string;
-      const userPlan = ctx.user?.publicMetadata.plan;
+      const { userId, plan } = ctx;
+
+      const userPlan = plan;
 
       switch (userPlan) {
         case "noSubscription":
@@ -328,9 +327,8 @@ export const patientRouter = createTRPCRouter({
           }
           break;
         case "personal":
-          const { success: successPersonal } = await ratelimit.PCheckup.limit(
-            userId,
-          );
+          const { success: successPersonal } =
+            await ratelimit.PCheckup.limit(userId);
           if (!successPersonal) {
             throw new TRPCError({
               code: "BAD_REQUEST",
@@ -453,10 +451,12 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
       const result = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.user?.id,
+            userId,
           },
         },
         select: {
@@ -481,15 +481,17 @@ export const patientRouter = createTRPCRouter({
       return result;
     }),
   getStatPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx;
+
     const patientCount = await ctx.prisma.patient.count({
       where: {
-        userId: ctx.user?.id,
+        userId,
       },
     });
     const lastVisit = await ctx.prisma.medicalRecord.findFirst({
       where: {
         patient: {
-          userId: ctx.user?.id,
+          userId,
         },
       },
       select: {
@@ -514,10 +516,12 @@ export const patientRouter = createTRPCRouter({
         .nullish(),
     )
     .query(async ({ input, ctx }) => {
+      const { userId } = ctx;
+
       const visits = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: ctx.user?.id,
+            userId,
           },
         },
         select: {
@@ -655,11 +659,13 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
+      const { userId } = ctx;
+
       //check if patient is owned by user
       const patient = await ctx.prisma.patient.findFirst({
         where: {
           id: input.patientId,
-          userId: ctx.user?.id as string,
+          userId: userId as string,
         },
       });
       if (!patient) {
@@ -677,9 +683,11 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
+      const { userId } = ctx;
+
       const result = await ctx.prisma.patient.findMany({
         where: {
-          userId: ctx.user?.id,
+          userId: userId as string,
           name: {
             search: input.query,
           },
