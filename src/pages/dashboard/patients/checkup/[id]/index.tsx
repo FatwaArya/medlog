@@ -1,6 +1,5 @@
 import Layout from "@/components/dashboard/Layout";
 import type { PasienPlusPage } from "@/pages/_app";
-import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import { useState } from "react";
 import Head from "next/head";

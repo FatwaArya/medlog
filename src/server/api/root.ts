@@ -3,7 +3,6 @@ import { patientRouter } from "./routers/patient";
 import { recordRouter } from "./routers/record";
 import { medicineRouter } from "./routers/medicine";
 import { adminRouter } from "./routers/admin";
-import { userRouter } from "./routers/user";
 import { subscriptionRouter } from "./routers/subscription";
 import { cannyRouter } from "./routers/canny";
 
@@ -17,7 +16,6 @@ export const appRouter = createTRPCRouter({
   record: recordRouter,
   medicine: medicineRouter,
   admin: adminRouter,
-  user: userRouter,
   subscription: subscriptionRouter,
   canny: cannyRouter,
 });

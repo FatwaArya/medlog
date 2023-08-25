@@ -8,7 +8,6 @@ import { PatientDescription } from "../checkup/[id]/new";
 import { GetServerSidePropsContext } from "next/types";
 import { User, getAuth } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs";
-import { generateSSGHelper } from "@/server/api/helpers/ssgHelper";
 import { useRouter } from "next/router";
 
 
