@@ -10,22 +10,17 @@ export default authMiddleware({
     "/api/recurring",
   ],
   afterAuth(auth, req) {
-    console.log(auth);
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
     }
-
+    console.log(auth.sessionClaims);
     if (
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      !auth.sessionClaims?.publicMetadata.isSubscribed &&
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      auth.sessionClaims?.publicMetadata.plan === "noSubscription" &&
+      auth.sessionClaims?.isSubscribed === false &&
+      auth.sessionClaims?.plan === "noSubscription" &&
       req.nextUrl.pathname !== "/subscription"
     ) {
       const subscribtionUrl = new URL("/subscription", req.url);
-      console.log(subscribtionUrl);
+      console.log("hit");
       return NextResponse.redirect(subscribtionUrl);
     }
 

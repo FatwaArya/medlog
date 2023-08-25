@@ -225,7 +225,6 @@ const ContinueCheckup: PasienPlusPage<{ id: string }> = () => {
                 <title>Pasien Plus | Periksa Pasien {patient?.name}</title>
             </Head>
             <main>
-                <Breadcrumbs patientName={patient?.name} patientId={patient?.id} />
                 <PatientDescription {...patient} />
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

@@ -5,7 +5,7 @@ import { api } from "@/utils/api";
 import { useState } from "react";
 import Head from "next/head";
 import type {
-  GetServerSidePropsContext,
+  GetServerSidePropsContext, GetStaticPropsContext,
 } from "next/types";
 import type { RouterOutputs } from "@/utils/api";
 import { PatientDescription } from "./new";
@@ -23,7 +23,11 @@ import { ImageOff } from "lucide-react";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { User, getAuth } from "@clerk/nextjs/server";
-import { clerkClient } from "@clerk/nextjs";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "@/server/api/root";
+import superjson from "superjson";
+import { boostedPrisma, prisma } from "@/server/db";
 
 
 type PatientInfo = NonNullable<
@@ -227,52 +231,6 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
 
 export default CheckupDetail;
 
-// export async function getServerSideProps(
-//   context: GetServerSidePropsContext<{ id: string }>
-// ) {
-//   const { userId } = getAuth(context.req);
-//   const user = userId ? await clerkClient.users.getUser(userId) : undefined;
-
-
-//   if (!user) {
-//     return {
-//       redirect: {
-//         destination: "/auth/sign-in",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-
-//   if (user?.publicMetadata.isSubscribed) {
-//     return {
-//       redirect: {
-//         destination: "/subscription",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   const helpers = generateSSGHelper(user as User);
-//   const id = context.params?.id as string;
-
-//   const reportExists = await helpers.record.getRecordById.fetch({ id });
-//   if (reportExists) {
-//     await helpers.record.getRecordById.prefetch({ id });
-//   } else {
-//     return {
-//       props: { id },
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       trpcState: helpers.dehydrate(),
-//       id,
-//     },
-//   };
-// }
 
 CheckupDetail.authRequired = true;
 

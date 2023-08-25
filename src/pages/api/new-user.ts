@@ -45,7 +45,6 @@ const newUserHandler = async (
     last_name,
     phone_numbers,
   } = evt.data as UserJSON;
-  console.log();
 
   try {
     const customer = await instance.post("/customers", {
@@ -60,8 +59,6 @@ const newUserHandler = async (
         mobile_number: formatPhoneNumber(phone_numbers[0]?.phone_number),
       }),
     });
-
-    console.log(customer.data);
 
     const user = await clerkClient.users.updateUserMetadata(req.body.data.id, {
       publicMetadata: {

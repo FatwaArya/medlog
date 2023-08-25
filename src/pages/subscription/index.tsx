@@ -28,7 +28,7 @@ const Subs = () => {
             <section
                 id="pricing"
                 aria-label="Pricing"
-                className="bg-slate-900 py-20 sm:py-32"
+                className="bg-slate-900 py-20 sm:py-32 min-h-screen"
             >
 
                 <Container>
@@ -80,19 +80,6 @@ const Subs = () => {
                         />
                         <Plan
                             featured
-                            name="Personal"
-                            price="Rp 65.000/bln"
-                            description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
-                            onClick={() => {
-                                mutate({ plan: 'personal' });
-                            }}
-                            features={[
-                                "Tambah 35 pasien baru per hari",
-                                "Tambah 100 checkup baru per hari",
-                                "Ekspor data pasien",
-                            ]}
-                        />
-                        <Plan
                             name="Professional"
                             price="Rp 150.000/bln"
                             description="Untuk skala perawat online yang lebih besar."
@@ -104,6 +91,19 @@ const Subs = () => {
                                 "Tambah tak terbatas checkup baru per hari",
                                 "Ekspor data pasien",
                                 "Akses awal ke fitur baru"
+                            ]}
+                        />
+                        <Plan
+                            name="Personal"
+                            price="Rp 65.000/bln"
+                            description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
+                            onClick={() => {
+                                mutate({ plan: 'personal' });
+                            }}
+                            features={[
+                                "Tambah 35 pasien baru per hari",
+                                "Tambah 100 checkup baru per hari",
+                                "Ekspor data pasien",
                             ]}
                         />
                     </div>
