@@ -22,19 +22,17 @@ import {
 import { ImageOff } from "lucide-react";
 
 import Breadcrumbs from "@/components/ui/breadcrumb";
-import { User, getAuth } from "@clerk/nextjs/server";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "@/server/api/root";
-import superjson from "superjson";
-import { boostedPrisma, prisma } from "@/server/db";
-
+import { useRouter } from "next/router";
 
 type PatientInfo = NonNullable<
   RouterOutputs["record"]["getRecordById"]
 >["patient"];
 
-const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
+const CheckupDetail: PasienPlusPage = () => {
+  const router = useRouter()
+  const { id } = router.query as { id: string };
+
+
   const { data: report, isLoading } = api.record.getRecordById.useQuery({ id });
 
   const [activeSlide, setActiveSlide] = useState(0);

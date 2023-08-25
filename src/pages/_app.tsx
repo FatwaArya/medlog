@@ -45,6 +45,8 @@ const MyApp: AppType = ({
   pageProps: { ...pageProps },
   router
 }: PasienPlusProps) => {
+  const { push } = useRouter();
+
   const getLayout = Component.getLayout ?? ((page) => page);
   const authRequired = Component.authRequired ?? false;
 
@@ -81,7 +83,7 @@ const MyApp: AppType = ({
       }
     `}</style>
     <Toaster />
-    <ClerkProvider {...pageProps}>
+    <ClerkProvider {...pageProps} navigate={to => push(to)}>
       <ClerkLoading>
         <Loader />
       </ClerkLoading>

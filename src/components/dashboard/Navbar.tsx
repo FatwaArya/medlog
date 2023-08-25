@@ -155,17 +155,26 @@ export default function Navbar({
               </div>
             </div>
 
-            <div className=" flex items-center md:ml-6">
-              <Button
+            <div className=" flex items-center ">
+              <button
+                className="mx-6"
                 data-canny-changelog
-                variant={"ghost"}
+                //change megaphone color when hover
+                onMouseEnter={(e) => {
+                  e.currentTarget.classList.add("text-blue-600")
+                }
+                }
+                onMouseLeave={(e) => {
+                  e.currentTarget.classList.remove("text-blue-600")
+                }
+                }
               >
                 <span className="sr-only">View notifications</span>
                 <Megaphone className="h-6 w-6" aria-hidden="true" />
-              </Button>
+              </button>
               {/* Profile dropdown */}
-              <UserButton afterSignOutUrl="/" />
-              {/* <DropdownMenu>
+              {/* <UserButton afterSignOutUrl="/" /> */}
+              <DropdownMenu>
                 <div className="relative ml-3">
                   <DropdownMenuTrigger
                     className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -208,7 +217,7 @@ export default function Navbar({
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </div>
-              </DropdownMenu> */}
+              </DropdownMenu>
             </div>
           </div>
         </div>
