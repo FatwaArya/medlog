@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/utils/cn";
 
 export const redAsterisk = <span className="text-red-500">*</span>;
 
@@ -166,6 +167,7 @@ const NewCheckup = () => {
         onError: (e) => {
           const errorMessage = e.data?.zodError?.fieldErrors.phone;
           if (errorMessage && errorMessage[0]) {
+            console.log('hit as')
             toast.error(errorMessage[0]);
           } else {
             toast.error(e.message);
@@ -193,7 +195,9 @@ const NewCheckup = () => {
 
               <AlertDialog>
                 <AlertDialogTrigger
-                  className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className={cn("ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                    isLoading && "bg-blue-200"
+                  )}
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -229,7 +233,7 @@ const NewCheckup = () => {
             </div>
           </div>
         </form>
-      </FormProvider>
+      </FormProvider >
     </>
   );
 };

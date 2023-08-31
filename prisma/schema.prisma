@@ -15,10 +15,7 @@ model Medicine {
   name           String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   MedicineDetail MedicineDetail[]
-
-  @@index([userId])
 }
 
 model MedicineDetail {
@@ -32,6 +29,7 @@ model MedicineDetail {
 
   @@index([medicineId])
   @@index([medicalRecordId])
+  @@index([createdAt])
 }
 
 model Patient {
@@ -44,12 +42,9 @@ model Patient {
   birthDate     DateTime
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   MedicalRecord MedicalRecord[]
-  // @@fulltext([phone])
-  // @@fulltext([address])
 
-  @@index([userId])
+  @@index([createdAt])
   @@fulltext([name])
 }
 
@@ -70,6 +65,8 @@ model MedicalRecord {
   MedicineDetail MedicineDetail[]
 
   @@index([patientId])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 model Attachment {
@@ -83,6 +80,7 @@ model Attachment {
 
   @@index([medicalRecordId])
   @@index([fileId])
+  @@index([createdAt])
 }
 
 model File {
@@ -99,62 +97,6 @@ model File {
   attachments Attachment[]
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model User {
-  id            String           @id @default(cuid())
-  name          String?
-  email         String?          @unique
-  emailVerified DateTime?
-  image         String?
-  isSubscribed  Boolean          @default(false)
-  plan          SubscriptionPlan @default(noSubscription)
-  phone         String?          @unique
-  role          Role             @default(user)
-  customer_id   String?
-  isNewUser     Boolean          @default(true)
-  accounts      Account[]
-  sessions      Session[]
-  Patient       Patient[]
-  Medicine      Medicine[]
-  Subscription  Subscription[]
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
 model Subscription {
   id              String             @id @default(cuid())
   userId          String
@@ -162,9 +104,9 @@ model Subscription {
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   subscribedUntil DateTime?
-  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 enum SubscriptionStatus {

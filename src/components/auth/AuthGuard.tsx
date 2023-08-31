@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 interface IAuthGuardProps {
   children: React.ReactNode;
-  isSubscription?: boolean;
 }
 
 export function Loader() {

@@ -1,11 +1,8 @@
-import {
-  createTRPCRouter,
-  protectedSubscribedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 
 export const medicineRouter = createTRPCRouter({
-  gets: protectedSubscribedProcedure.query(async ({ ctx }) => {
+  gets: protectedProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 
     const medicines = await ctx.prisma.medicine.findMany({
@@ -22,7 +19,7 @@ export const medicineRouter = createTRPCRouter({
       label: medicine.name,
     }));
   }),
-  create: protectedSubscribedProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -39,7 +36,7 @@ export const medicineRouter = createTRPCRouter({
       });
       return medicine;
     }),
-  update: protectedSubscribedProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -57,7 +54,7 @@ export const medicineRouter = createTRPCRouter({
       });
       return medicine;
     }),
-  delete: protectedSubscribedProcedure
+  delete: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -71,7 +68,7 @@ export const medicineRouter = createTRPCRouter({
       });
       return medicine;
     }),
-  isMedicineRelatedToRecord: protectedSubscribedProcedure
+  isMedicineRelatedToRecord: protectedProcedure
     .input(
       z.object({
         id: z.array(z.string()),

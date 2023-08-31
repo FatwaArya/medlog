@@ -135,13 +135,13 @@ export function Pricing() {
         </div>
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
           <Plan
-            name="Pemula"
-            price="Rp 35.000/bln"
-            description="Cocok untuk pemula yang ingin mencoba layanan aplikasi kami."
-            href="//auth/signin"
+            name="Gratis"
+            price="Rp 0/bln"
+            description="Cocok untuk perawat yang ingin mencoba layanan aplikasi kami."
+            href="/auth/signin"
             features={[
               "Tambah 5 pasien baru per hari",
-              "Tambah 25 checkup baru per hari (tanpa gambar)",
+              "Tambah 25 checkup baru per hari",
               "Ekspor Laporan ",
             ]}
           />
@@ -160,10 +160,9 @@ export function Pricing() {
           <Plan
             name="Professional"
             price="Rp 150.000/bln"
-            description="Untuk skala perawat online yang lebih besar."
+            description="Untuk skala perawat yang lebih besar."
             href="/auth/signin"
             features={[
-              // tambah tak terbatas pasien
               "Tambah tak terbatas pasien baru per hari",
               "Tambah tak terbatas checkup baru per hari",
               "Ekspor data pasien",

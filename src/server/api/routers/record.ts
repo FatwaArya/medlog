@@ -1,8 +1,10 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedSubscribedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { clerkClient } from "@clerk/nextjs";
+import { report } from "process";
 
 export const recordRouter = createTRPCRouter({
-  getStatRevenue: protectedSubscribedProcedure.query(async ({ ctx }) => {
+  getStatRevenue: protectedProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 
     const result = await ctx.prisma.medicalRecord.aggregate({
@@ -25,7 +27,7 @@ export const recordRouter = createTRPCRouter({
       lastRevenue,
     };
   }),
-  getRecordById: protectedSubscribedProcedure
+  getRecordById: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -52,7 +54,7 @@ export const recordRouter = createTRPCRouter({
       });
       return record;
     }),
-  getRecords: protectedSubscribedProcedure
+  getRecords: protectedProcedure
     .input(
       z.object({
         patientId: z.string(),
@@ -88,7 +90,7 @@ export const recordRouter = createTRPCRouter({
       });
       return records;
     }),
-  getRecordReports: protectedSubscribedProcedure
+  getRecordReports: protectedProcedure
     .input(
       z.object({
         from: z.date(),
@@ -97,11 +99,13 @@ export const recordRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { userId } = ctx;
+      const { firstName, lastName } = await clerkClient.users.getUser(userId);
+      const fullName = `${firstName} ${lastName}`;
 
       const reports = await ctx.prisma.medicalRecord.findMany({
         where: {
           patient: {
-            userId: userId,
+            userId,
           },
           createdAt: {
             gte: input.from,
@@ -111,11 +115,6 @@ export const recordRouter = createTRPCRouter({
         include: {
           patient: {
             select: {
-              user: {
-                select: {
-                  name: true,
-                },
-              },
               name: true,
               address: true,
               phone: true,
@@ -123,6 +122,14 @@ export const recordRouter = createTRPCRouter({
           },
         },
       });
-      return reports;
+
+      const reportsWithFullName = reports.map((report) => {
+        return {
+          ...report,
+          fullName: fullName,
+        };
+      });
+
+      return reportsWithFullName;
     }),
 });

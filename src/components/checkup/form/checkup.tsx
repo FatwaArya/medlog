@@ -65,10 +65,11 @@ export function CheckupForm() {
         const isRelated = isMedicineRelated?.some((medicine) => medicine.id === data.value)
 
         return (
-            <div className="relative mt-1 rounded-md shadow-sm">
+            <div className="relative mt-1 rounded-2xl shadow-sm">
                 <components.Option {...props} />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <button
+                        className=""
                         type="button"
                         onClick={() => {
                             deleteMedicine({ id: data.value }, {
@@ -140,6 +141,7 @@ export function CheckupForm() {
                                                     <CreatableSelect
                                                         {...field}
                                                         isMulti
+
                                                         placeholder="Pilih obat"
                                                         isDisabled={isLoading}
                                                         isLoading={isLoading}
@@ -148,7 +150,6 @@ export function CheckupForm() {
                                                         value={field.value}
                                                         components={{ Option }}
                                                         isClearable
-
                                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                                         // @ts-ignore
                                                         options={medicineOptions}
@@ -158,6 +159,8 @@ export function CheckupForm() {
                                                                 'input:focus': {
                                                                     boxShadow: 'none',
                                                                 },
+                                                                //make border rounded
+
                                                             }),
                                                         }}
                                                         formatCreateLabel={(inputValue) => `Tambahkan obat "${inputValue}"`}
@@ -192,11 +195,12 @@ export function CheckupForm() {
                                                         onValueChange={(values) => {
                                                             field.onChange(values.floatValue)
                                                         }}
-                                                        className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                        className="block w-full rounded-md border-gray-300 bg-white pl-10 pr-12  sm:text-sm"
                                                         name={field.name}
                                                         value={field.value as number}
                                                         onBlur={field.onBlur}
                                                         getInputRef={field.ref}
+
                                                         //if submit success, reset the value
                                                         onReset={() => field.onChange(0)}
                                                     />

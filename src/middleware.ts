@@ -13,17 +13,6 @@ export default authMiddleware({
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
     }
-    console.log(auth.sessionClaims);
-    if (
-      auth.sessionClaims?.isSubscribed === false &&
-      auth.sessionClaims?.plan === "noSubscription" &&
-      req.nextUrl.pathname !== "/subscription"
-    ) {
-      const subscribtionUrl = new URL("/subscription", req.url);
-      console.log("hit");
-      return NextResponse.redirect(subscribtionUrl);
-    }
-
     return NextResponse.next();
   },
 });

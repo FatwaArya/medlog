@@ -123,28 +123,10 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  const { userId } = ctx;
-
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return next({
-    ctx: {
-      userId,
-    },
-  });
-});
-
-/** Reusable middleware that enforces users are subcribed before running the procedure. */
-const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
   const { userId, isSubscribed, plan } = ctx;
 
   if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not logged In" });
-  }
-  if (!isSubscribed) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not subscribed" });
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
@@ -152,22 +134,6 @@ const enforceUserIsSubscribed = t.middleware(async ({ ctx, next }) => {
       userId,
       isSubscribed,
       plan,
-    },
-  });
-});
-
-const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  const { userId } = ctx;
-
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  // if (metadata.role !== "admin") {
-  //   throw new TRPCError({ code: "UNAUTHORIZED" });
-  // }
-  return next({
-    ctx: {
-      userId,
     },
   });
 });
@@ -182,7 +148,3 @@ const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
  */
 
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-export const protectedSubscribedProcedure = t.procedure.use(
-  enforceUserIsSubscribed,
-);
-export const adminProcedure = t.procedure.use(enforceUserIsAdmin);

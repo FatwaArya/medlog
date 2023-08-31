@@ -4,25 +4,25 @@ import { Redis } from "@upstash/redis";
 const redis = Redis.fromEnv();
 
 const ratelimit = {
-  BPatient: new Ratelimit({
+  FreePatient: new Ratelimit({
     redis,
     analytics: true,
     prefix: "ratelimit:BPatient",
     limiter: Ratelimit.slidingWindow(10, "1 d"),
   }),
-  BCheckup: new Ratelimit({
+  FreeCheckup: new Ratelimit({
     redis,
     analytics: true,
     prefix: "ratelimit:BCheckup",
     limiter: Ratelimit.slidingWindow(25, "1 d"),
   }),
-  PPatient: new Ratelimit({
+  PersonalPatient: new Ratelimit({
     redis,
     analytics: true,
     prefix: "ratelimit:PPatient",
     limiter: Ratelimit.slidingWindow(35, "1 d"),
   }),
-  PCheckup: new Ratelimit({
+  PersonalCheckup: new Ratelimit({
     redis,
     analytics: true,
     prefix: "ratelimit:PCheckup",

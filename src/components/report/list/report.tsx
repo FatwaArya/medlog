@@ -78,7 +78,7 @@ export default function ReportList() {
                 </span>
             ),
         }),
-        columnHelper.accessor("patient.user.name", {
+        columnHelper.accessor("fullName", {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="nama perawat" />
             ),

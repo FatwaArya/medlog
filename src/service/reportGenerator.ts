@@ -26,7 +26,7 @@ const generatePDF = (patients: ReportData) => {
       data?.patient.name,
       data?.patient.address,
       data?.patient.phone,
-      data?.patient.user.name,
+      data?.fullName,
       rupiah.format(data?.pay),
     ];
     tblRows.push(patientsData);

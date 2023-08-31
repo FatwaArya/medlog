@@ -63,7 +63,7 @@ const newUserHandler = async (
     const user = await clerkClient.users.updateUserMetadata(req.body.data.id, {
       publicMetadata: {
         isSubscribed: false,
-        plan: "noSubscription",
+        plan: "Free",
       },
       privateMetadata: {
         customer_id: customer.data.id,

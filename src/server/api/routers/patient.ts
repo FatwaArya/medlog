@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  protectedSubscribedProcedure,
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
@@ -33,7 +32,7 @@ interface GenderCount {
 }
 
 export const patientRouter = createTRPCRouter({
-  createPresignedUrl: protectedSubscribedProcedure
+  createPresignedUrl: protectedProcedure
 
     .input(z.object({ count: z.number().gte(1).lte(8) }))
     .query(async ({ input }) => {
@@ -63,7 +62,7 @@ export const patientRouter = createTRPCRouter({
    * this procedure only calls when user is registering new patient for the first time
    *
    */
-  createNewPatient: protectedSubscribedProcedure
+  createNewPatient: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -98,34 +97,33 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, plan } = ctx;
+      const { userId, plan } = ctx as {
+        userId: string;
+        plan: string;
+      };
 
-      const userPlan = plan;
-
+      const userPlan = plan.toLowerCase();
+      console.log(userPlan);
       switch (userPlan) {
-        case "noSubscription":
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Anda belum berlangganan",
-          });
-          break;
-        case "beginner":
-          const { success } = await ratelimit.BPatient.limit(userId);
+        case "free":
+          const { success } = await ratelimit.FreePatient.limit(userId);
           if (!success) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Limit pasien sudah tercapai",
+              message:
+                "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
           console.log("hit");
           break;
         case "personal":
           const { success: successPersonal } =
-            await ratelimit.PPatient.limit(userId);
+            await ratelimit.PersonalPatient.limit(userId);
           if (!successPersonal) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Limit pasien sudah tercapai",
+              message:
+                "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
           console.log("hit");
@@ -275,7 +273,7 @@ export const patientRouter = createTRPCRouter({
    * this procedure only calls when user is creating new medical record for existing patient
    *
    */
-  createMedicalRecord: protectedSubscribedProcedure
+  createMedicalRecord: protectedProcedure
     .input(
       z.object({
         patientId: z.string(),
@@ -306,33 +304,32 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, plan } = ctx;
+      const { userId, plan } = ctx as {
+        userId: string;
+        plan: string;
+      };
 
-      const userPlan = plan;
+      const userPlan = plan.toLowerCase();
 
       switch (userPlan) {
-        case "noSubscription":
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Anda belum berlangganan",
-          });
-          break;
-        case "beginner":
-          const { success } = await ratelimit.BCheckup.limit(userId);
+        case "free":
+          const { success } = await ratelimit.FreeCheckup.limit(userId);
           if (!success) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Limit pasien sudah tercapai",
+              message:
+                "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
           break;
         case "personal":
           const { success: successPersonal } =
-            await ratelimit.PCheckup.limit(userId);
+            await ratelimit.PersonalCheckup.limit(userId);
           if (!successPersonal) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Limit pasien sudah tercapai",
+              message:
+                "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
           break;
@@ -443,7 +440,7 @@ export const patientRouter = createTRPCRouter({
         }
       });
     }),
-  getNewestPatients: protectedSubscribedProcedure
+  getNewestPatients: protectedProcedure
     .input(
       z.object({
         limit: z.number().gte(1).lte(5).nullish().nullable(),
@@ -480,7 +477,7 @@ export const patientRouter = createTRPCRouter({
       });
       return result;
     }),
-  getStatPatients: protectedSubscribedProcedure.query(async ({ ctx }) => {
+  getStatPatients: protectedProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 
     const patientCount = await ctx.prisma.patient.count({
@@ -506,7 +503,7 @@ export const patientRouter = createTRPCRouter({
       lastVisit: lastVisit?.createdAt,
     };
   }),
-  getStatLine: protectedSubscribedProcedure
+  getStatLine: protectedProcedure
 
     .input(
       z
@@ -676,7 +673,7 @@ export const patientRouter = createTRPCRouter({
       }
       return patient;
     }),
-  searchPatient: protectedSubscribedProcedure
+  searchPatient: protectedProcedure
     .input(
       z.object({
         query: z.string(),
