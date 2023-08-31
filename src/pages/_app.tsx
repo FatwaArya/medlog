@@ -20,6 +20,7 @@ import { Toaster } from "react-hot-toast";
 import { Loader } from "@/components/auth/AuthGuard";
 
 
+
 NProgress.configure({ showSpinner: false });
 
 const inter = Inter({

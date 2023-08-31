@@ -63,8 +63,6 @@ const createInnerTRPCContext = ({
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const auth = getAuth(opts.req);
-  console.log("from createTRPCContext", auth);
-
   return createInnerTRPCContext({
     auth,
     isSubscribed: auth.sessionClaims?.isSubscribed,

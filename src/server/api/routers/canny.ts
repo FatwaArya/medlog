@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import jwt from "jsonwebtoken";
 import { env } from "@/env.mjs";
 import { clerkClient } from "@clerk/nextjs";
+import { log } from "next-axiom";
 
 export const cannyRouter = createTRPCRouter({
   cannyUserToken: protectedProcedure.query(async ({ ctx }) => {

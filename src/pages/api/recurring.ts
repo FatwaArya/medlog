@@ -12,6 +12,7 @@ import {
 } from "@/server/api/interface/recurring/plan";
 import { type IRecurringCycle } from "@/server/api/interface/recurring/cycle";
 import { env } from "@/env.mjs";
+import { log } from "next-axiom";
 
 function calculateSubscribedUntil(schedule: Schedule): string {
   const anchorDate = new Date(schedule.anchor_date);
@@ -55,8 +56,7 @@ export default async function handler(
     }
 
     const payload = req.body as RecurringPlanPayload | RecurringCyclePayload; // Updated type
-
-    console.log("Received webhook payload:", JSON.stringify(payload, null, 2));
+    log.info("Webhook verified", payload);
     // Handle the webhook event based on the event type
     switch (payload.event) {
       case "recurring.plan.activated":
@@ -82,11 +82,14 @@ export default async function handler(
         throw new Error(`Unsupported event type`);
     }
 
+    log.info("Webhook processing successful");
     // Send a success response
     res.status(200).json({ success: true });
   } catch (error) {
-    // Handle any errors that occur during webhook processing
     console.log(error);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    log.error("Webhook processing failed or invalid xendit signature", error);
     res
       .status(500)
       .json({ error: "Webhook processing failed or invalid xendit signature" });
@@ -96,15 +99,21 @@ export default async function handler(
 // Handler functions for each webhook event type
 async function handlePlanActivatedEvent(data: IRecurringPlan) {
   await prisma.$transaction(async (tx) => {
-    await clerkClient.users.updateUserMetadata(data.reference_id, {
-      publicMetadata: {
-        isSubscribed: true,
-        plan: data.metadata.plan as "beginner" | "personal" | "professional",
+    const updateUserMetadata = await clerkClient.users.updateUserMetadata(
+      data.reference_id,
+      {
+        publicMetadata: {
+          isSubscribed: true,
+          plan: data.metadata.plan as "beginner" | "personal" | "professional",
+        },
       },
-    });
-    const subscribedUntil = calculateSubscribedUntil(data.schedule);
+    );
+    log.info("update user metadata on activated plan", { updateUserMetadata });
 
-    await tx.subscription.create({
+    const subscribedUntil = calculateSubscribedUntil(data.schedule);
+    log.info("subscribedUntil", { subscribedUntil });
+
+    const updateSubscription = await tx.subscription.create({
       data: {
         id: data.id,
         status: "active",
@@ -112,19 +121,27 @@ async function handlePlanActivatedEvent(data: IRecurringPlan) {
         subscribedUntil: subscribedUntil,
       },
     });
+    log.info("update subscription activated plan", { updateSubscription });
   });
 }
 async function handlePlanInactivatedEvent(data: IRecurringPlan) {
   // Handle recurring.plan.inactivated event
   // Perform necessary actions based on the event data
   await prisma.$transaction(async (tx) => {
-    await clerkClient.users.updateUserMetadata(data.reference_id, {
-      publicMetadata: {
-        isSubscribed: false,
-        plan: "noSubscription",
+    const updateUserMetadata = await clerkClient.users.updateUserMetadata(
+      data.reference_id,
+      {
+        publicMetadata: {
+          isSubscribed: false,
+          plan: "noSubscription",
+        },
       },
+    );
+    log.info("update user metadata on inactivated plan", {
+      updateUserMetadata,
     });
-    await tx.subscription.updateMany({
+
+    const updateSubscription = await tx.subscription.updateMany({
       where: {
         id: data.id,
       },
@@ -133,14 +150,15 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
         subscribedUntil: null,
       },
     });
+
+    log.info("update subscription inactivated plan", { updateSubscription });
   });
 }
 
 async function handleCycleSucceededEvent(data: IRecurringCycle) {
   // Handle recurring.cycle.succeeded event
-  console.log("Cycle succeeded 3");
   await prisma.$transaction(async (tx) => {
-    await tx.subscription.update({
+    const updateSubscription = await tx.subscription.update({
       where: {
         id: data.plan_id,
       },
@@ -149,6 +167,8 @@ async function handleCycleSucceededEvent(data: IRecurringCycle) {
         subscribedUntil: data.scheduled_timestamp,
       },
     });
+
+    log.info("update subscription succeeded cycle", { updateSubscription });
   });
 }
 
@@ -156,7 +176,7 @@ async function handleCycleCreatedEvent(data: IRecurringCycle) {
   console.log("Cycle created 1");
 
   await prisma.$transaction(async (tx) => {
-    await tx.subscription.update({
+    const updateSubscription = await tx.subscription.update({
       where: {
         id: data.plan_id,
       },
@@ -165,6 +185,8 @@ async function handleCycleCreatedEvent(data: IRecurringCycle) {
         subscribedUntil: data.scheduled_timestamp,
       },
     });
+
+    log.info("update subscription created cycle", { updateSubscription });
   });
 }
 
