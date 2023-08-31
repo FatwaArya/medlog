@@ -10,7 +10,6 @@ import { DataTableFacetedFilter } from "@/components/ui/datatable/data-table-fac
 
 import { useEffect, useState } from "react";
 
-import { statuses } from "@/components/accounts/data/data";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -59,15 +58,6 @@ export function DataTableToolbar<TData>({
                         )
                     }
 
-                    {isFacetedFilter && (
-                        table.getColumn("status") && (
-                            <DataTableFacetedFilter
-                                column={table.getColumn("status")}
-                                title="Status"
-                                options={statuses}
-                            />
-                        )
-                    )}
                     {isFiltered && (
                         <Button
                             variant="ghost"
