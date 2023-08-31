@@ -127,6 +127,14 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
+  // if plan is empty and user is empty, throw error
+  if (!isSubscribed && !plan) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "User is not subscribed",
+    });
+  }  
+
   return next({
     ctx: {
       userId,
