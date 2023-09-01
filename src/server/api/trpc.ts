@@ -22,6 +22,7 @@ import {
   type SignedOutAuthObject,
   User,
 } from "@clerk/nextjs/server";
+import { AxiomAPIRequest, Logger } from "next-axiom";
 
 import { boostedPrisma, prisma } from "@/server/db";
 
@@ -29,6 +30,13 @@ type CreateContextOptions = {
   auth: SignedInAuthObject | SignedOutAuthObject;
   isSubscribed: SignedInAuthObject["sessionClaims"]["isSubscribed"];
   plan: SignedInAuthObject["sessionClaims"]["plan"];
+  log: Logger;
+};
+
+const isAxiomAPIRequest = (
+  req?: NextApiRequest | AxiomAPIRequest,
+): req is AxiomAPIRequest => {
+  return Boolean((req as AxiomAPIRequest)?.log);
 };
 
 /**
@@ -45,6 +53,7 @@ const createInnerTRPCContext = ({
   auth,
   isSubscribed,
   plan,
+  log,
 }: CreateContextOptions) => {
   return {
     userId: auth.userId,
@@ -52,6 +61,7 @@ const createInnerTRPCContext = ({
     plan,
     prisma,
     boostedPrisma,
+    log,
   };
 };
 
@@ -62,11 +72,21 @@ const createInnerTRPCContext = ({
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  const req = opts?.req;
+
+  if (!isAxiomAPIRequest(req)) {
+    throw new Error("Invalid request");
+  }
+
   const auth = getAuth(opts.req);
+
+  const log = auth ? req.log.with({ userId: auth.userId }) : req.log;
+
   return createInnerTRPCContext({
     auth,
     isSubscribed: auth.sessionClaims?.isSubscribed,
     plan: auth.sessionClaims?.plan,
+    log,
   });
 };
 
@@ -81,6 +101,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { unknown, ZodError } from "zod";
 import { addDays } from "date-fns";
+import { NextApiRequest } from "next";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -121,7 +142,7 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  const { userId, isSubscribed, plan } = ctx;
+  const { userId, isSubscribed, plan, log } = ctx;
 
   if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -133,17 +154,17 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
       code: "BAD_REQUEST",
       message: "User is not subscribed",
     });
-  }  
+  }
 
   return next({
     ctx: {
       userId,
       isSubscribed,
       plan,
+      log,
     },
   });
 });
-
 /**
  * Protected (authenticated) procedure
  *

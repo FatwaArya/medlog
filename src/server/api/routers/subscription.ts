@@ -21,10 +21,11 @@ export const subscriptionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       let redirectUrl: string | undefined;
-      const { userId, isSubscribed } = ctx;
+      const { userId, isSubscribed, log } = ctx;
       const user = await clerkClient.users.getUser(userId);
 
       if (!userId) {
+        log.error("User not found", { userId });
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User not found",
@@ -32,6 +33,7 @@ export const subscriptionRouter = createTRPCRouter({
       }
 
       if (isSubscribed) {
+        log.error("User is already subscribed", { userId });
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User is already subscribed",
@@ -67,7 +69,7 @@ export const subscriptionRouter = createTRPCRouter({
           break;
 
         default:
-          // Invalid plan
+          log.error("Invalid plan", { input });
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Invalid plan",
@@ -113,13 +115,17 @@ export const subscriptionRouter = createTRPCRouter({
         );
         redirectUrl = subscription.data.actions[0]?.url;
 
+        log.info("Subscription created", { subscription });
+
         if (!redirectUrl) {
+          log.error("Failed to create subscription", { subscription });
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Failed to create subscription",
           });
         }
       } catch (error) {
+        log.error("Failed to create subscription", { error });
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Failed to create subscription",

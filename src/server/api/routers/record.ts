@@ -5,7 +5,7 @@ import { report } from "process";
 
 export const recordRouter = createTRPCRouter({
   getStatRevenue: protectedProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx;
+    const { userId, log } = ctx;
 
     const result = await ctx.prisma.medicalRecord.aggregate({
       where: {
@@ -22,6 +22,8 @@ export const recordRouter = createTRPCRouter({
     });
     const total = result._sum.pay;
     const lastRevenue = result._max;
+
+    log.info("Revenue fetched", { total, lastRevenue });
     return {
       total,
       lastRevenue,
@@ -52,6 +54,8 @@ export const recordRouter = createTRPCRouter({
           },
         },
       });
+      ctx.log.info("Record fetched", { record });
+
       return record;
     }),
   getRecords: protectedProcedure
@@ -62,7 +66,7 @@ export const recordRouter = createTRPCRouter({
     )
 
     .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       const records = await ctx.prisma.medicalRecord.findMany({
         where: {
@@ -88,6 +92,9 @@ export const recordRouter = createTRPCRouter({
           createdAt: "desc",
         },
       });
+
+      log.info("Records fetched", { records });
+
       return records;
     }),
   getRecordReports: protectedProcedure
@@ -98,7 +105,7 @@ export const recordRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
       const { firstName, lastName } = await clerkClient.users.getUser(userId);
       const fullName = `${firstName} ${lastName}`;
 
@@ -129,6 +136,8 @@ export const recordRouter = createTRPCRouter({
           fullName: fullName,
         };
       });
+
+      log.info("Reports fetched", { reportsWithFullName });
 
       return reportsWithFullName;
     }),

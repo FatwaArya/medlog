@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const medicineRouter = createTRPCRouter({
   gets: protectedProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx;
+    const { userId, log } = ctx;
 
     const medicines = await ctx.prisma.medicine.findMany({
       where: {
@@ -14,6 +14,9 @@ export const medicineRouter = createTRPCRouter({
         name: true,
       },
     });
+
+    log.info("Medicines fetched", { medicines });
+
     return medicines.map((medicine) => ({
       value: medicine.id,
       label: medicine.name,
@@ -26,7 +29,7 @@ export const medicineRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       const medicine = await ctx.prisma.medicine.create({
         data: {
@@ -34,6 +37,9 @@ export const medicineRouter = createTRPCRouter({
           userId,
         },
       });
+
+      log.info("Medicine created", { medicine });
+
       return medicine;
     }),
   update: protectedProcedure
@@ -52,6 +58,8 @@ export const medicineRouter = createTRPCRouter({
           name: input.name,
         },
       });
+      ctx.log.info("Medicine updated", { medicine });
+
       return medicine;
     }),
   delete: protectedProcedure
@@ -66,6 +74,8 @@ export const medicineRouter = createTRPCRouter({
           id: input.id,
         },
       });
+      ctx.log.info("Medicine deleted", { medicine });
+
       return medicine;
     }),
   isMedicineRelatedToRecord: protectedProcedure
@@ -89,10 +99,15 @@ export const medicineRouter = createTRPCRouter({
           },
         },
       });
+
+      ctx.log.info("Medicine fetched", { medicine });
+
       // show only unrelate medicine
       const res = medicine.filter((medicine) => {
         return medicine.MedicineDetail.length === 0;
       });
+
+      ctx.log.info("Medicine filtered", { res });
 
       return res;
     }),

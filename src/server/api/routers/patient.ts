@@ -21,6 +21,7 @@ import localeData from "dayjs/plugin/localeData";
 import isBetween from "dayjs/plugin/isBetween";
 import { TRPCError } from "@trpc/server";
 import ratelimit from "../helpers/rateLimiter";
+import { Logger } from "next-axiom";
 
 dayjs.extend(localeData);
 dayjs.extend(isBetween);
@@ -97,36 +98,39 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, plan } = ctx as {
+      const { userId, plan, log } = ctx as {
         userId: string;
         plan: string;
+        log: Logger;
       };
 
       const userPlan = plan.toLowerCase();
-      console.log(userPlan);
+
+      log.info("User plan", { userPlan });
+
       switch (userPlan) {
         case "free":
           const { success } = await ratelimit.FreePatient.limit(userId);
           if (!success) {
+            log.error("Free patient limit failed", { success });
             throw new TRPCError({
               code: "BAD_REQUEST",
               message:
                 "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
-          console.log("hit");
           break;
         case "personal":
           const { success: successPersonal } =
             await ratelimit.PersonalPatient.limit(userId);
           if (!successPersonal) {
+            log.error("Personal patient limit failed", { successPersonal });
             throw new TRPCError({
               code: "BAD_REQUEST",
               message:
                 "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
-          console.log("hit");
 
           break;
         case "professional":
@@ -160,12 +164,12 @@ export const patientRouter = createTRPCRouter({
 
         //check if phone number is unique dont check if phone is nullish
         if (phone && isNumberUnique) {
+          log.error("Phone number already registered", { phone });
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Nomor telepon sudah terdaftar",
           });
         }
-
         const patient = await tx.patient.create({
           data: {
             name,
@@ -176,6 +180,8 @@ export const patientRouter = createTRPCRouter({
             userId,
           },
         });
+
+        log.info("Patient created", { patient });
 
         const record = await tx.medicalRecord.create({
           data: {
@@ -188,6 +194,8 @@ export const patientRouter = createTRPCRouter({
             note,
           },
         });
+
+        log.info("Medical record created", { record });
 
         await tx.medicineDetail.createMany({
           //create with nullish value
@@ -238,6 +246,11 @@ export const patientRouter = createTRPCRouter({
               !fileType ||
               upload.ext !== fileType.type
             ) {
+              log.error("Invalid file uploaded", {
+                object,
+                fileType,
+                upload,
+              });
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Invalid file uploaded.",
@@ -256,6 +269,8 @@ export const patientRouter = createTRPCRouter({
                 height: fileType.width,
               },
             });
+
+            log.info("File created", { file });
 
             await tx.attachment.create({
               data: {
@@ -304,9 +319,10 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, plan } = ctx as {
+      const { userId, plan, log } = ctx as {
         userId: string;
         plan: string;
+        log: Logger;
       };
 
       const userPlan = plan.toLowerCase();
@@ -315,6 +331,7 @@ export const patientRouter = createTRPCRouter({
         case "free":
           const { success } = await ratelimit.FreeCheckup.limit(userId);
           if (!success) {
+            log.error("Free checkup limit failed", { success });
             throw new TRPCError({
               code: "BAD_REQUEST",
               message:
@@ -326,6 +343,7 @@ export const patientRouter = createTRPCRouter({
           const { success: successPersonal } =
             await ratelimit.PersonalCheckup.limit(userId);
           if (!successPersonal) {
+            log.error("Personal checkup limit failed", { successPersonal });
             throw new TRPCError({
               code: "BAD_REQUEST",
               message:
@@ -363,6 +381,8 @@ export const patientRouter = createTRPCRouter({
             labNote,
           },
         });
+
+        log.info("Medical record created", { record });
 
         await tx.medicineDetail.createMany({
           data:
@@ -411,6 +431,11 @@ export const patientRouter = createTRPCRouter({
               !fileType ||
               upload.ext !== fileType.type
             ) {
+              log.error("Invalid file uploaded", {
+                object,
+                fileType,
+                upload,
+              });
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Invalid file uploaded.",
@@ -448,7 +473,7 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       const result = await ctx.prisma.medicalRecord.findMany({
         where: {
@@ -475,16 +500,22 @@ export const patientRouter = createTRPCRouter({
         distinct: ["patientId"],
         ...(input?.limit && { take: input.limit }),
       });
+
+      log.info("Newest patients fetched", { result });
+
       return result;
     }),
   getStatPatients: protectedProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx;
+    const { userId, log } = ctx;
 
     const patientCount = await ctx.prisma.patient.count({
       where: {
         userId,
       },
     });
+
+    log.info("Patient count fetched", { patientCount });
+
     const lastVisit = await ctx.prisma.medicalRecord.findFirst({
       where: {
         patient: {
@@ -498,6 +529,9 @@ export const patientRouter = createTRPCRouter({
         createdAt: "desc",
       },
     });
+
+    log.info("Last visit fetched", { lastVisit });
+
     return {
       total: patientCount,
       lastVisit: lastVisit?.createdAt,
@@ -513,7 +547,7 @@ export const patientRouter = createTRPCRouter({
         .nullish(),
     )
     .query(async ({ input, ctx }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       const visits = await ctx.prisma.medicalRecord.findMany({
         where: {
@@ -533,6 +567,9 @@ export const patientRouter = createTRPCRouter({
           createdAt: "asc",
         },
       });
+
+      log.info("Visits fetched", { visits });
+
       const currentYear = dayjs().format("YYYY");
       const currentMonthYear = dayjs().format("MMM YYYY");
 
@@ -565,6 +602,8 @@ export const patientRouter = createTRPCRouter({
         };
       });
 
+      log.info("Weekly visits fetched", { weeklyVisits });
+
       const allTimeVisits = visits.reduce((acc: GenderCount[], cur) => {
         const existingCount = acc.find((count) =>
           dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month"),
@@ -587,6 +626,8 @@ export const patientRouter = createTRPCRouter({
 
         return acc;
       }, []);
+
+      log.info("All time visits fetched", { allTimeVisits });
 
       const yearlyVisits = visits.reduce((acc: GenderCount[], cur) => {
         const createdAt = dayjs(cur.createdAt);
@@ -612,6 +653,8 @@ export const patientRouter = createTRPCRouter({
         return acc;
       }, []);
 
+      log.info("Yearly visits fetched", { yearlyVisits });
+
       const monthlyVisits = visits.reduce((acc: GenderCount[], cur) => {
         const createdAt = dayjs(cur.createdAt);
         if (createdAt.isSame(currentMonthYear, "month")) {
@@ -636,6 +679,8 @@ export const patientRouter = createTRPCRouter({
         return acc;
       }, []);
 
+      log.info("Monthly visits fetched", { monthlyVisits });
+
       switch (input?.sortBy) {
         case "week":
           return weeklyVisits;
@@ -656,7 +701,7 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       //check if patient is owned by user
       const patient = await ctx.prisma.patient.findFirst({
@@ -666,11 +711,15 @@ export const patientRouter = createTRPCRouter({
         },
       });
       if (!patient) {
+        log.error("Patient not found", { patientId: input.patientId });
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Patient not found",
         });
       }
+
+      log.info("Patient fetched", { patient });
+
       return patient;
     }),
   searchPatient: protectedProcedure
@@ -680,7 +729,7 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { userId } = ctx;
+      const { userId, log } = ctx;
 
       const result = await ctx.prisma.patient.findMany({
         where: {
@@ -690,6 +739,9 @@ export const patientRouter = createTRPCRouter({
           },
         },
       });
+
+      log.info("Patient searched", { result });
+
       return result;
     }),
 });

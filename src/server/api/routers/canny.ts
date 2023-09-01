@@ -7,7 +7,7 @@ import { log } from "next-axiom";
 
 export const cannyRouter = createTRPCRouter({
   cannyUserToken: protectedProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx;
+    const { userId, log } = ctx;
     const user = await clerkClient.users.getUser(userId);
 
     const userData = {
@@ -16,6 +16,8 @@ export const cannyRouter = createTRPCRouter({
       email: user?.emailAddresses[0]?.emailAddress,
       id: userId,
     };
+
+    log.info("Canny user token generated", { userData });
 
     return jwt.sign(userData, env.CANNY_PRIVATE_TOKEN, { algorithm: "HS256" });
   }),

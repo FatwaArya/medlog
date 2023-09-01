@@ -12,7 +12,7 @@ import {
 } from "@/server/api/interface/recurring/plan";
 import { type IRecurringCycle } from "@/server/api/interface/recurring/cycle";
 import { env } from "@/env.mjs";
-import { log } from "next-axiom";
+import { withAxiom, type AxiomRequest, Logger } from "next-axiom";
 
 function calculateSubscribedUntil(schedule: Schedule): string {
   const anchorDate = new Date(schedule.anchor_date);
@@ -44,32 +44,31 @@ function calculateSubscribedUntil(schedule: Schedule): string {
   return formattedSubscribedUntil;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default withAxiom(async (req: AxiomRequest, res: NextApiResponse) => {
   try {
-    //check if the request is from Xendit
-    const xenditSignature = req.headers["x-callback-token"];
+    const log = req.log.with({ scope: "recurring" });
+    const xenditSignature = new Headers(req.headers).get("x-callback-token");
     if (xenditSignature !== env.XENDIT_CALLBACK_TOKEN) {
       throw new Error("Invalid Xendit signature");
     }
 
-    const payload = req.body as RecurringPlanPayload | RecurringCyclePayload; // Updated type
+    const payload = req.body as unknown as
+      | RecurringPlanPayload
+      | RecurringCyclePayload;
     log.info("Webhook verified", payload);
     // Handle the webhook event based on the event type
     switch (payload.event) {
       case "recurring.plan.activated":
-        handlePlanActivatedEvent(payload.data);
+        handlePlanActivatedEvent(payload.data, log);
         break;
       case "recurring.plan.inactivated":
-        handlePlanInactivatedEvent(payload.data);
+        handlePlanInactivatedEvent(payload.data, log);
         break;
       case "recurring.cycle.created":
-        handleCycleCreatedEvent(payload.data);
+        handleCycleCreatedEvent(payload.data, log);
         break;
       case "recurring.cycle.succeeded":
-        handleCycleSucceededEvent(payload.data);
+        handleCycleSucceededEvent(payload.data, log);
         break;
       case "recurring.cycle.retrying":
         handleCycleRetryingEvent(payload.data);
@@ -94,10 +93,10 @@ export default async function handler(
       .status(500)
       .json({ error: "Webhook processing failed or invalid xendit signature" });
   }
-}
+});
 
 // Handler functions for each webhook event type
-async function handlePlanActivatedEvent(data: IRecurringPlan) {
+async function handlePlanActivatedEvent(data: IRecurringPlan, log: Logger) {
   await prisma.$transaction(async (tx) => {
     const updateUserMetadata = await clerkClient.users.updateUserMetadata(
       data.reference_id,
@@ -124,7 +123,7 @@ async function handlePlanActivatedEvent(data: IRecurringPlan) {
     log.info("update subscription activated plan", { updateSubscription });
   });
 }
-async function handlePlanInactivatedEvent(data: IRecurringPlan) {
+async function handlePlanInactivatedEvent(data: IRecurringPlan, log: Logger) {
   // Handle recurring.plan.inactivated event
   // Perform necessary actions based on the event data
   await prisma.$transaction(async (tx) => {
@@ -155,7 +154,7 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan) {
   });
 }
 
-async function handleCycleSucceededEvent(data: IRecurringCycle) {
+async function handleCycleSucceededEvent(data: IRecurringCycle, log: Logger) {
   // Handle recurring.cycle.succeeded event
   await prisma.$transaction(async (tx) => {
     const updateSubscription = await tx.subscription.update({
@@ -172,7 +171,7 @@ async function handleCycleSucceededEvent(data: IRecurringCycle) {
   });
 }
 
-async function handleCycleCreatedEvent(data: IRecurringCycle) {
+async function handleCycleCreatedEvent(data: IRecurringCycle, log: Logger) {
   console.log("Cycle created 1");
 
   await prisma.$transaction(async (tx) => {
