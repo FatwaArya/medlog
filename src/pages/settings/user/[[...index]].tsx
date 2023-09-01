@@ -7,7 +7,7 @@ const UserPage = () => {
             <Head>
                 <title>User Profile</title>
             </Head>
-            <UserProfile path="/user" routing="path" appearance={{
+            <UserProfile path="/settings/user" routing="path" appearance={{
                 elements: {
                     card: {
                         //remove border radius and shadow

@@ -56,7 +56,7 @@ import { UserButton, useClerk, useUser } from "@clerk/nextjs";
 
 
 const userNavigation = [
-  { name: "Profile", href: "/profile", icon: User },
+  { name: "Profile", href: "/settings/user", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Logout", href: "/", icon: LogOut },
 ];
