@@ -10,7 +10,17 @@ export default function Page() {
             </Head>
             <AuthLayout>
                 <div className="flex flex-col">
-                    <SignUp />
+                    <SignUp appearance={{
+                        elements: {
+                            // remove background shadow
+                            card: {
+                                boxShadow: "none",
+                                // create a border line
+                                border: "1px solid #E5E5E5",
+                                margin: "0px",
+                            },
+                        }
+                    }} />
 
                 </div>
             </AuthLayout>

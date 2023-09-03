@@ -18,6 +18,7 @@ import { ClerkLoaded, ClerkLoading, ClerkProvider, RedirectToSignIn, SignedIn, S
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import { Loader } from "@/components/auth/AuthGuard";
+import { idIDN } from "@/utils/localizations";
 
 
 
@@ -84,7 +85,7 @@ const MyApp: AppType = ({
       }
     `}</style>
     <Toaster />
-    <ClerkProvider {...pageProps} navigate={to => push(to)}>
+    <ClerkProvider {...pageProps} navigate={to => push(to)} localization={idIDN}>
       <ClerkLoading>
         <Loader />
       </ClerkLoading>
