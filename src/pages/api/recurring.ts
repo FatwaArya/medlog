@@ -107,6 +107,7 @@ async function handlePlanActivatedEvent(data: IRecurringPlan, log: Logger) {
         },
       },
     );
+
     log.info("update user metadata on activated plan", { updateUserMetadata });
 
     const subscribedUntil = calculateSubscribedUntil(data.schedule);

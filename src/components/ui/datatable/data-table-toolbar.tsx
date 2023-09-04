@@ -49,7 +49,7 @@ export function DataTableToolbar<TData>({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="ml-auto hidden h-8 lg:flex mt-1 mr-1"
+                                className="ml-auto h-8 lg:flex mt-1 mr-1"
                                 href={href ?? "#"}
                             >
                                 <Scroll className="mr-2 h-4 w-4" />

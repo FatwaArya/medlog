@@ -191,6 +191,7 @@ export const patientRouter = createTRPCRouter({
             diagnosis,
             treatment,
             labNote,
+            checkup,
             note,
           },
         });
