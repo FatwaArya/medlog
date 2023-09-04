@@ -40,7 +40,7 @@ export const patientRouter = createTRPCRouter({
           new PutObjectCommand({
             Bucket: "pasienplus",
             Key: key,
-          })
+          }),
         );
 
         urls.push({
@@ -73,7 +73,7 @@ export const patientRouter = createTRPCRouter({
             z.object({
               value: z.string(),
               label: z.string(),
-            })
+            }),
           )
           .nullish(),
         labNote: z.string(),
@@ -84,11 +84,11 @@ export const patientRouter = createTRPCRouter({
             z.object({
               key: z.string().min(1),
               ext: z.string().min(1),
-            })
+            }),
           )
           .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const {
@@ -145,6 +145,7 @@ export const patientRouter = createTRPCRouter({
             diagnosis,
             treatment,
             labNote,
+            checkup,
             note,
           },
         });
@@ -169,21 +170,21 @@ export const patientRouter = createTRPCRouter({
                 CopySource: "pasienplus/" + upload.key,
                 Key: name,
                 ACL: "public-read",
-              })
+              }),
             );
 
             await s3Client.send(
               new DeleteObjectCommand({
                 Bucket: "pasienplus",
                 Key: upload.key,
-              })
+              }),
             );
 
             const object = await s3Client.send(
               new GetObjectCommand({
                 Bucket: "pasienplus",
                 Key: name,
-              })
+              }),
             );
 
             const fileType = await probe(object.Body as Readable);
@@ -245,7 +246,7 @@ export const patientRouter = createTRPCRouter({
             z.object({
               value: z.string(),
               label: z.string(),
-            })
+            }),
           )
           .nullish(),
         labNote: z.string(),
@@ -257,11 +258,11 @@ export const patientRouter = createTRPCRouter({
             z.object({
               key: z.string().min(1),
               ext: z.string().min(1),
-            })
+            }),
           )
           .max(8, { message: "Maksimal 8 foto" })
           .nullish(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const {
@@ -310,21 +311,21 @@ export const patientRouter = createTRPCRouter({
                 CopySource: "pasienplus/" + upload.key,
                 Key: name,
                 ACL: "public-read",
-              })
+              }),
             );
 
             await s3Client.send(
               new DeleteObjectCommand({
                 Bucket: "pasienplus",
                 Key: upload.key,
-              })
+              }),
             );
 
             const object = await s3Client.send(
               new GetObjectCommand({
                 Bucket: "pasienplus",
                 Key: name,
-              })
+              }),
             );
             const fileType = await probe(object.Body as Readable);
 
@@ -424,7 +425,7 @@ export const patientRouter = createTRPCRouter({
         .object({
           sortBy: z.enum(["month", "year", "all", "week"]).nullish(),
         })
-        .nullish()
+        .nullish(),
     )
     .query(async ({ input, ctx }) => {
       const visits = await ctx.prisma.medicalRecord.findMany({
@@ -467,7 +468,7 @@ export const patientRouter = createTRPCRouter({
               }
               return counts;
             },
-            { Male: 0, Female: 0 }
+            { Male: 0, Female: 0 },
           );
 
         return {
@@ -479,7 +480,7 @@ export const patientRouter = createTRPCRouter({
 
       const allTimeVisits = visits.reduce((acc: GenderCount[], cur) => {
         const existingCount = acc.find((count) =>
-          dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month")
+          dayjs(count.date, "MMMM YYYY").isSame(cur.createdAt, "month"),
         );
 
         if (existingCount) {
@@ -504,7 +505,7 @@ export const patientRouter = createTRPCRouter({
         const createdAt = dayjs(cur.createdAt);
         if (createdAt.isSame(currentYear, "year")) {
           const existingCount = acc.find(
-            (count) => count.date === createdAt.format("MMMM YYYY")
+            (count) => count.date === createdAt.format("MMMM YYYY"),
           );
           if (existingCount) {
             if (cur.patient.gender === "male") {
@@ -528,7 +529,7 @@ export const patientRouter = createTRPCRouter({
         const createdAt = dayjs(cur.createdAt);
         if (createdAt.isSame(currentMonthYear, "month")) {
           const existingCount = acc.find(
-            (count) => count.date === createdAt.format("DD MMM")
+            (count) => count.date === createdAt.format("DD MMM"),
           );
           if (existingCount) {
             if (cur.patient.gender === "male") {
@@ -565,7 +566,7 @@ export const patientRouter = createTRPCRouter({
     .input(
       z.object({
         patientId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       //check if patient is owned by user
