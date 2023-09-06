@@ -7,14 +7,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { api } from "@/utils/api";
-import {
-    CartesianGrid,
-    Line,
-    LineChart,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from "recharts";
+import { Card, Title, LineChart, AreaChart } from "@tremor/react";
 import type { TooltipProps } from "recharts";
 import type {
     NameType,
@@ -155,44 +148,16 @@ export const LineCharts = () => {
                     //     width="100%"
                     //     height={297}
                     // >
-                    <LineChart data={data}
-                        width={700}
-                        height={300}
-                    >
-                        <CartesianGrid vertical={false} strokeDasharray="4" y={20} />
-                        <XAxis
-                            dataKey="date"
-                            tickLine={false}
-                            stroke="#BEBEBE"
-                            tickMargin={10}
-                        />
-                        <YAxis
-                            type="number"
-                            includeHidden
-                            stroke="#BEBEBE"
-                            allowDecimals={false}
-                            axisLine={false}
-                            tickLine={false}
-                        />
-                        <Tooltip
-                            content={<CustomTooltip />}
-                            wrapperStyle={{ outline: "none" }}
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="Male"
-                            stroke="#3366FF"
-                            strokeWidth="2"
-                            dot={false}
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="Female"
-                            stroke="#FF3366"
-                            strokeWidth="2"
-                            dot={false}
-                        />
-                    </LineChart>
+                    <AreaChart
+                        className="mt-6"
+                        data={data || []}
+                        index="date"
+                        categories={["Male", "Female"]}
+                        colors={["blue", "pink"]}
+                        noDataText="No Patients"
+
+                        yAxisWidth={40}
+                    />
                     // </ResponsiveContainer>
                 )}
             </div>

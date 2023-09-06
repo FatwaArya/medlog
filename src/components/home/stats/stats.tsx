@@ -38,7 +38,7 @@ export const Stats = (props: StatsProps) => {
   };
 
 
-  return (
+  return (<>
     <div className={cn("flex flex-col h-full rounded-lg bg-white shadow p-6 outline outline-1 outline-slate-200")}>
       <div className={cn("flex items-center", color)}>
         <props.header.icon className={cn("p-2 mr-4 h-9 w-9 rounded-full text-xl font-bold", bgColor)} />
@@ -63,5 +63,6 @@ export const Stats = (props: StatsProps) => {
         </ul>
       </div>
     </div>
+  </>
   );
 };
