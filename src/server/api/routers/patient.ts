@@ -110,7 +110,27 @@ export const patientRouter = createTRPCRouter({
 
       switch (userPlan) {
         case "free":
-          const { success } = await ratelimit.FreePatient.limit(userId);
+          const { success, remaining, reset } = await ratelimit.FreePatient.limit(userId);
+
+        const FreePatientResult =  await ctx.prisma.remainingLimit.upsert({
+          where: {
+            userId: userId,
+          },
+          create: {
+            userId: userId,
+            patientLimit: remaining,
+            resetAt: reset.toString(),
+            plan: "free"
+          },
+          update: {
+            patientLimit: remaining,
+            plan: "free",
+            resetAt: reset.toString(),
+          },
+        });
+
+          log.info("Remaining limit updated", { FreePatientResult });
+
           if (!success) {
             log.error("Free patient limit failed", { success });
             throw new TRPCError({
@@ -119,10 +139,32 @@ export const patientRouter = createTRPCRouter({
                 "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
+       
           break;
         case "personal":
-          const { success: successPersonal } =
+          const { success: successPersonal, remaining: remainingPersonal, reset: resetPersonal } =
             await ratelimit.PersonalPatient.limit(userId);
+
+        const PersonalPatientResult =  await ctx.prisma.remainingLimit.upsert({
+          where: {
+            userId: userId,
+          },
+          create: {
+            userId: userId,
+            patientLimit: remainingPersonal,
+            plan: "personal",
+            resetAt: resetPersonal.toString() 
+          },
+          update: {
+            patientLimit: remainingPersonal,
+            plan: "personal",
+            resetAt: resetPersonal.toString()
+          },
+        });
+
+          log.info("Remaining limit updated", { PersonalPatientResult });
+
+
           if (!successPersonal) {
             log.error("Personal patient limit failed", { successPersonal });
             throw new TRPCError({
@@ -131,7 +173,7 @@ export const patientRouter = createTRPCRouter({
                 "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
-
+         
           break;
         case "professional":
           break;
@@ -330,7 +372,30 @@ export const patientRouter = createTRPCRouter({
 
       switch (userPlan) {
         case "free":
-          const { success } = await ratelimit.FreeCheckup.limit(userId);
+          const { success, remaining, reset } = await ratelimit.FreeCheckup.limit(userId);
+          
+
+        const FreeCheckupResult =  await ctx.prisma.remainingLimit.upsert({
+            where: {
+              userId: userId,
+            },
+            create: {
+              id: uuidv4(),
+              userId: userId,
+              medicalRecordLimit: remaining,
+              resetAt: reset.toString(),
+              plan: "free"
+            },
+            update: {
+              medicalRecordLimit: remaining,
+              plan: "free",
+              resetAt: reset.toString() 
+            },
+          });
+          
+
+          log.info("Remaining limit updated", { FreeCheckupResult });
+
           if (!success) {
             log.error("Free checkup limit failed", { success });
             throw new TRPCError({
@@ -339,10 +404,33 @@ export const patientRouter = createTRPCRouter({
                 "Limit pasien sudah tercapai. Ayo upgrade ke Professional!",
             });
           }
+        
           break;
         case "personal":
-          const { success: successPersonal } =
+          const { success: successPersonal, remaining: remainingPersonal, reset: resetPersonal } =
             await ratelimit.PersonalCheckup.limit(userId);
+
+
+        const PersonalCheckupResult  = await ctx.prisma.remainingLimit.upsert({
+            where: {
+              userId: userId,
+            },
+            create: {
+              userId: userId,
+              medicalRecordLimit: remainingPersonal,
+              plan: "personal",
+              resetAt: resetPersonal.toString()
+            },
+            update: {
+              medicalRecordLimit: remainingPersonal,
+              plan: "personal",
+              resetAt: resetPersonal.toString()
+
+            },
+          });
+
+          log.info("Remaining limit updated", { PersonalCheckupResult });
+
           if (!successPersonal) {
             log.error("Personal checkup limit failed", { successPersonal });
             throw new TRPCError({
@@ -469,7 +557,7 @@ export const patientRouter = createTRPCRouter({
   getNewestPatients: protectedProcedure
     .input(
       z.object({
-        limit: z.number().gte(1).lte(5).nullish().nullable(),
+        limit: z.number().gte(1).lte(5).nullish().nullable().default(5),
         isLastVisit: z.boolean().nullish().nullable(),
       }),
     )
@@ -745,4 +833,54 @@ export const patientRouter = createTRPCRouter({
 
       return result;
     }),
+    //create pagination for get patients
+  getPatients: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().gte(1).lte(50),
+        pageIndex: z.number().gte(1),
+        query: z.string().nullish().nullable(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { userId, log } = ctx;
+
+      const patient = await ctx.prisma.patient.findMany({
+        where: {
+          userId: userId as string,
+          name: {
+            search: input?.query || "",
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        ...(input?.limit && { take: input.limit }),
+        ...(input?.pageIndex && { skip: (input.pageIndex - 1) * input?.limit }),
+      });
+
+      const count = await ctx.prisma.patient.count({
+        where: {
+          userId: userId as string,
+        },
+      });
+
+      const canNextPage = count > input?.pageIndex * input?.limit;
+      const canPreviousPage = input?.pageIndex > 1;
+      const totalPages = Math.ceil(count / input?.limit);
+
+
+
+      log.info("Patients fetched", { patient,canNextPage, canPreviousPage, totalPages });
+
+      return {
+        data: patient,
+        meta: {
+          totalPages,
+          canNextPage,
+          canPreviousPage,
+        },
+      }
+    }
+  ),
 });

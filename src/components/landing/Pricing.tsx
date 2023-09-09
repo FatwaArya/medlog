@@ -152,8 +152,8 @@ export function Pricing() {
             description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
             href="/auth/signin"
             features={[
-              "Tambah 35 pasien baru per hari",
-              "Tambah 100 checkup baru per hari",
+              "Tambah 20 pasien baru per hari",
+              "Tambah 75 checkup baru per hari",
               "Ekspor data pasien",
             ]}
           />

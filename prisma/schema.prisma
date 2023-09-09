@@ -109,14 +109,35 @@ model Subscription {
   @@index([updatedAt])
 }
 
+// create a model to save remaining limit from redis
+model RemainingLimit {
+  id                 String           @id @default(cuid())
+  userId             String           @unique
+  patientLimit       Int?
+  medicalRecordLimit Int?
+  plan               SubscriptionPlan
+  resetAt            String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+enum LimitType {
+  patient
+  medicalRecord
+  attachment
+  medicine
+}
+
 enum SubscriptionStatus {
   active
   inactive
 }
 
 enum SubscriptionPlan {
-  noSubscription
-  beginner
+  free
   personal
   professional
 }

@@ -103,7 +103,7 @@ async function handlePlanActivatedEvent(data: IRecurringPlan, log: Logger) {
       {
         publicMetadata: {
           isSubscribed: true,
-          plan: data.metadata.plan as "beginner" | "personal" | "professional",
+          plan: data.metadata.plan as "free" | "personal" | "professional",
         },
       },
     );
@@ -133,7 +133,7 @@ async function handlePlanInactivatedEvent(data: IRecurringPlan, log: Logger) {
       {
         publicMetadata: {
           isSubscribed: false,
-          plan: "noSubscription",
+          plan: "free",
         },
       },
     );

@@ -69,7 +69,7 @@ const newUserHandler = withAxiom(
             plan: "Free",
           },
           privateMetadata: {
-            customer_id: customer.data.id,
+            cust_id: customer.data.id,
           },
         },
       );

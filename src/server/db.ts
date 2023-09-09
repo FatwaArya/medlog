@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import pagination from "prisma-extension-pagination";
+import { paginate } from "prisma-extension-pagination";
 
 import { env } from "@/env.mjs";
 
@@ -10,14 +10,26 @@ export const prisma =
   new PrismaClient({
     log:
       env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  }).$extends(pagination);
+  }).$extends({
+    model: {
+      patient:{
+        paginate
+      }
+    },
+  });
 
 export const boostedPrisma =
   globalForPrisma.prisma ||
   new PrismaClient({
     log:
       env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  }).$extends(pagination);
+  }).$extends({
+    model: {
+      patient:{
+        paginate
+      }
+    },
+  });
 
 boostedPrisma.$queryRaw`SET @@boost_cached_queries = true`;
 

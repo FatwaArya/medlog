@@ -20,13 +20,13 @@ const ratelimit = {
     redis,
     analytics: true,
     prefix: "ratelimit:PPatient",
-    limiter: Ratelimit.slidingWindow(35, "1 d"),
+    limiter: Ratelimit.slidingWindow(20, "1 d"),
   }),
   PersonalCheckup: new Ratelimit({
     redis,
     analytics: true,
     prefix: "ratelimit:PCheckup",
-    limiter: Ratelimit.slidingWindow(100, "1 d"),
+    limiter: Ratelimit.slidingWindow(75, "1 d"),
   }),
 };
 

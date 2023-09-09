@@ -1,27 +1,10 @@
 import { Container } from "@/components/landing/Container";
 import { Plan, SwirlyDoodle } from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/button";
-import { api } from "@/utils/api";
-import { getAuth, buildClerkProps, clerkClient } from "@clerk/nextjs/server";
 import { useRouter } from "next/router";
-import { type GetServerSidePropsContext } from "next/types";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
 
 const Subs = () => {
     const router = useRouter();
-    const { mutate, data: redirect, error } = api.subscription.subscribe.useMutation();
-
-
-    useEffect(() => {
-        if (error) {
-            toast.error(error.message);
-        }
-        if (redirect) {
-            router.push(redirect);
-        }
-
-    }, [error, redirect, router])
 
     return (
         <>
@@ -66,44 +49,38 @@ const Subs = () => {
                     </div>
                     <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
                         <Plan
-                            name="Pemula"
-                            price="Rp 35.000/bln"
-                            description="Cocok untuk pemula yang ingin mencoba layanan aplikasi kami."
-                            onClick={() => {
-                                mutate({ plan: 'beginner' });
-                            }}
+                            name="Gratis"
+                            price="Rp 0/bln"
+                            description="Cocok untuk perawat yang ingin mencoba layanan aplikasi kami."
+                            href="/auth/signin"
                             features={[
                                 "Tambah 5 pasien baru per hari",
-                                "Tambah 25 checkup baru per hari (tanpa gambar)",
+                                "Tambah 25 checkup baru per hari",
                                 "Ekspor Laporan ",
                             ]}
                         />
                         <Plan
                             featured
+                            name="Personal"
+                            price="Rp 65.000/bln"
+                            description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
+                            href="/auth/signin"
+                            features={[
+                                "Tambah 20 pasien baru per hari",
+                                "Tambah 75 checkup baru per hari",
+                                "Ekspor data pasien",
+                            ]}
+                        />
+                        <Plan
                             name="Professional"
                             price="Rp 150.000/bln"
-                            description="Untuk skala perawat online yang lebih besar."
-                            onClick={() => {
-                                mutate({ plan: 'professional' });
-                            }}
+                            description="Untuk skala perawat yang lebih besar."
+                            href="/auth/signin"
                             features={[
                                 "Tambah tak terbatas pasien baru per hari",
                                 "Tambah tak terbatas checkup baru per hari",
                                 "Ekspor data pasien",
                                 "Akses awal ke fitur baru"
-                            ]}
-                        />
-                        <Plan
-                            name="Personal"
-                            price="Rp 65.000/bln"
-                            description="Bagi perawat mandiri yang ingin dimudahkan pekerjaannya."
-                            onClick={() => {
-                                mutate({ plan: 'personal' });
-                            }}
-                            features={[
-                                "Tambah 35 pasien baru per hari",
-                                "Tambah 100 checkup baru per hari",
-                                "Ekspor data pasien",
                             ]}
                         />
                     </div>
@@ -114,36 +91,5 @@ const Subs = () => {
 }
 
 
-
-
-
-// export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-//     const { userId } = getAuth(ctx.req);
-//     const user = userId ? await clerkClient.users.getUser(userId) : undefined;
-
-
-//     if (!userId || !user) {
-//         return {
-//             redirect: {
-//                 destination: "/auth/sign-in?redirect_url=" + ctx.resolvedUrl,
-//                 permanent: false,
-//             },
-//         };
-//     }
-
-
-//     if (user.publicMetadata.isSubscribed === true && user.publicMetadata.plan !== 'noSubscription') {
-//         return {
-//             redirect: {
-//                 destination: '/dashboard/home',
-//                 permanent: false,
-//             },
-//         }
-//     }
-
-//     return {
-//         props: { ...buildClerkProps(ctx.req, { user }) }
-//     };
-// }
 
 export default Subs;

@@ -100,16 +100,7 @@ export const LineCharts = () => {
                     <p className="font-semibold text-[#3366FF] sm:text-2xl leading-6  scroll-m-20 text-base tracking-tight ">
                         Kunjungan Pasien
                     </p>
-                    <div className="flex flex-col gap-2 px-4 text-sm sm:flex-row sm:text-md">
-                        <div className="flex items-center gap-1">
-                            <span className=" block h-2 w-2 rounded-full bg-[#3366FF] ring-2 ring-white" />
-                            Male
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <span className=" block h-2 w-2 rounded-full bg-[#FF3366] ring-2 ring-white" />
-                            Female
-                        </div>
-                    </div>
+
                     <Controller
                         name="time"
                         control={control}
@@ -149,7 +140,7 @@ export const LineCharts = () => {
                     //     height={297}
                     // >
                     <AreaChart
-                        className="mt-6"
+                        className="mt-2"
                         data={data || []}
                         index="date"
                         categories={["Male", "Female"]}

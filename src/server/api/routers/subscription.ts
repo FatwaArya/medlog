@@ -7,6 +7,10 @@ import { type RecurringPaymentResponse } from "../interface/subscriptionEvent";
 import { type AxiosResponse } from "axios";
 import { getBaseUrl } from "@/utils/api";
 import { clerkClient } from "@clerk/nextjs";
+import ratelimit from "../helpers/rateLimiter";
+import { type Logger } from "next-axiom";
+import { type SubscriptionPlan } from "@prisma/client";
+
 
 type RecurringResponse = AxiosResponse<RecurringPaymentResponse>;
 
@@ -16,15 +20,19 @@ export const subscriptionRouter = createTRPCRouter({
   subscribe: protectedProcedure
     .input(
       z.object({
-        plan: z.enum(["beginner", "personal", "professional"]),
+        plan: z.enum(["free", "personal", "professional"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       let redirectUrl: string | undefined;
-      const { userId, isSubscribed, log } = ctx;
-      const user = await clerkClient.users.getUser(userId);
+      const { userId, log } = ctx;
+      log.info("Subscription started", { input });
 
-      if (!userId) {
+
+      try {
+      const {privateMetadata, id} = await clerkClient.users.getUser(userId);
+      
+      if (!id || !privateMetadata) {
         log.error("User not found", { userId });
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -32,14 +40,8 @@ export const subscriptionRouter = createTRPCRouter({
         });
       }
 
-      if (isSubscribed) {
-        log.error("User is already subscribed", { userId });
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User is already subscribed",
-        });
-      }
-
+      
+      const cust_id = privateMetadata?.cust_id;
       const interval: "MONTH" | "DAY" = "MONTH";
       let intervalCount = 1;
       let totalRecurrence: number | undefined;
@@ -52,10 +54,8 @@ export const subscriptionRouter = createTRPCRouter({
 
       // Set schedule properties based on the input plan
       switch (input.plan) {
-        case "beginner":
-          intervalCount = 1;
-          amount = 35000;
-          anchorDate = new Date().toISOString();
+        case "free":
+          return "free plan cannot be subscribed"
           break;
         case "personal":
           intervalCount = 1;
@@ -75,13 +75,12 @@ export const subscriptionRouter = createTRPCRouter({
             message: "Invalid plan",
           });
       }
-      // create subscription
-      try {
+  
         const subscription: RecurringResponse = await instance.post(
           "/recurring/plans",
           {
             reference_id: userId,
-            customer_id: user.privateMetadata.customer_id,
+            customer_id: cust_id,
             recurring_action: "PAYMENT",
             currency: "IDR",
             amount: 13579,
@@ -113,9 +112,15 @@ export const subscriptionRouter = createTRPCRouter({
             }),
           },
         );
+
+   
+        
         redirectUrl = subscription.data.actions[0]?.url;
 
-        log.info("Subscription created", { subscription });
+
+        log.info("Subscription created - Redirect URL:", {
+          redirectUrl: subscription.data.actions[0]?.url 
+        });
 
         if (!redirectUrl) {
           log.error("Failed to create subscription", { subscription });
@@ -133,4 +138,64 @@ export const subscriptionRouter = createTRPCRouter({
       }
       return redirectUrl;
     }),
+    getUserPlan: protectedProcedure
+    .input(z.object({}))
+    .query(async ({ ctx }) => {
+      const { userId, log,plan } = ctx as {
+        userId: string;
+        log: Logger;
+        plan: string;
+      }
+      log.info("User plan fetched", { plan });
+
+      const userPlan = plan.toLowerCase() as SubscriptionPlan
+
+      let maxPatient: string
+      let maxCheckup: string
+
+      // change max patient and max checkup based on user plan
+      
+      switch (userPlan) {
+        case "free":
+          maxPatient = "5";
+          maxCheckup = "25";
+          break;
+        case "personal":
+          maxPatient = "20";
+          maxCheckup = "75";
+          break;
+        case "professional":
+          maxPatient = "unlimited";
+          maxCheckup = "unlimited";
+          break;
+        default:
+          log.error("Invalid plan", { userPlan });  
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid plan",
+          });
+      }
+
+
+      const result = await ctx.prisma.remainingLimit.findFirst({
+        where: {
+          userId: userId,
+        },
+      });
+
+      log.info("User remaining usage fetched", { result });
+
+      
+      
+      return {
+        plan: userPlan,
+        remainingPatient: result?.patientLimit,
+        remainingCheckup: result?.medicalRecordLimit,
+        maxPatient,
+        maxCheckup,
+        resetDate: result?.resetAt,
+      }
+
+    
+    })
 });
