@@ -20,11 +20,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper, PaginationState } from "@tanstack/react-table";
+import { use, useEffect, useState } from "react";
 
 dayjs.extend(relativeTime);
 
-type CheckupColumn = RouterOutputs["record"]["getRecords"][number];
+type CheckupColumn = RouterOutputs["record"]["getRecords"]['data'][number];
 
 const columnHelper = createColumnHelper<CheckupColumn>();
 
@@ -38,9 +39,44 @@ const columnViews = [
 ];
 
 export default function CheckupList({ patientId }: ListProps) {
-  const { data: CheckupData, isLoading } = api.record.getRecords.useQuery({
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 1,
+    pageSize: 10,
+  })
+  const [sort, setSort] = useState({
+    field: "createdAt",
+    direction: "desc",
+  })
+  const utils = api.useContext()
+
+
+  const { data: CheckupData, isLoading,  isPreviousData,  } = api.record.getRecords.useQuery({
     patientId: patientId as string,
+  }, {
+    queryKey: ['record.getRecords', {
+      patientId: patientId as string,
+      page: pagination.pageIndex,
+      limit: pagination.pageSize,
+      sortBy: sort.field,
+      sortDirection: sort.direction as 'asc' | 'desc',
+    }]
   });
+  
+  //prefetch
+  useEffect(() => {
+    if (!isPreviousData && CheckupData?.meta.hasMore) {
+      utils.record.getRecords.prefetch({
+        patientId: patientId as string,
+        page: pagination.pageIndex,
+        limit: pagination.pageSize,
+        sortBy: sort.field,
+        sortDirection: sort.direction as 'asc' | 'desc',
+      })
+    }
+
+  }, [pagination, sort, isPreviousData, CheckupData, utils.record.getRecords])
+
+
 
   const checkupColumns = [
     columnHelper.accessor("createdAt", {
@@ -144,7 +180,10 @@ export default function CheckupList({ patientId }: ListProps) {
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore
                       columns={checkupColumns}
-                      data={CheckupData}
+                      data={CheckupData.data}
+                      pagination={pagination}
+                      setPagination={setPagination}
+                      meta={CheckupData.meta}
                       columnViews={columnViews}
                       href={`/dashboard/patients/checkup/${patientId}/new`}
                       isPaginated={true}

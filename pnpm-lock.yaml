@@ -9,7 +9,7 @@ specifiers:
   '@faker-js/faker': ^8.0.2
   '@headlessui/react': ^1.7.17
   '@hookform/resolvers': ^3.3.1
-  '@prisma/client': ^5.2.0
+  '@prisma/client': ^5.6.0
   '@radix-ui/react-alert-dialog': ^1.0.4
   '@radix-ui/react-avatar': ^1.0.3
   '@radix-ui/react-checkbox': ^1.0.4
@@ -69,7 +69,7 @@ specifiers:
   postcss: ^8.4.29
   prettier: ^3.0.3
   prettier-plugin-tailwindcss: ^0.4.1
-  prisma: ^5.2.0
+  prisma: ^5.6.0
   prisma-extension-pagination: ^0.4.2
   probe-image-size: ^7.2.3
   prop-types: ^15.8.1
@@ -104,7 +104,7 @@ dependencies:
   '@clerk/types': 3.50.0
   '@headlessui/react': 1.7.17_biqbaboplfbrettd7655fr4n2y
   '@hookform/resolvers': 3.3.1_react-hook-form@7.45.4
-  '@prisma/client': 5.2.0_prisma@5.2.0
+  '@prisma/client': 5.6.0_prisma@5.6.0
   '@radix-ui/react-alert-dialog': 1.0.4_zkisbtryv3xtasf42ecsrjh3ky
   '@radix-ui/react-avatar': 1.0.3_zkisbtryv3xtasf42ecsrjh3ky
   '@radix-ui/react-checkbox': 1.0.4_zkisbtryv3xtasf42ecsrjh3ky
@@ -146,7 +146,7 @@ dependencies:
   next: 13.4.10_biqbaboplfbrettd7655fr4n2y
   next-axiom: 0.18.0_next@13.4.10
   nprogress: 0.2.0
-  prisma-extension-pagination: 0.4.2_@prisma+client@5.2.0
+  prisma-extension-pagination: 0.4.2_@prisma+client@5.6.0
   prop-types: 15.8.1
   react: 18.2.0
   react-day-picker: 8.8.1_kzhlcyde2l6xjiirkbg7jzhosa
@@ -188,7 +188,7 @@ devDependencies:
   postcss: 8.4.29
   prettier: 3.0.3
   prettier-plugin-tailwindcss: 0.4.1_prettier@3.0.3
-  prisma: 5.2.0
+  prisma: 5.6.0
   probe-image-size: 7.2.3
   tailwindcss: 3.3.3_ts-node@10.9.1
   tailwindcss-animate: 1.0.7_tailwindcss@3.3.3
@@ -1339,8 +1339,8 @@ packages:
       webcrypto-core: 1.7.7
     dev: false
 
-  /@prisma/client/5.2.0_prisma@5.2.0:
-    resolution: {integrity: sha512-AiTjJwR4J5Rh6Z/9ZKrBBLel3/5DzUNntMohOy7yObVnVoTNVFi2kvpLZlFuKO50d7yDspOtW6XBpiAd0BVXbQ==}
+  /@prisma/client/5.6.0_prisma@5.6.0:
+    resolution: {integrity: sha512-mUDefQFa1wWqk4+JhKPYq8BdVoFk9NFMBXUI8jAkBfQTtgx8WPx02U2HB/XbAz3GSUJpeJOKJQtNvaAIDs6sug==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -1349,16 +1349,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 5.2.0-25.2804dc98259d2ea960602aca6b8e7fdc03c1758f
-      prisma: 5.2.0
+      '@prisma/engines-version': 5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee
+      prisma: 5.6.0
     dev: false
 
-  /@prisma/engines-version/5.2.0-25.2804dc98259d2ea960602aca6b8e7fdc03c1758f:
-    resolution: {integrity: sha512-jsnKT5JIDIE01lAeCj2ghY9IwxkedhKNvxQeoyLs6dr4ZXynetD0vTy7u6wMJt8vVPv8I5DPy/I4CFaoXAgbtg==}
+  /@prisma/engines-version/5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee:
+    resolution: {integrity: sha512-UoFgbV1awGL/3wXuUK3GDaX2SolqczeeJ5b4FVec9tzeGbSWJboPSbT0psSrmgYAKiKnkOPFSLlH6+b+IyOwAw==}
     dev: false
 
-  /@prisma/engines/5.2.0:
-    resolution: {integrity: sha512-dT7FOLUCdZmq+AunLqB1Iz+ZH/IIS1Fz2THmKZQ6aFONrQD/BQ5ecJ7g2wGS2OgyUFf4OaLam6/bxmgdOBDqig==}
+  /@prisma/engines/5.6.0:
+    resolution: {integrity: sha512-Mt2q+GNJpU2vFn6kif24oRSBQv1KOkYaterQsi0k2/lA+dLvhRX6Lm26gon6PYHwUM8/h8KRgXIUMU0PCLB6bw==}
     requiresBuild: true
 
   /@radix-ui/number/1.0.1:
@@ -6108,21 +6108,21 @@ packages:
     hasBin: true
     dev: true
 
-  /prisma-extension-pagination/0.4.2_@prisma+client@5.2.0:
+  /prisma-extension-pagination/0.4.2_@prisma+client@5.6.0:
     resolution: {integrity: sha512-8sNDhz17CN4riQxAyu0VPg/CmXR5vaNWz2oiqlBwuPFbZ4fO+ZkxRyfS9y6+tCSUsPbiVCZ4q0GcaLUJH5dQ9Q==}
     peerDependencies:
       '@prisma/client': ^4.9.0 || ^5.0.0
     dependencies:
-      '@prisma/client': 5.2.0_prisma@5.2.0
+      '@prisma/client': 5.6.0_prisma@5.6.0
     dev: false
 
-  /prisma/5.2.0:
-    resolution: {integrity: sha512-FfFlpjVCkZwrqxDnP4smlNYSH1so+CbfjgdpioFzGGqlQAEm6VHAYSzV7jJgC3ebtY9dNOhDMS2+4/1DDSM7bQ==}
+  /prisma/5.6.0:
+    resolution: {integrity: sha512-EEaccku4ZGshdr2cthYHhf7iyvCcXqwJDvnoQRAJg5ge2Tzpv0e2BaMCp+CbbDUwoVTzwgOap9Zp+d4jFa2O9A==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.2.0
+      '@prisma/engines': 5.6.0
 
   /probe-image-size/7.2.3:
     resolution: {integrity: sha512-HubhG4Rb2UH8YtV4ba0Vp5bQ7L78RTONYu/ujmCu5nBI8wGv24s4E9xSKBi0N1MowRpxk76pFCpJtW0KPzOK0w==}

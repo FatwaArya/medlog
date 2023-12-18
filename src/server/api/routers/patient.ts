@@ -557,12 +557,16 @@ export const patientRouter = createTRPCRouter({
   getNewestPatients: protectedProcedure
     .input(
       z.object({
-        limit: z.number().gte(1).lte(5).nullish().nullable().default(5),
-        isLastVisit: z.boolean().nullish().nullable(),
+        page: z.number().default(1),
+        limit: z.number().default(10),
+        sortBy: z.string().default("createdAt"),
+        sortDirection: z.enum(["asc", "desc"]).default("desc"),
       }),
     )
     .query(async ({ ctx, input }) => {
       const { userId, log } = ctx;
+      const { page, limit, sortBy, sortDirection } = input;
+
 
       const result = await ctx.prisma.medicalRecord.findMany({
         where: {
@@ -580,19 +584,36 @@ export const patientRouter = createTRPCRouter({
               phone: true,
             },
           },
-          ...(input?.isLastVisit && { createdAt: true }),
+          createdAt: true,
           updatedAt: true,
         },
         orderBy: {
-          createdAt: "desc",
+          [sortBy]: sortDirection,
         },
         distinct: ["patientId"],
-        ...(input?.limit && { take: input.limit }),
+        skip: (page - 1) * limit,
+        take: limit,
       });
 
-      log.info("Newest patients fetched", { result });
+      const total = await ctx.prisma.patient.count({
+        where: {
+          userId,
+          },
+          });
 
-      return result;
+
+      log.info("Newest patients fetched", { result, total });
+
+      return {
+        data: result,
+        meta: {
+          total,
+          page,
+          limit,
+          hasMore: page * limit < total,
+        },
+
+      };
     }),
   getStatPatients: protectedProcedure.query(async ({ ctx }) => {
     const { userId, log } = ctx;

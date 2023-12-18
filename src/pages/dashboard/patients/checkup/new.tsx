@@ -152,15 +152,15 @@ const NewCheckup = () => {
         labNote: data.labNote,
       },
       {
-        onSuccess: () => {
-          //reset all fields
+
+        onSuccess() {
           methods.reset();
           methods.resetField("phone");
           methods.resetField("pay");
           clearPreviewCheckUpAttachments();
           clearPreviewLabAttachments();
           toast.success("Pasien dan Pemeriksaan Berhasil ditambahkan!", {
-            position: "top-center",
+            position: "bottom-right",
           });
           utils.patient.getNewestPatients.invalidate();
         },

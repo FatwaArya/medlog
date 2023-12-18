@@ -6,7 +6,7 @@ import dayjs, { type Dayjs } from "dayjs";
 import { Button } from "@/components/ui/button";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id"; // ES 2015
-import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper, PaginationState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -25,7 +25,7 @@ import { DataTableColumnHeader } from "@/components/ui/datatable/data-table-colu
 import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.extend(relativeTime);
-type PatientColumn = RouterOutputs["patient"]["getNewestPatients"][number];
+type PatientColumn = RouterOutputs["patient"]["getNewestPatients"]["data"][number];
 
 import {
   type RankingInfo,
@@ -35,44 +35,7 @@ import {
 import { Spinner } from "@/components/ui/loading-overlay";
 import { UserPlus, MoreHorizontal } from "lucide-react";
 
-// declare module "@tanstack/table-core" {
-//     interface FilterFns {
-//         fuzzy: FilterFn<unknown>;
-//     }
-//     interface FilterMeta {
-//         itemRank: RankingInfo;
-//     }
-// }
 
-// export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-//     // Rank the item
-//     const itemRank = rankItem(row.getValue(columnId), value);
-
-//     // Store the itemRank info
-//     addMeta({
-//         itemRank,
-//     });
-
-//     // Return if the item should be filtered in/out
-//     return itemRank.passed;
-// };
-
-// export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-//     let dir = 0;
-
-//     // Only sort by rank if the column has ranking information
-//     if (rowA.columnFiltersMeta[columnId]) {
-//         dir = compareItems(
-//             rowA.columnFiltersMeta[columnId]?.itemRank!,
-//             rowB.columnFiltersMeta[columnId]?.itemRank!
-//         );
-//     }
-
-//     // Provide an alphanumeric fallback for when the item ranks are equal
-//     return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-// };
-
-const columnHelper = createColumnHelper<PatientColumn>();
 
 export interface ListProps {
   patientId?: string;
@@ -82,8 +45,41 @@ export interface ListProps {
 }
 
 export default function PatientList({ isDetailed = true }: ListProps) {
-  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ isLastVisit: true })
-  // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 1,
+    pageSize: 10,
+  })
+  const [sort, setSort] = useState({
+    field: "createdAt",
+    direction: "desc",
+  })
+  const utils = api.useContext()
+
+  const { data: patientData, isLoading, isPreviousData} = api.patient.getNewestPatients.useQuery({
+    page: pagination.pageIndex,
+    limit: pagination.pageSize,
+    sortBy: sort.field,
+    sortDirection: sort.direction as 'asc' | 'desc',
+  }, {
+    queryKey: ['patient.getNewestPatients', {
+      page: pagination.pageIndex,
+      limit: pagination.pageSize,
+      sortBy: sort.field,
+      sortDirection: sort.direction as 'asc' | 'desc',
+    }]
+  })
+
+  //prefetch
+  // useEffect(() => {
+  //   if (!isPreviousData && patientData?.meta.hasMore) {
+  //     utils.patient.getNewestPatients.prefetch({
+  //       page: pagination.pageIndex,
+  //       limit: pagination.pageSize,
+  //       sortBy: sort.field,
+  //       sortDirection: sort.direction as 'asc' | 'desc',
+  //     })
+  //   }
+  // }, [pagination, sort, isPreviousData, utils.patient.getNewestPatients])
 
   const patientColumn: ColumnDef<PatientColumn>[] = [
     {
@@ -175,14 +171,18 @@ export default function PatientList({ isDetailed = true }: ListProps) {
         </div>
 
         {!isLoading && patientData ? (
-          <DataTable columns={patientColumn} data={patientData} href="/dashboard/patients/checkup/new"
+          <DataTable columns={patientColumn} data={patientData.data} href="/dashboard/patients/checkup/new"
             filter="patient_name"
             filterTitle="nama"
-            isPaginated={true}
-
+            pagination={pagination}
+            setPagination={setPagination}
           />
         ) : (
           <div className="flex w-full flex-col gap-4">
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
             <Skeleton className="h-10 w-full rounded-md" />
             <Skeleton className="h-10 w-full rounded-md" />
             <Skeleton className="h-10 w-full rounded-md" />

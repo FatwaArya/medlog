@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/table"
 import { type RankingInfo, rankItem } from "@tanstack/match-sorter-utils"
 import { SearchIcon, UserPlus } from "lucide-react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 
 import { Input } from "@/components/ui/input"
 import { DebouncedInput } from "@/components/home/lists/patient"
@@ -33,6 +33,12 @@ import { Button } from "@/components/ui/button"
 import { DataTablePagination } from "@/components/ui/datatable/data-table-pagination"
 import { DataTableViewOptions } from "@/components/ui/datatable/data-table-viewOptions"
 import { DataTableToolbar } from "@/components/ui/datatable/data-table-toolbar"
+
+interface DataTableMeta {
+  total: number
+  page: number
+  limit: number
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -43,32 +49,43 @@ interface DataTableProps<TData, TValue> {
   filterTitle?: string
   isFacetedFilter?: boolean
   isPaginated?: boolean
+  meta?: DataTableMeta
+  pagination?: {
+    pageIndex: number
+    pageSize: number
+  }
+  setPagination?: React.Dispatch<
+    React.SetStateAction<{
+      pageIndex: number
+      pageSize: number
+    }>
+  >
 }
 
-declare module "@tanstack/table-core" {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>;
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo;
-  }
-}
+// declare module "@tanstack/table-core" {
+//   interface FilterFns {
+//     fuzzy: FilterFn<unknown>;
+//   }
+//   interface FilterMeta {
+//     itemRank: RankingInfo;
+//   }
+// }
 
-export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
+// export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value, addMeta) => {
+//   // Rank the item
+//   const itemRank = rankItem(row.getValue(columnId), value);
 
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
+//   // Store the itemRank info
+//   addMeta({
+//     itemRank,
+//   });
 
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
+//   // Return if the item should be filtered in/out
+//   return itemRank.passed;
+// };
 
 export function DataTable<TData, TValue>(
-  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href, isPaginated }: DataTableProps<TData, TValue>
+  { columns, data, columnViews, filter, filterTitle, isFacetedFilter, href, meta, pagination, setPagination }: DataTableProps<TData, TValue>
 ) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -76,31 +93,21 @@ export function DataTable<TData, TValue>(
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
 
+
+
   const table = useReactTable({
     data: data || [],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
-    filterFns: {
-      fuzzy: fuzzyFilter,
+    manualPagination: true,
+    pageCount: meta?.total ?? -1,
+    state:{
+      pagination,
     },
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      globalFilter
-    },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter
+    onPaginationChange: setPagination,
+  
   });
 
   return (

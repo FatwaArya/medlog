@@ -1,6 +1,6 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { useRouter } from "next/router";
-import { type PropsWithChildren, useEffect, useState } from "react";
+import { type PropsWithChildren, useEffect, useState, useMemo } from "react";
 
 import Sidebar from "@/components/dashboard/Sidebar";
 
@@ -65,6 +65,10 @@ const AdminLayout = (props: PropsWithChildren) => {
     }
   }, [pathname]);
 
+  const MemoizedNavbar = useMemo(() => {
+    return <Navbar setSidebarOpen={setSidebarOpen} />;
+  }, [setSidebarOpen]);
+
   return (
     <>
       {/* layout problem */}
@@ -74,7 +78,7 @@ const AdminLayout = (props: PropsWithChildren) => {
         open={sidebarOpen}
         setOpen={setSidebarOpen}
       />
-      <Navbar setSidebarOpen={setSidebarOpen} />
+      {MemoizedNavbar}
       <ContentArea {...props} />
     </>
   );

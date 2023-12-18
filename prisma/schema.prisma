@@ -45,6 +45,7 @@ model Patient {
   MedicalRecord MedicalRecord[]
 
   @@index([createdAt])
+  @@index([userId])
   @@fulltext([name])
 }
 

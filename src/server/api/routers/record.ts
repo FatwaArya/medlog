@@ -62,11 +62,17 @@ export const recordRouter = createTRPCRouter({
     .input(
       z.object({
         patientId: z.string(),
+        //create pagination and sorting
+        page: z.number().default(1),
+        limit: z.number().default(10),
+        sortBy: z.string().default("createdAt"),
+        sortDirection: z.enum(["asc", "desc"]).default("desc"),
       }),
     )
 
     .query(async ({ ctx, input }) => {
       const { userId, log } = ctx;
+      const { page, limit, sortBy, sortDirection } = input;
 
       const records = await ctx.prisma.medicalRecord.findMany({
         where: {
@@ -88,14 +94,33 @@ export const recordRouter = createTRPCRouter({
             },
           },
         },
+        skip: (page - 1) * limit,
+        take: limit,
         orderBy: {
-          createdAt: "desc",
+          [sortBy]: sortDirection,
+        },
+      });
+       
+      const total = await ctx.prisma.medicalRecord.count({
+        where: {
+          patient: {
+            id: input.patientId,
+            userId: userId,
+          },
         },
       });
 
-      log.info("Records fetched", { records });
+      log.info("Records fetched", { records, total });
 
-      return records;
+      return {
+        data: records,
+        meta: {
+          total,
+          page,
+          limit,
+          hasMore: page * limit < total,
+        },
+      };
     }),
   getRecordReports: protectedProcedure
     .input(

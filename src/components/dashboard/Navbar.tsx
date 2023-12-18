@@ -66,7 +66,7 @@ export default function Navbar({
 }: {
   setSidebarOpen: (isOpen: boolean) => void;
 }) {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
 
   const { data: ssoToken } = api.canny.cannyUserToken.useQuery();
@@ -232,7 +232,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search, 800)
-  const { data: patientData, isLoading } = api.patient.getNewestPatients.useQuery({ limit: 5, isLastVisit: false });
+  const { data: patientData } = api.patient.getNewestPatients.useQuery({ limit: 5, });
   const { data: searchPatientData, isLoading: isSearching } = api.patient.searchPatient.useQuery({ query: debouncedSearch })
   console.log(isSearching)
 
@@ -303,7 +303,7 @@ function CommandDialogPasienPlus({ ...props }: DialogProps) {
           <CommandSeparator />
           <CommandGroup heading="Daftar Pasien">
             {
-              patientData?.map(({ patient }) => (
+              patientData?.data?.map(({ patient }) => (
                 <CommandItem
                   onSelect={() => {
                     runCommand(() => router.push(`/dashboard/patients/record/${patient.id}`))
