@@ -25,7 +25,6 @@ type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patien
 
 const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
     const { data: report, isLoading } = api.record.getRecordById.useQuery({ id })
-
     const [activeSlide, setActiveSlide] = useState(0)
 
     if (isLoading) {
@@ -92,6 +91,10 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                             <div className="w-full flex flex-col items-start sm:col-span-1">
                                 <dt className="font-medium text-gray-500 text-sm">Tindakan </dt>
                                 <dd className="text-gray-900 text-sm mt-1">{report?.treatment ?? "Belum ada tindakan"}</dd>
+                            </div>
+                            <div className="w-full flex flex-col items-start sm:col-span-1">
+                                <dt className="font-medium text-gray-500 text-sm">Catatan Dokter </dt>
+                                <dd className="text-gray-900 text-sm mt-1">{report?.note ?? "Belum ada catatan dokter"}</dd>
                             </div>
                             <div className="w-full flex flex-col items-start sm:col-span-1">
                                 <dt className="font-medium text-gray-500 text-sm">Catatan Lab </dt>
