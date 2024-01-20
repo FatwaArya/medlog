@@ -44,9 +44,10 @@ const buttonVariants = cva(
                     `${baseStyles.outline} ring-blue-600 text-blue-600 hover:text-white hover:ring-blue-500 hover:bg-blue-600 active:bg-blue-100 active:text-blue-700 focus-visible:outline-blue-600 focus-visible:ring-blue-500`,
             },
             size: {
-                default: "h-10 py-2 px-4",
-                sm: "h-8 px-2",
-                lg: "h-11 px-8",
+                default: "h-9 px-4 py-2",
+                sm: "h-8 rounded-md px-3 text-xs",
+                lg: "h-10 rounded-md px-8",
+                icon: "h-9 w-9",
             },
         },
         defaultVariants: {

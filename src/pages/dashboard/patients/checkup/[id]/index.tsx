@@ -20,8 +20,53 @@ import {
 } from "@/components/ui/dialog"
 import { ImageOffIcon } from "lucide-react"
 import Breadcrumbs from "@/components/ui/breadcrumb";
+import * as React from "react"
+
+import { Card, CardContent } from "@/components/ui/card"
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+
+
 
 type PatientInfo = NonNullable<RouterOutputs["record"]['getRecordById']>['patient']
+type PatientAttachment = NonNullable<RouterOutputs["record"]['getRecordById']>['Attachment']
+
+
+
+function CarouselAttachment(attachments: PatientAttachment) {
+    return (
+        <Carousel className="w-full max-w-xs">
+            <CarouselContent>
+                {attachments.map((item, index) => (
+                    <CarouselItem key={index}>
+                        <div className="p-1">
+                            <Card>
+                                <CardContent className="flex aspect-square items-center justify-center p-6">
+                                    <span className="text-4xl font-semibold">{index + 1}</span>
+                                    <Image
+                                        src={item?.File?.url as string}
+                                        alt={item?.File?.name as string}
+                                        width={576}
+                                        height={20}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+        </Carousel>
+    )
+}
+
 
 const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
     const { data: report, isLoading } = api.record.getRecordById.useQuery({ id })
@@ -39,7 +84,7 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
         </div>
     }
 
-    const attachment = report?.Attachment;
+    const attachment = report?.Attachment as PatientAttachment
 
     function goToPrevSlide() {
         setActiveSlide((activeSlide - 1 + attachment.length) % attachment.length);
@@ -104,68 +149,41 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                                 <dt className="font-medium text-gray-500 text-sm">Nominal Pembayaran </dt>
                                 <dd className="text-gray-900 text-sm mt-1">{report?.pay.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) ?? "Belum ada nominal pembayaran"}</dd>
                             </div>
-                            <div className="w-full flex flex-col items-start sm:col-span-1">
+                            <div className="">
                                 <dt className="font-medium text-gray-500 text-sm">Foto Luka dan Hasil Lab</dt>
-                                <div className="flex sm:w-auto w-full flex-col items-center justify-start mt-1">
-                                    {attachment.length !== 0 ? attachment.map((item, i) => (
-                                        <div
-                                            key={i}
-                                            className={`${i === activeSlide
-                                                ? "opacity-100 z-10"
-                                                : "opacity-0 z-0 absolute"
-                                                } w-full max-w-sm rounded-sm border p-2 border-gray-200`}
-                                        >
-                                            <div className="relative">
-                                                <Image
-                                                    src={item?.File?.url as string}
-                                                    alt={item?.File?.name as string}
-                                                    width={576}
-                                                    height={20}
-                                                    className="rounded-sm max-h-52 h-full object-cover hover:brightness-75 cursor-pointer"
-                                                />
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                    <Dialog>
-                                                        <DialogTrigger>
-                                                            <Button size="sm" variant="solidWhite">Lihat Detail</Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent className="sm:min-w-[1200px] sm:w-full w-[340px]">
-                                                            <DialogHeader>
-                                                                <DialogTitle>Attachment Detail</DialogTitle>
-                                                            </DialogHeader>
-                                                            <div className="sm:h-[600px] h-[240px] overflow-y-scroll">
-                                                                {isLoading ? <div className="flex h-full justify-center items-center"><Spinner /></div>
-                                                                    : (
-                                                                        <Image
-                                                                            src={item?.File?.url as string}
-                                                                            alt={item?.File?.name as string}
-                                                                            width={1280}
-                                                                            height={20}
-                                                                            quality={100}
-                                                                            className="object-cover w-full h-auto"
-                                                                        />
-                                                                    )}
-
-                                                            </div>
-                                                        </DialogContent>
-                                                    </Dialog>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )) : (
-                                        <div className="sm:w-[576px] w-full rounded-sm border p-2 flex justify-center items-center border-gray-200 h-[208px]">
-                                            <div className="flex flex-col items-center gap-4">
-                                                <ImageOffIcon className="text-gray-400" />
-                                                <p className="text-sm text-gray-400 font-medium">Belum ada foto</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {attachment.length !== 0 && (
-                                        <div className="flex w-full items-center justify-between mt-3">
-                                            <Button size="sm" variant="ghost" onClick={goToPrevSlide}>Prev</Button>
-                                            <p className="text-sm font-medium text-gray-600">{activeSlide + 1} / {attachment.length}</p>
-                                            <Button size="sm" variant="ghost" onClick={goToNextSlide}>Next</Button>
-                                        </div>
-                                    )}
+                                <div className="mt-1">
+                                    <Carousel className="w-full max-w-xs">
+                                        <CarouselContent className="-ml-1">
+                                            {attachment.length !== 0 ? attachment.map((item, index) => (
+                                                <CarouselItem key={index} className="pl-4">
+                                                    <div className="p-1">
+                                                        <Card>
+                                                            <CardContent className="flex aspect-square items-center justify-center p-6">
+                                                                <Image
+                                                                    src={item?.File?.url as string}
+                                                                    alt={item?.File?.name as string}
+                                                                    width={576}
+                                                                    height={20}
+                                                                />
+                                                            </CardContent>
+                                                        </Card>
+                                                    </div>
+                                                </CarouselItem>
+                                            )) : (
+                                                <CarouselItem className="pl-4">
+                                                    <div className="p-1">
+                                                        <Card>
+                                                            <CardContent className="flex aspect-square items-center justify-center p-6">
+                                                                <ImageOffIcon className="text-gray-400" />
+                                                            </CardContent>
+                                                        </Card>
+                                                    </div>
+                                                </CarouselItem>
+                                            )}
+                                        </CarouselContent>
+                                        <CarouselPrevious />
+                                        <CarouselNext />
+                                    </Carousel>
                                 </div>
                             </div>
                         </div>

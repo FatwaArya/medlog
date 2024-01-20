@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { cn } from "@/utils/cn";
 import { Button } from "../ui/button";
 import { XIcon } from "lucide-react";
-
+import Image from "next/image";
 
 export type AttachmentType = Prisma.AttachmentGetPayload<{
     include: {
@@ -59,15 +59,18 @@ export const Attachment: React.FC<{
                     </Button>
                 </div>
             )}
-            {/* if file ext is pdf use react -f */}
             {attachment.File?.extension === "pdf" ? (
                 <embed src={attachment.File?.url} type="application/pdf" width="100%" height="100%" />
 
             ) : (
-                <img
-                    className="h-full w-full object-cover"
+                <Image
+                    id={attachment.id}
+                    className=" object-cover"
                     alt="Attachment"
-                    src={attachment.File?.url}
+                    src={attachment.File?.url as string}
+                    // stay small
+                    width={250}
+                    height={250}
                 />
             )}
         </div>
