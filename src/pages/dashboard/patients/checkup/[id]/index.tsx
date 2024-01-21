@@ -151,20 +151,48 @@ const CheckupDetail: PasienPlusPage<{ id: string }> = ({ id }) => {
                             </div>
                             <div className="">
                                 <dt className="font-medium text-gray-500 text-sm">Foto Luka dan Hasil Lab</dt>
-                                <div className="mt-1">
+                                <div className="mt-1 flex justify-center items-center">
                                     <Carousel className="w-full max-w-xs">
                                         <CarouselContent className="-ml-1">
                                             {attachment.length !== 0 ? attachment.map((item, index) => (
-                                                <CarouselItem key={index} className="pl-4">
+                                                <CarouselItem key={index} className="pl-2">
                                                     <div className="p-1">
                                                         <Card>
-                                                            <CardContent className="flex aspect-square items-center justify-center p-6">
-                                                                <Image
-                                                                    src={item?.File?.url as string}
-                                                                    alt={item?.File?.name as string}
-                                                                    width={576}
-                                                                    height={20}
-                                                                />
+                                                            <CardContent className="flex aspect-square items-center justify-center p-2">
+                                                                <div className="relative">
+                                                                    <Image
+                                                                        src={item?.File?.url as string}
+                                                                        alt={item?.File?.name as string}
+                                                                        width={576}
+                                                                        height={20}
+                                                                        className="rounded-md"
+                                                                    />
+                                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                                        <Dialog>
+                                                                            <DialogTrigger>
+                                                                                <Button size="sm" variant="solidWhite">Lihat Detail</Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="sm:min-w-[1200px] sm:w-full w-[340px]">
+                                                                                <DialogHeader>
+                                                                                    <DialogTitle>Attachment Detail</DialogTitle>
+                                                                                </DialogHeader>
+                                                                                <div className="sm:h-[600px] h-[240px] overflow-y-scroll">
+                                                                                    {isLoading ? <div className="flex h-full justify-center items-center"><Spinner /></div>
+                                                                                        : (
+                                                                                            <Image
+                                                                                                src={item?.File?.url as string}
+                                                                                                alt={item?.File?.name as string}
+                                                                                                width={1280}
+                                                                                                height={20}
+                                                                                                quality={100}
+                                                                                            />
+                                                                                        )}
+
+                                                                                </div>
+                                                                            </DialogContent>
+                                                                        </Dialog>
+                                                                    </div>
+                                                                </div>
                                                             </CardContent>
                                                         </Card>
                                                     </div>
