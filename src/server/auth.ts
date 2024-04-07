@@ -10,7 +10,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
 import bcrypt from "bcrypt";
-import type { User as PrismaUser, Role } from "@prisma/client";
+import type { User as PrismaUser } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
